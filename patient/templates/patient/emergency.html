@@ -1,0 +1,195 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}Emergency Help - PEDO ALIGN{% endblock %}
+{% block page_title %}Emergency Help{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Top Alert Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-600 via-rose-500 to-pink-500 p-6 md:p-8 text-white shadow-xl shadow-rose-500/20">
+        <div class="relative z-10 max-w-xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i> Orthodontic Urgent Care
+            </span>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Report an Aligner or Dental Issue</h1>
+            <p class="mt-2 text-sm text-rose-50 leading-relaxed">
+                If your aligner broke, an attachment came off, or you are experiencing abnormal discomfort, alert Dr. {{ doctor.full_name|default:"Your Doctor" }} immediately for urgent clinical instructions.
+            </p>
+        </div>
+        <i class="fa-solid fa-kit-medical absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+    </div>
+
+    <!-- Critical Medical Disclaimer Banner -->
+    <div class="bg-amber-50 border-2 border-amber-300 rounded-3xl p-5 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-sm">
+            <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <div class="text-xs text-amber-900 leading-relaxed">
+            <h4 class="font-bold text-amber-950 text-sm mb-1">Important Medical Notice</h4>
+            <p>
+                This portal is for non-life-threatening orthodontic issues. If you are experiencing severe bleeding, acute facial trauma, or difficulty breathing, please seek immediate emergency medical care or visit the nearest hospital emergency room.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Grid: Report Form + Clinic Hotline -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Form Card (Col 8) -->
+        <div class="lg:col-span-8 bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-notes-medical"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Send Emergency Alert</h2>
+                    <p class="text-xs text-slate-500">Your doctor will be notified immediately</p>
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl text-xs font-medium space-y-1">
+                    {% for err in form.non_field_errors %}
+                        <p><i class="fa-solid fa-circle-exclamation mr-1"></i> {{ err }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Problem Type -->
+                <div>
+                    <label for="{{ form.problem_type.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Category of Problem <span class="text-rose-500">*</span>
+                    </label>
+                    {{ form.problem_type }}
+                    {% if form.problem_type.errors %}
+                        <p class="text-xs text-rose-600 mt-1">{{ form.problem_type.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Severity Level -->
+                <div>
+                    <label for="{{ form.severity.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Urgency Level <span class="text-rose-500">*</span>
+                    </label>
+                    {{ form.severity }}
+                    {% if form.severity.errors %}
+                        <p class="text-xs text-rose-600 mt-1">{{ form.severity.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="{{ form.description.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Describe What Happened <span class="text-rose-500">*</span>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <p class="text-xs text-rose-600 mt-1">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Optional Photo Attachment -->
+                <div>
+                    <label for="{{ form.photo.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Attach Photo of Issue (Optional but Recommended)
+                    </label>
+                    {{ form.photo }}
+                    <p class="text-[11px] text-slate-400 mt-1">Take a close-up photo showing the broken tray, loose attachment, or irritated gum area.</p>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-rose-600 via-rose-500 to-pink-500 hover:from-rose-700 hover:to-pink-600 shadow-md shadow-rose-500/25 transition-all transform active:scale-[0.99]">
+                    <i class="fa-solid fa-bullhorn"></i> Submit Urgent Alert to Doctor
+                </button>
+            </form>
+        </div>
+
+        <!-- Sidebar / Clinic Hotline (Col 4) -->
+        <div class="lg:col-span-4 space-y-5">
+            <!-- Clinic Direct Contact -->
+            <div class="bg-white rounded-3xl p-6 border border-blue-100/80 shadow-sm">
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-hospital text-blue-600"></i> Clinic Direct Line
+                </h3>
+
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Dr. {{ doctor.full_name|default:"Orthodontist" }}</h4>
+                        <p class="text-slate-500">{{ doctor.clinic_name|default:"PEDO ALIGN Partner Clinic" }}</p>
+                    </div>
+
+                    {% if doctor.phone_number %}
+                    <div class="pt-2">
+                        <a href="tel:{{ doctor.phone_number }}" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">
+                            <i class="fa-solid fa-phone"></i> Call Clinic: {{ doctor.phone_number }}
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if doctor.clinic_address %}
+                    <div class="pt-3 border-t border-slate-100 text-slate-600 flex items-start gap-2">
+                        <i class="fa-solid fa-location-dot text-slate-400 mt-0.5"></i>
+                        <span>{{ doctor.clinic_address }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Temporary Advice -->
+            <div class="bg-gradient-to-br from-blue-50 to-sky-50 rounded-3xl p-6 border border-blue-100 text-xs text-slate-700 space-y-2.5">
+                <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-shield-heart text-blue-600"></i> Immediate Steps:
+                </h4>
+                <p><strong>Lost Aligner:</strong> If you lost your active tray, switch back to your immediately previous tray to maintain tooth positions until the doctor responds.</p>
+                <p><strong>Sharp Edge:</strong> Use orthodontic relief wax over any rough plastic edge to protect lips and cheeks.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Alerts History -->
+    {% if recent_alerts %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-slate-500"></i> Your Recent Emergency Reports
+        </h3>
+
+        <div class="divide-y divide-slate-100">
+            {% for alert in recent_alerts %}
+            <div class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-sm font-bold text-slate-900">{{ alert.get_issue_type_display|default:alert.issue_type }}</h4>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold 
+                                {% if alert.status == 'RESOLVED' %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                                {{ alert.status }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">{{ alert.description|truncatechars:100 }}</p>
+                        <span class="text-[11px] text-slate-400 mt-0.5 block">{{ alert.reported_at|date:"M d, Y h:i A" }}</span>
+                    </div>
+                </div>
+
+                {% if alert.attachment %}
+                <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
+                    <img src="{{ alert.attachment.url }}" alt="Attachment" class="w-full h-full object-cover">
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

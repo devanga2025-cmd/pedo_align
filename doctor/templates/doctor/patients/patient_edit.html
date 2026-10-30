@@ -1,0 +1,142 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Edit Patient - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_list' %}" class="hover:underline">Patients</a> / <a href="{% url 'doctor:patient_detail' patient.id %}" class="hover:underline">{{ patient.full_name }}</a> / Edit{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-user-pen text-blue-600"></i> Edit Patient Information
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Updating profile and treatment parameters for {{ patient.full_name }} ({{ patient.patient_id }})
+            </p>
+        </div>
+        <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs">
+            <i class="fa-solid fa-arrow-left"></i> Cancel & Return
+        </a>
+    </div>
+
+    {% if form.errors %}
+    <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+        <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Please fix form errors:</p>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p class="pl-4">• <strong>{{ field.label }}:</strong> {{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="pa-card p-6 sm:p-8 space-y-6">
+        {% csrf_token %}
+
+        <!-- Personal Info -->
+        <div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-id-card text-blue-600"></i> Personal Information
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">First Name *</label>
+                    {{ form.first_name }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Last Name *</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Age *</label>
+                    {{ form.age }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Gender *</label>
+                    {{ form.gender }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Date of Birth</label>
+                    {{ form.date_of_birth }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
+                    {{ form.email }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone *</label>
+                    {{ form.phone }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Guardian Info -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Details
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Name</label>
+                    {{ form.parent_guardian_name }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Phone</label>
+                    {{ form.parent_guardian_phone }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Status & Duration -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Status
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Status *</label>
+                    {{ form.treatment_status }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Start Date</label>
+                    {{ form.treatment_start_date }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Duration (Months)</label>
+                    {{ form.treatment_duration_months }}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Doctor Case Notes</label>
+                {{ form.notes }}
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Profile Photo</label>
+                {{ form.profile_photo }}
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+            <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs">Cancel</a>
+            <button type="submit" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-save mr-1"></i> Save Changes
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

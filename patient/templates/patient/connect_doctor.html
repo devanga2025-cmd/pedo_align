@@ -1,0 +1,206 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}Connect with Doctor - PEDO ALIGN{% endblock %}
+{% block page_title %}Connect with Doctor{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 p-6 md:p-8 text-white shadow-xl shadow-blue-500/15">
+        <div class="relative z-10 max-w-xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white mb-3">
+                <i class="fa-solid fa-link text-sky-200"></i> Clinic Connection
+            </span>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Connect with Your Doctor</h1>
+            <p class="mt-2 text-sm md:text-base text-blue-50/90 leading-relaxed">
+                Enter the unique 6-character joining code provided by your orthodontist to link your records, unlock personalized aligner tracking, and submit weekly photos.
+            </p>
+        </div>
+        <!-- Decorative subtle tooth icon in background -->
+        <i class="fa-solid fa-tooth absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+    </div>
+
+    <!-- Status Alert if Pending or Connected -->
+    {% if patient.connection_status == 'CONNECTED' %}
+    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-lg shadow-sm">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="flex-1">
+            <h3 class="text-base font-bold text-emerald-950">Successfully Connected!</h3>
+            <p class="text-sm text-emerald-800 mt-0.5">
+                You are currently connected with <strong class="font-bold text-emerald-950">Dr. {{ patient.doctor.full_name }}</strong> at <span class="font-semibold">{{ patient.doctor.clinic_name }}</span>.
+            </p>
+            <div class="mt-3 flex items-center gap-3">
+                <a href="{% url 'patient:my_treatment' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-sm">
+                    <i class="fa-solid fa-teeth-open"></i> View Treatment Plan
+                </a>
+                <a href="{% url 'patient:dashboard' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-emerald-800 hover:bg-emerald-100 text-xs font-bold rounded-xl border border-emerald-200 transition">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+    {% elif patient.connection_status == 'PENDING_APPROVAL' %}
+    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 text-lg shadow-sm animate-pulse">
+            <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+        <div class="flex-1">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <h3 class="text-base font-bold text-amber-950">Request Pending Doctor Approval</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-200 text-amber-900 uppercase tracking-wider">
+                    Code: {{ patient.pending_code.code|default:"Submitted" }}
+                </span>
+            </div>
+            <p class="text-sm text-amber-800 mt-1">
+                Your connection request has been securely submitted to <strong>Dr. {{ patient.pending_code.doctor.full_name }}</strong> at <strong>{{ patient.pending_code.doctor.clinic_name }}</strong>. 
+                As soon as the doctor approves your request in their portal, your treatment schedule and aligner tracker will activate immediately.
+            </p>
+            <div class="mt-3 flex items-center gap-2 text-xs text-amber-700">
+                <i class="fa-solid fa-clock"></i> Submitted: {{ patient.requested_at|date:"M d, Y h:i A"|default:"Recently" }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Grid: Form + How It Works -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left Column: Code Form Card -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Enter Joining Code</h2>
+                    <p class="text-xs text-slate-500">Provide the 6-character clinic voucher code</p>
+                </div>
+            </div>
+
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl text-xs font-medium space-y-1">
+                    {% for err in form.non_field_errors %}
+                        <p><i class="fa-solid fa-circle-exclamation mr-1"></i> {{ err }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Code Input -->
+                <div>
+                    <label for="{{ form.joining_code.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Unique Joining Code <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-shield-halved text-blue-500"></i>
+                        </div>
+                        {{ form.joining_code }}
+                    </div>
+                    {% if form.joining_code.errors %}
+                        <p class="text-xs text-rose-600 mt-1 font-semibold">{{ form.joining_code.errors.0 }}</p>
+                    {% else %}
+                        <p class="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-info text-blue-400"></i> Usually formatted like <code class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-mono font-bold">PA-XXXXXX</code> or 6 letters/numbers.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <!-- Notes / Message (Optional) -->
+                <div>
+                    <label for="{{ form.notes.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Notes for Doctor (Optional)
+                    </label>
+                    {{ form.notes }}
+                    <p class="text-[11px] text-slate-400 mt-1">E.g., "Hi Dr. Dileep, this is Rohan's mom setting up our home monitor."</p>
+                </div>
+
+                <!-- Action Button -->
+                <button type="submit" 
+                        class="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-md shadow-blue-500/25 transition-all transform active:scale-[0.99]">
+                    <i class="fa-solid fa-paper-plane"></i> Verify Code & Send Request
+                </button>
+            </form>
+
+            <!-- Privacy Guarantee Notice -->
+            <div class="mt-6 pt-5 border-t border-slate-100 flex items-center gap-2.5 text-xs text-slate-500">
+                <i class="fa-solid fa-lock text-emerald-500 text-sm"></i>
+                <span>HIPAA-compliant dental records. Your data is accessible solely by your verified doctor.</span>
+            </div>
+        </div>
+
+        <!-- Right Column: Step-by-Step Guide Card -->
+        <div class="lg:col-span-5 space-y-5">
+            <div class="bg-white rounded-3xl p-6 border border-blue-100/80 shadow-sm">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2 text-blue-600">
+                    <i class="fa-solid fa-route"></i> How Connecting Works
+                </h3>
+
+                <ol class="space-y-4">
+                    <li class="flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                            1
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800">Receive Code from Clinic</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Your orthodontist provides an individual joining code during your in-clinic consultation.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                            2
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800">Submit Code in Portal</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Type or paste the code in the form. Our secure engine verifies the clinic affiliation.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                            3
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800">Doctor Reviews & Approves</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">The doctor receives an instant request on their clinical workstation and approves the link.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800">Full Access Unlocked</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Your aligner schedule, wear timer, progress comparison, and photo uploads activate!</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Need Help Card -->
+            <div class="bg-gradient-to-br from-blue-50 to-sky-50 rounded-3xl p-6 border border-blue-100 text-slate-700">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-8 h-8 rounded-xl bg-white text-blue-600 flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <h4 class="text-sm font-bold text-blue-900">Don't have a code?</h4>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Please contact your orthodontic clinic reception or request your doctor to generate a new joining code from their Doctor Portal.
+                </p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-bold text-blue-700">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>support@pedoalign.com</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

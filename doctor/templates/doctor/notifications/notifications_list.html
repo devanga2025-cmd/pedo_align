@@ -1,0 +1,165 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Notifications & Patient Reminders - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Notifications{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-bell text-blue-600"></i> Notifications & Clinical Instructions
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Clinical alerts, incoming requests, patient progress updates, and outbound treatment reminders
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a href="{% url 'doctor:mark_all_notifications_read' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-check-double mr-1"></i> Mark All as Read
+            </a>
+            <button type="button" onclick="document.getElementById('sendReminderModal').classList.remove('hidden')" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-paper-plane mr-1"></i> Send Patient Reminder
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="pa-card p-4 flex flex-wrap items-center gap-2 text-xs">
+        <span class="font-bold text-slate-700 mr-2">Filter Category:</span>
+        <a href="?type=ALL" class="px-3 py-1.5 rounded-lg font-semibold transition {% if type_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            All Alerts ({{ notifications.count }})
+        </a>
+        <a href="?type=PATIENT_REQUEST" class="px-3 py-1.5 rounded-lg font-semibold transition {% if type_filter == 'PATIENT_REQUEST' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Patient Requests
+        </a>
+        <a href="?type=PHOTO_UPLOAD" class="px-3 py-1.5 rounded-lg font-semibold transition {% if type_filter == 'PHOTO_UPLOAD' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Photo Uploads
+        </a>
+        <a href="?type=EMERGENCY" class="px-3 py-1.5 rounded-lg font-semibold transition {% if type_filter == 'EMERGENCY' %}bg-rose-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Emergencies
+        </a>
+        <a href="?type=APPOINTMENT" class="px-3 py-1.5 rounded-lg font-semibold transition {% if type_filter == 'APPOINTMENT' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Appointments
+        </a>
+        <a href="?type=FOLLOWUP" class="px-3 py-1.5 rounded-lg font-semibold transition {% if type_filter == 'FOLLOWUP' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Outbound Follow-ups
+        </a>
+    </div>
+
+    <!-- Notifications Feed -->
+    {% if notifications %}
+    <div class="pa-card divide-y divide-slate-100 overflow-hidden">
+        {% for notif in notifications %}
+        <div class="p-4 sm:p-5 flex items-start justify-between gap-4 transition hover:bg-slate-50/70 {% if not notif.is_read %}bg-blue-50/20{% endif %}">
+            <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm flex-shrink-0 shadow-sm
+                    {% if notif.notification_type == 'EMERGENCY' %}bg-rose-100 text-rose-600
+                    {% elif notif.notification_type == 'PATIENT_REQUEST' %}bg-amber-100 text-amber-700
+                    {% elif notif.notification_type == 'PHOTO_UPLOAD' %}bg-sky-100 text-sky-700
+                    {% elif notif.notification_type == 'APPOINTMENT' %}bg-purple-100 text-purple-700
+                    {% else %}bg-blue-100 text-blue-700{% endif %}">
+                    <i class="fa-solid 
+                        {% if notif.notification_type == 'EMERGENCY' %}fa-triangle-exclamation
+                        {% elif notif.notification_type == 'PATIENT_REQUEST' %}fa-key
+                        {% elif notif.notification_type == 'PHOTO_UPLOAD' %}fa-camera
+                        {% elif notif.notification_type == 'APPOINTMENT' %}fa-calendar
+                        {% else %}fa-message{% endif %}"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-900">{{ notif.title }}</h4>
+                        {% if not notif.is_read %}
+                        <span class="w-2 h-2 rounded-full bg-blue-600 ring-2 ring-blue-100"></span>
+                        {% endif %}
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">{{ notif.message }}</p>
+                    <div class="flex items-center gap-3 text-[11px] text-slate-400 mt-1.5 font-medium">
+                        <span><i class="fa-regular fa-clock mr-1"></i>{{ notif.created_at|timesince }} ago</span>
+                        {% if notif.patient %}
+                        <span>•</span>
+                        <a href="{% url 'doctor:patient_detail' notif.patient.id %}" class="text-blue-600 hover:underline">
+                            Patient: {{ notif.patient.full_name }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-shrink-0">
+                {% if not notif.is_read %}
+                <a href="{% url 'doctor:mark_notification_read' notif.id %}" class="btn-secondary py-1 px-2.5 text-xs">
+                    Mark Read
+                </a>
+                {% endif %}
+                {% if notif.link_url %}
+                <a href="{{ notif.link_url }}" class="btn-primary py-1 px-3 text-xs">
+                    View <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="pa-card p-12 text-center text-xs text-slate-400">
+        <i class="fa-regular fa-bell-slash text-3xl mb-2 text-slate-300 block"></i>
+        No notifications found under this filter.
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- SEND REMINDER / INSTRUCTION MODAL -->
+<div id="sendReminderModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane text-blue-600"></i> Dispatch Instruction / Alert to Patient
+            </h3>
+            <button onclick="document.getElementById('sendReminderModal').classList.add('hidden')" class="p-1 rounded text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+        </div>
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="send_reminder" value="1">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Select Patient *</label>
+                {{ reminder_form.patient }}
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Reminder Template / Type *</label>
+                {{ reminder_form.instruction_type }}
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Subject / Title *</label>
+                {{ reminder_form.title }}
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Instruction Message *</label>
+                {{ reminder_form.message }}
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button type="button" onclick="document.getElementById('sendReminderModal').classList.add('hidden')" class="btn-secondary text-xs">
+                    Cancel
+                </button>
+                <button type="submit" class="btn-primary text-xs shadow-md">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Send Instruction
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

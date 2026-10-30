@@ -1,0 +1,85 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Clinical Records - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Clinical Records{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-file-medical text-blue-600"></i> Clinical Examination & Intake Records
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Clinical intake, skeletal patterns, occlusion, and oral habits examination records
+            </p>
+        </div>
+
+        <form method="GET" class="relative w-full sm:w-72">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search patient or diagnosis..." class="form-input text-xs pl-8">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+        </form>
+    </div>
+
+    <!-- Table of Clinical Records -->
+    {% if records %}
+    <div class="pa-card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
+                        <th class="py-3 px-4">Patient</th>
+                        <th class="py-3 px-4">Dentition</th>
+                        <th class="py-3 px-4">Molar Relationship</th>
+                        <th class="py-3 px-4">Overbite / Deep Bite</th>
+                        <th class="py-3 px-4">Crossbite</th>
+                        <th class="py-3 px-4">Oral Habits</th>
+                        <th class="py-3 px-4">Last Updated</th>
+                        <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for rec in records %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4">
+                            <a href="{% url 'doctor:patient_detail' rec.patient.id %}?tab=clinical" class="font-bold text-slate-900 hover:text-blue-700 block">
+                                {{ rec.patient.full_name }}
+                            </a>
+                            <span class="text-[10px] text-slate-400 font-mono">{{ rec.patient.patient_id }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-700 font-medium">{{ rec.teeth_present }}</td>
+                        <td class="py-3 px-4 font-semibold text-blue-900">{{ rec.molar_relationship }}</td>
+                        <td class="py-3 px-4 text-slate-700">
+                            <div>{{ rec.overbite }}</div>
+                            <span class="text-[10px] text-slate-400">{{ rec.deep_bite }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-700">{{ rec.crossbite }}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold {% if rec.oral_habits != 'None' %}bg-amber-100 text-amber-800{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                {{ rec.oral_habits }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-400 text-[11px]">{{ rec.updated_at|date:"M d, Y" }}</td>
+                        <td class="py-3 px-4 text-right">
+                            <a href="{% url 'doctor:clinical_record_edit' rec.patient.id %}" class="btn-primary py-1 px-3 text-xs">
+                                <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Record
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="pa-card p-12 text-center text-xs text-slate-400">
+        <i class="fa-solid fa-notes-medical text-3xl mb-2 text-slate-300 block"></i>
+        No clinical examination records found.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

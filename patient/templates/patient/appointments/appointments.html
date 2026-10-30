@@ -1,0 +1,168 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}Appointments - PEDO ALIGN{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Top Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 p-6 md:p-8 text-white shadow-xl shadow-blue-500/15">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="max-w-xl">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white mb-3">
+                    <i class="fa-solid fa-calendar-check"></i> Clinic Visits
+                </span>
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Your Dental Appointments</h1>
+                <p class="mt-2 text-sm text-blue-50 leading-relaxed">
+                    Schedule checkups, review fit with Dr. {{ doctor.full_name|default:"Your Doctor" }}, and receive your upcoming aligner stages.
+                </p>
+            </div>
+
+            <div>
+                <a href="{% url 'patient:appointment_request' %}" class="inline-flex items-center gap-2 px-5 py-3 bg-white text-blue-700 hover:bg-blue-50 text-xs font-bold rounded-2xl shadow-lg transition-all transform hover:scale-[1.02]">
+                    <i class="fa-solid fa-calendar-plus text-sm"></i> Request New Appointment
+                </a>
+            </div>
+        </div>
+        <i class="fa-solid fa-calendar-days absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+    </div>
+
+    <!-- Friendly Clinic Reminder Checklist -->
+    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-3xl p-5 border border-sky-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white text-sky-600 flex items-center justify-center text-lg flex-shrink-0 shadow-sm">
+            <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div class="flex-1 text-xs text-slate-700">
+            <h4 class="font-bold text-slate-900 text-sm mb-1">What to bring to your appointment:</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-check text-blue-600"></i> Your current aligner tray
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-check text-blue-600"></i> Your protective carry case
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-check text-blue-600"></i> Your bite chewies
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments Section -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-star text-blue-600"></i> Upcoming Visits
+            </h2>
+            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full">
+                {{ upcoming_appointments|length }} Scheduled
+            </span>
+        </div>
+
+        {% if upcoming_appointments %}
+        <div class="space-y-4">
+            {% for appt in upcoming_appointments %}
+            <div class="p-5 rounded-2xl border border-blue-100 bg-white hover:border-blue-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm">
+                
+                <div class="flex items-start gap-4">
+                    <!-- Date badge -->
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-b from-blue-600 to-sky-500 text-white flex flex-col items-center justify-center flex-shrink-0 shadow-md shadow-blue-500/20">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider">{{ appt.scheduled_date|date:"M" }}</span>
+                        <span class="text-2xl font-black leading-none my-0.5">{{ appt.scheduled_date|date:"d" }}</span>
+                        <span class="text-[9px] font-semibold opacity-90">{{ appt.scheduled_date|date:"D" }}</span>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base font-bold text-slate-900">{{ appt.appointment_type|default:"Orthodontic Review" }}</h3>
+                            
+                            {% if appt.status == 'CONFIRMED' %}
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> Confirmed
+                                </span>
+                            {% elif appt.status == 'REQUESTED' %}
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 uppercase flex items-center gap-1">
+                                    <i class="fa-solid fa-hourglass-half"></i> Pending Confirmation
+                                </span>
+                            {% else %}
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 uppercase">
+                                    {{ appt.status }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-2 text-xs text-slate-600 space-y-1">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-slate-400"></i>
+                                <span class="font-bold text-slate-800">{{ appt.scheduled_time|time:"g:i A"|default:"Time confirmed upon arrival" }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-user-doctor text-slate-400"></i>
+                                <span>Dr. {{ appt.doctor.full_name }} • {{ appt.doctor.clinic_name }}</span>
+                            </div>
+                            {% if appt.notes %}
+                            <div class="text-[11px] text-slate-500 italic mt-1">
+                                Note: {{ appt.notes|truncatechars:100 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reschedule Action -->
+                <div class="flex items-center gap-2 self-start md:self-center">
+                    <a href="{% url 'patient:appointment_reschedule' appt.id %}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-pen"></i> Reschedule
+                    </a>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="p-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">
+            <i class="fa-solid fa-calendar-xmark text-4xl mb-2 text-slate-300"></i>
+            <h4 class="text-sm font-bold text-slate-800">No Upcoming Appointments</h4>
+            <p class="text-xs text-slate-500 mt-1">Need an in-person aligner checkup or attachment check?</p>
+            <a href="{% url 'patient:appointment_request' %}" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm transition">
+                <i class="fa-solid fa-calendar-plus"></i> Request an Appointment
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Past Appointments History Section -->
+    {% if past_appointments %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-slate-500"></i> Past Visit History
+        </h3>
+
+        <div class="divide-y divide-slate-100">
+            {% for appt in past_appointments %}
+            <div class="py-3.5 flex items-center justify-between gap-4 text-xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[11px]">
+                        {{ appt.scheduled_date|date:"M d" }}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">{{ appt.appointment_type|default:"Routine Checkup" }}</h4>
+                        <p class="text-slate-400 text-[11px]">{{ appt.scheduled_date|date:"Y" }} at {{ appt.scheduled_time|time:"g:i A" }}</p>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 uppercase">
+                        {{ appt.status }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

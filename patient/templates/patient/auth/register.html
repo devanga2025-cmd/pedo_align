@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#F4F9FF]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Patient Account - PEDO ALIGN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'patient/css/patient.css' %}">
+</head>
+<body class="h-full flex items-center justify-center p-4 bg-[#F4F9FF] antialiased">
+
+    <div class="w-full max-w-lg my-6">
+        
+        <div class="bg-white rounded-3xl shadow-xl border border-blue-100 overflow-hidden">
+            
+            <!-- Friendly Header Banner -->
+            <div class="relative bg-cover bg-center p-6 text-center border-b border-blue-100/80" style="background-image: url('{% static 'bg.png' %}?v=2305');">
+                <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" alt="PEDO ALIGN" onerror="this.src='/static/sidebar_glowing_logo.png'" class="max-w-[210px] mx-auto h-auto object-contain drop-shadow-sm">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm text-blue-700 text-xs font-bold mt-2 shadow-xs">
+                    <i class="fa-solid fa-sparkles text-pink-500"></i>
+                    <span>Quick Patient Registration</span>
+                </div>
+            </div>
+
+            <div class="p-8 sm:p-10 space-y-5">
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-slate-900 tracking-tight">Create Your Account</h2>
+                    <p class="text-xs text-slate-500 mt-1">Start following your clear aligner journey with your orthodontist</p>
+                </div>
+
+                <!-- Errors / Messages -->
+                {% if form.errors %}
+                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+                    <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Please fix the errors below:</p>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p class="pl-4">• <strong>{{ field.label }}:</strong> {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p class="pl-4">• {{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Form -->
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name *</label>
+                        {{ form.full_name }}
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Date of Birth *</label>
+                            {{ form.date_of_birth }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mobile / WhatsApp *</label>
+                            {{ form.mobile_number }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
+                        {{ form.email }}
+                        <p class="text-[11px] text-slate-400 mt-0.5">Used for login and weekly photo reminders</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password *</label>
+                            {{ form.password }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Confirm Password *</label>
+                            {{ form.confirm_password }}
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <button type="submit" class="w-full btn-patient-primary py-3 text-sm font-bold shadow-md">
+                            <i class="fa-solid fa-check-circle mr-1"></i> Register & Connect with Doctor
+                        </button>
+                    </div>
+                </form>
+
+                <div class="pt-4 border-t border-slate-100 text-center">
+                    <p class="text-xs text-slate-600">
+                        Already have an account? 
+                        <a href="{% url 'patient:login' %}" class="font-bold text-blue-600 hover:underline ml-1">Sign In</a>
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+

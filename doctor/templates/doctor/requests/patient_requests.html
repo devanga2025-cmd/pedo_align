@@ -1,0 +1,191 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Patient Joining Requests - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Patient Requests{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-key text-blue-600"></i> Unique Patient Joining Codes & Connection Requests
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Manage individual onboarding security codes and approve incoming patient connection requests
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-user-plus mr-1"></i> Add Patient & Generate Code
+            </a>
+            <a href="{% url 'doctor:patient_join_portal' %}" target="_blank" class="btn-secondary text-xs" title="Open Public Patient Join Page">
+                <i class="fa-solid fa-external-link-alt mr-1"></i> Public Join Portal
+            </a>
+        </div>
+    </div>
+
+    <!-- 3 Quick KPI Counters -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <div class="pa-card p-4 border-l-4 border-amber-500 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Pending Approval</span>
+                <div class="text-2xl font-black text-amber-700 mt-1">{{ pending_count }}</div>
+                <p class="text-[11px] text-amber-600 mt-0.5">Patients entered code & awaiting approval</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-user-clock"></i>
+            </div>
+        </div>
+
+        <div class="pa-card p-4 border-l-4 border-blue-500 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Active / Unclaimed</span>
+                <div class="text-2xl font-black text-blue-800 mt-1">{{ active_count }}</div>
+                <p class="text-[11px] text-slate-500 mt-0.5">Codes ready to be shared with patients</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+        </div>
+
+        <div class="pa-card p-4 border-l-4 border-emerald-500 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Connected & Active</span>
+                <div class="text-2xl font-black text-emerald-700 mt-1">{{ approved_count }}</div>
+                <p class="text-[11px] text-emerald-600 mt-0.5">Patients successfully linked</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="pa-card p-4 flex flex-wrap items-center gap-2 text-xs">
+        <span class="font-bold text-slate-700 mr-2">Filter Status:</span>
+        <a href="?status=ALL" class="px-3 py-1.5 rounded-lg font-semibold transition {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            All Codes ({{ codes.count }})
+        </a>
+        <a href="?status=PENDING_APPROVAL" class="px-3 py-1.5 rounded-lg font-semibold transition {% if status_filter == 'PENDING_APPROVAL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Awaiting Approval ({{ pending_count }})
+        </a>
+        <a href="?status=ACTIVE" class="px-3 py-1.5 rounded-lg font-semibold transition {% if status_filter == 'ACTIVE' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Active / Unclaimed ({{ active_count }})
+        </a>
+        <a href="?status=APPROVED" class="px-3 py-1.5 rounded-lg font-semibold transition {% if status_filter == 'APPROVED' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Approved ({{ approved_count }})
+        </a>
+    </div>
+
+    <!-- Joining Codes Table / Cards -->
+    {% if codes %}
+    <div class="space-y-4">
+        {% for c in codes %}
+        <div class="pa-card p-5 {% if c.status == 'PENDING_APPROVAL' %}border-2 border-amber-300 bg-amber-50/20 shadow-md{% endif %}">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                
+                <!-- Left: Patient & Code info -->
+                <div class="flex items-start sm:items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0
+                        {% if c.status == 'PENDING_APPROVAL' %}bg-amber-100 text-amber-800
+                        {% elif c.status == 'APPROVED' %}bg-emerald-100 text-emerald-800
+                        {% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ c.patient.first_name|first }}{{ c.patient.last_name|first }}
+                    </div>
+
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="font-bold text-slate-900 text-sm hover:text-blue-700">
+                                {{ c.patient.full_name }}
+                            </a>
+                            <span class="text-xs text-slate-500 font-mono">({{ c.patient.patient_id }})</span>
+                            <span class="badge 
+                                {% if c.status == 'APPROVED' %}badge-active
+                                {% elif c.status == 'PENDING_APPROVAL' %}badge-pending animate-pulse
+                                {% elif c.status == 'ACTIVE' %}badge-completed
+                                {% else %}badge-emergency-high{% endif %}">
+                                {{ c.get_status_display }}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-1">
+                            <span>Phone: <strong class="text-slate-700">{{ c.patient.phone }}</strong></span>
+                            <span>•</span>
+                            <span>Generated: {{ c.created_at|date:"M d, Y" }}</span>
+                            <span>•</span>
+                            <span>Expires: {{ c.expires_at|date:"M d, Y" }}</span>
+                        </div>
+
+                        {% if c.patient_request_notes %}
+                        <div class="mt-2 text-xs bg-white p-2.5 rounded-lg border border-slate-200 text-slate-700">
+                            <strong>Patient Request Note:</strong> "{{ c.patient_request_notes }}"
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Middle: Code Display -->
+                <div class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 flex-shrink-0">
+                    <div class="text-center px-2">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Joining Code</span>
+                        <span class="font-mono text-lg font-black text-blue-800 tracking-wider">{{ c.code }}</span>
+                    </div>
+                    <button type="button" onclick="copyToClipboard('{{ c.code }}', 'cpCode{{ c.id }}')" id="cpCode{{ c.id }}" class="btn-secondary py-1.5 px-2.5 text-xs">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+
+                <!-- Right: Action Buttons (Approve / Reject) -->
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    {% if c.status == 'PENDING_APPROVAL' %}
+                    <!-- APPROVE CONNECTION REQUEST -->
+                    <form method="POST" action="{% url 'doctor:approve_patient_request' c.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-primary bg-emerald-600 hover:bg-emerald-700 text-xs px-3.5 py-2 font-bold shadow-md">
+                            <i class="fa-solid fa-check mr-1"></i> Approve Connection
+                        </button>
+                    </form>
+
+                    <!-- REJECT CONNECTION REQUEST -->
+                    <form method="POST" action="{% url 'doctor:reject_patient_request' c.id %}" onsubmit="return confirm('Reject this connection request?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary text-rose-600 hover:bg-rose-50 text-xs px-3 py-2">
+                            <i class="fa-solid fa-xmark mr-1"></i> Reject
+                        </button>
+                    </form>
+
+                    {% elif c.status == 'ACTIVE' %}
+                    <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="btn-secondary text-xs">
+                        View Patient
+                    </a>
+
+                    {% elif c.is_expired or c.status == 'REJECTED' %}
+                    <a href="{% url 'doctor:regenerate_code' c.patient.id %}" class="btn-primary text-xs">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Generate New Code
+                    </a>
+                    {% else %}
+                    <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="btn-secondary text-xs text-emerald-700">
+                        <i class="fa-solid fa-circle-check mr-1"></i> Connected
+                    </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="pa-card p-12 text-center text-xs text-slate-400">
+        <i class="fa-solid fa-key text-3xl mb-2 text-slate-300 block"></i>
+        No joining codes match the selected filter.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

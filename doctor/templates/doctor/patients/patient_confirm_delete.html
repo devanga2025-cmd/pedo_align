@@ -1,0 +1,30 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Delete Patient - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_list' %}" class="hover:underline">Patients</a> / Confirm Removal{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-8">
+    <div class="pa-card p-6 sm:p-8 text-center space-y-4">
+        <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h2 class="text-lg font-bold text-slate-900">Remove Patient Record?</h2>
+        <p class="text-xs text-slate-500 leading-relaxed">
+            Are you sure you want to remove <strong class="text-slate-800">{{ patient.full_name }}</strong> (<span class="font-mono">{{ patient.patient_id }}</span>)? This will remove their clinical records, treatment plan, and photos from your portal.
+        </p>
+
+        <form method="POST" class="pt-4 flex items-center justify-center gap-3">
+            {% csrf_token %}
+            <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs">
+                Cancel
+            </a>
+            <button type="submit" class="btn-primary text-xs bg-rose-600 hover:bg-rose-700">
+                <i class="fa-solid fa-trash-can mr-1"></i> Yes, Remove Patient
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

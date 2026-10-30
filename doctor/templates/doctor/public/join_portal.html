@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Join Portal - PEDO ALIGN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
+</head>
+<body class="min-h-full py-10 px-4 flex items-center justify-center bg-gradient-to-br from-blue-100 via-sky-50 to-blue-50 antialiased">
+
+    <div class="w-full max-w-lg">
+        
+        <div class="bg-white rounded-3xl shadow-2xl border border-blue-100 p-8 sm:p-10">
+            
+            <!-- Logo Header -->
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-3">
+                    <img src="{% static 'doctor/images/logo.jpeg' %}" alt="PEDO ALIGN" class="h-20 w-20 object-contain rounded-2xl shadow-md border border-slate-100">
+                </div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">PEDO <span class="text-sky-500">ALIGN</span></h2>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider my-2">
+                    <i class="fa-solid fa-link"></i> Patient Connection Portal
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Connect to Your Orthodontist</h3>
+                <p class="text-xs text-slate-500 mt-1">Enter the unique joining code given by your dental doctor to activate treatment tracking</p>
+            </div>
+
+            {% if success_info %}
+            <!-- Success Confirmation Screen -->
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-4 animate-in fade-in">
+                <div class="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-2xl shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-emerald-950">Connection Request Submitted!</h3>
+                    <p class="text-xs text-emerald-800 mt-1">
+                        Your joining code <strong>{{ success_info.code }}</strong> was verified.
+                    </p>
+                </div>
+                <div class="bg-white/80 rounded-xl p-4 text-xs text-slate-700 text-left border border-emerald-100 space-y-1.5">
+                    <p><strong>Patient Name:</strong> {{ success_info.patient_name }}</p>
+                    <p><strong>Treating Orthodontist:</strong> Dr. {{ success_info.doctor_name }}</p>
+                    <p><strong>Clinic:</strong> {{ success_info.clinic_name }}</p>
+                    <p><strong>Status:</strong> <span class="text-amber-700 font-bold bg-amber-100 px-2 py-0.5 rounded">Pending Doctor Approval</span></p>
+                </div>
+                <p class="text-xs text-slate-500">
+                    Dr. {{ success_info.doctor_name }} has been notified. Once approved, you can start submitting your weekly aligner tracking photos.
+                </p>
+                <div class="pt-2">
+                    <a href="{% url 'doctor:patient_join_portal' %}" class="btn-secondary text-xs w-full">Connect Another Code</a>
+                </div>
+            </div>
+
+            {% else %}
+
+            <!-- Errors -->
+            {% if form.errors %}
+            <div class="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+                <p class="font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Could not connect code:</p>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>• {{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Code Entry Form -->
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 text-center">
+                        Unique Joining Code *
+                    </label>
+                    <div class="relative">
+                        {{ form.joining_code }}
+                    </div>
+                    <p class="text-[11px] text-slate-400 text-center mt-1">Format: PA-XXXXXX (e.g. PA-7K4M9Q)</p>
+                </div>
+
+                <div class="border-t border-slate-100 pt-3">
+                    <p class="text-xs font-bold text-slate-800 mb-2">Patient Details</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">First Name *</label>
+                            {{ form.patient_first_name }}
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Last Name *</label>
+                            {{ form.patient_last_name }}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Phone / WhatsApp Number *</label>
+                    {{ form.phone }}
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Notes for Doctor (Optional)</label>
+                    {{ form.request_notes }}
+                </div>
+
+                <div class="pt-3">
+                    <button type="submit" class="w-full btn-primary py-3.5 text-sm font-bold shadow-lg shadow-blue-700/20">
+                        <i class="fa-solid fa-paper-plane mr-1.5"></i> Verify Code & Send Connection Request
+                    </button>
+                </div>
+
+            </form>
+
+            {% endif %}
+
+            <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <a href="{% url 'doctor:login' %}" class="text-blue-600 hover:underline font-semibold">
+                    <i class="fa-solid fa-stethoscope mr-1"></i> Doctor Portal Login
+                </a>
+                <span>PEDO ALIGN Secure Health</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Treatment Progress Monitoring - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Progress Tracking{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-blue-600"></i> Treatment Progress & Compliance Monitoring
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Monitor aligner stage progression, daily wear fidelity, and treatment milestones across your patient caseload
+            </p>
+        </div>
+    </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        
+        <div class="pa-card p-4">
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Active Caseload</span>
+            <span class="text-2xl font-black text-blue-900 mt-1 block">{{ patients.count }} Patients</span>
+            <span class="text-xs text-slate-500">Under direct monitoring</span>
+        </div>
+
+        <div class="pa-card p-4">
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Average Compliance</span>
+            <span class="text-2xl font-black text-emerald-700 mt-1 block">{{ avg_compliance }}%</span>
+            <span class="text-xs text-emerald-600 font-semibold">High clinical compliance</span>
+        </div>
+
+        <div class="pa-card p-4">
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Average Treatment Duration</span>
+            <span class="text-2xl font-black text-blue-800 mt-1 block">{{ avg_duration }} Mos</span>
+            <span class="text-xs text-slate-500">Pediatric & teen cases</span>
+        </div>
+
+        <div class="pa-card p-4">
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Target Daily Wear Time</span>
+            <span class="text-2xl font-black text-purple-900 mt-1 block">22.0 Hours</span>
+            <span class="text-xs text-slate-500">Standard clear aligner protocol</span>
+        </div>
+
+    </div>
+
+    <!-- Patient Progress Monitoring Table -->
+    <div class="pa-card overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-900">Individual Patient Progress & Aligner Tracking</h3>
+            <span class="text-xs text-slate-400">{{ treatment_plans.count }} active plans</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
+                        <th class="py-3 px-4">Patient</th>
+                        <th class="py-3 px-4">Treatment Phase</th>
+                        <th class="py-3 px-4 w-48">Aligner Progress</th>
+                        <th class="py-3 px-4">Daily Wear Time</th>
+                        <th class="py-3 px-4">Compliance Score</th>
+                        <th class="py-3 px-4">Next Review</th>
+                        <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for plan in treatment_plans %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3.5 px-4">
+                            <a href="{% url 'doctor:patient_detail' plan.patient.id %}" class="font-bold text-slate-900 hover:text-blue-700 block">
+                                {{ plan.patient.full_name }}
+                            </a>
+                            <span class="text-[10px] text-slate-400 font-mono">{{ plan.patient.patient_id }}</span>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <span class="badge 
+                                {% if plan.status == 'Active / In Progress' %}badge-active
+                                {% elif plan.status == 'Completed' %}badge-completed
+                                {% else %}badge-pending{% endif %}">
+                                {{ plan.status }}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center justify-between text-[11px] font-bold text-slate-800 mb-1">
+                                <span>Tray #{{ plan.current_aligner }}</span>
+                                <span class="text-blue-600 font-extrabold">{{ plan.progress_percentage }}%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
+                            </div>
+                            <span class="text-[10px] text-slate-400 mt-1 block">Total: {{ plan.total_aligners }} aligners</span>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <span class="font-bold text-slate-800 text-xs">{{ plan.daily_wear_hours }} hrs/day</span>
+                            <span class="text-[10px] text-slate-400 block">Switch every {{ plan.aligner_frequency_days }} days</span>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2.5 h-2.5 rounded-full {% if plan.compliance_score >= 85 %}bg-emerald-500{% elif plan.compliance_score >= 70 %}bg-amber-500{% else %}bg-rose-500{% endif %}"></div>
+                                <span class="font-bold {% if plan.compliance_score >= 85 %}text-emerald-700{% elif plan.compliance_score >= 70 %}text-amber-700{% else %}text-rose-700{% endif %}">
+                                    {{ plan.compliance_score }}%
+                                </span>
+                            </div>
+                            <span class="text-[10px] text-slate-400">
+                                {% if plan.compliance_score >= 85 %}Excellent
+                                {% elif plan.compliance_score >= 70 %}Moderate
+                                {% else %}Needs Motivation{% endif %}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-700">
+                            {{ plan.next_review_date|default:"Unscheduled" }}
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                {% if plan.current_aligner < plan.total_aligners %}
+                                <form method="POST" action="{% url 'doctor:advance_aligner' plan.patient.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-primary py-1 px-2.5 text-xs" title="Advance to next aligner">
+                                        +1
+                                    </button>
+                                </form>
+                                {% endif %}
+                                <a href="{% url 'doctor:patient_detail' plan.patient.id %}?tab=progress" class="btn-secondary py-1 px-2.5 text-xs">
+                                    Details
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-slate-400">No active treatment plans found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,406 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PEDO ALIGN - Doctor Portal{% endblock %}</title>
+    
+    <!-- Google Fonts Preconnect & Stylesheet -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+                        heading: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        accent: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full flex flex-col font-sans text-slate-900 bg-slate-50 antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto">
+            
+            <!-- Brand / Logo Header & Doctor Identity (with assent/bg.png) -->
+            <div class="relative p-4 border-b border-blue-100/80 overflow-hidden bg-cover bg-center shadow-xs" style="background-image: url('{% static 'bg.png' %}?v=2305');">
+                <!-- Logo -->
+                <a href="{% url 'doctor:dashboard' %}" class="relative block mx-auto transition-transform hover:scale-[1.02] focus:outline-none" title="PEDO ALIGN Doctor Portal">
+                    <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" 
+                         alt="PEDO ALIGN DOCTOR PORTAL" 
+                         onerror="this.src='/static/sidebar_glowing_logo.png'"
+                         class="w-full max-w-[210px] mx-auto h-auto object-contain drop-shadow-sm">
+                </a>
+
+                <!-- Doctor Identity Card (exact reference layout) -->
+                {% if current_doctor %}
+                <a href="{% url 'doctor:settings' %}" class="relative mt-3.5 bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-lg shadow-blue-950/10 flex items-center gap-3 text-left border border-white/90 group transition hover:border-sky-300 hover:shadow-xl hover:shadow-sky-900/15 block" title="Doctor Profile & Change Picture">
+                    <div class="relative w-11 h-11 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-sky-200/80 shadow-sm bg-white">
+                        {% if current_doctor.profile_picture %}
+                            <img src="{{ current_doctor.profile_picture.url }}" alt="Dr. {{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="{% static 'doctor/images/doctor_avatar_sample_hq.png' %}" alt="Dr. {{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                        {% endif %}
+                        <div class="absolute inset-0 bg-blue-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-camera text-white text-[10px]"></i>
+                        </div>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h4 class="text-[13px] font-bold text-[#0c2340] truncate leading-tight tracking-tight group-hover:text-blue-700 transition">
+                            Dr. {{ current_doctor.full_name|default:"Dileep" }}
+                        </h4>
+                        <p class="text-[11px] font-semibold text-blue-600 truncate mt-0.5 leading-none">
+                            {{ current_doctor.dental_qualification|default:"Orthodontist" }}
+                        </p>
+                    </div>
+                    <i class="fa-solid fa-pen text-[10px] text-slate-400 group-hover:text-blue-600 transition"></i>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-3 space-y-1.5 overflow-y-auto custom-scrollbar text-sm font-medium">
+                
+                <!-- 1. Dashboard -->
+                <a href="{% url 'doctor:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'dashboard' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- 2. Patients -->
+                <a href="{% url 'doctor:patient_list' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_requests' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-users w-5 text-center text-base"></i>
+                    <span>Patients</span>
+                </a>
+
+                <!-- 3. Patient Requests (Joining Code) -->
+                <a href="{% url 'doctor:patient_requests' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'patient_requests' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-key w-5 text-center text-base"></i>
+                        <span>Patient Requests</span>
+                    </div>
+                    {% if pending_requests_count > 0 %}
+                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-amber-500 rounded-full animate-pulse shadow-sm shadow-amber-500/50">
+                        {{ pending_requests_count }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <!-- 4. Treatment Plans -->
+                <a href="{% url 'doctor:treatment_plans' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'treatment_plan' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-clipboard-list w-5 text-center text-base"></i>
+                    <span>Treatment Plans</span>
+                </a>
+
+                <!-- 5. Clinical Records -->
+                <a href="{% url 'doctor:clinical_records' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'clinical' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-file-medical w-5 text-center text-base"></i>
+                    <span>Clinical Records</span>
+                </a>
+
+                <!-- 6. Photo Monitoring -->
+                <a href="{% url 'doctor:photo_monitoring' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'photo' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-camera-retro w-5 text-center text-base"></i>
+                    <span>Photo Monitoring</span>
+                </a>
+
+                <!-- 7. Progress Tracking -->
+                <a href="{% url 'doctor:progress_tracking' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'progress_tracking' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-base"></i>
+                    <span>Progress Tracking</span>
+                </a>
+
+                <!-- 8. Appointments -->
+                <a href="{% url 'doctor:appointments' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'appointment' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-calendar-check w-5 text-center text-base"></i>
+                    <span>Appointments</span>
+                </a>
+
+                <!-- 9. Emergency Alerts -->
+                <a href="{% url 'doctor:emergency_alerts' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'emergenc' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation w-5 text-center text-base text-rose-500"></i>
+                        <span>Emergency Alerts</span>
+                    </div>
+                    {% if unresolved_emergencies_count > 0 %}
+                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-rose-600 rounded-full animate-bounce shadow-sm shadow-rose-500/50">
+                        {{ unresolved_emergencies_count }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <!-- 10. Notifications -->
+                <a href="{% url 'doctor:notifications' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'notification' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-bell w-5 text-center text-base"></i>
+                        <span>Notifications</span>
+                    </div>
+                    {% if unread_notifications_count > 0 %}
+                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-blue-700 bg-blue-100 rounded-full">
+                        {{ unread_notifications_count }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <!-- 11. Reports & Analytics -->
+                <a href="{% url 'doctor:reports_analytics' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'report' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-file-chart-pie w-5 text-center text-base"></i>
+                    <span>Reports & Analytics</span>
+                </a>
+
+                <div class="pt-3 pb-1">
+                    <hr class="border-slate-200">
+                </div>
+
+                <!-- 12. Settings -->
+                <a href="{% url 'doctor:settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'settings' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-gear w-5 text-center text-base"></i>
+                    <span>Settings</span>
+                </a>
+
+                <!-- 13. Logout -->
+                <a href="{% url 'doctor:logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i>
+                    <span>Logout</span>
+                </a>
+
+            </nav>
+
+            <!-- Bottom Patient Join Helper -->
+            <div class="p-3 border-t border-slate-200 text-xs text-slate-500 bg-slate-50">
+                <a href="{% url 'doctor:patient_join_portal' %}" target="_blank" class="flex items-center justify-between text-blue-700 font-semibold hover:underline">
+                    <span><i class="fa-solid fa-external-link-alt mr-1"></i> Patient Join Portal</span>
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </a>
+            </div>
+
+        </aside>
+
+        <!-- Sidebar Backdrop for Mobile -->
+        <div id="sidebarOverlay" class="fixed inset-0 z-40 bg-slate-900/50 hidden lg:hidden"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#f8fbff]">
+            
+            <!-- TOP NAVBAR -->
+            <header class="h-16 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-30 shadow-sm flex-shrink-0">
+                
+                <div class="flex items-center gap-3">
+                    <!-- Mobile Hamburger -->
+                    <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+
+                    <!-- Breadcrumbs / Page Title Context -->
+                    <div class="hidden sm:flex items-center gap-2 text-sm text-slate-500">
+                        <span class="font-extrabold text-blue-950">PEDO ALIGN</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                        <span class="text-slate-700 font-semibold">{% block breadcrumb %}Doctor Portal{% endblock %}</span>
+                    </div>
+                </div>
+
+                <!-- Right Header Actions -->
+                <div class="flex items-center gap-3">
+                    
+                    <!-- Fast Action: Add Patient -->
+                    <a href="{% url 'doctor:patient_create' %}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-user-plus text-xs"></i>
+                        <span>Add Patient</span>
+                    </a>
+
+                    <!-- Patient Join Code Shortcut -->
+                    <a href="{% url 'doctor:patient_requests' %}" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200/70 text-xs font-bold transition" title="Manage Patient Joining Codes">
+                        <i class="fa-solid fa-key text-blue-600"></i>
+                        <span>Joining Codes</span>
+                    </a>
+
+                    <!-- Notification Bell Dropdown -->
+                    <div class="relative">
+                        <button id="notifDropdownBtn" class="relative p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:outline-none">
+                            <i class="fa-solid fa-bell text-lg"></i>
+                            {% if unread_notifications_count > 0 %}
+                            <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                            {% endif %}
+                        </button>
+
+                        <div id="notifDropdownMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in">
+                            <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Notifications</h3>
+                                <a href="{% url 'doctor:notifications' %}" class="text-xs text-blue-600 hover:underline font-semibold">View All</a>
+                            </div>
+                            <div class="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+                                {% if recent_notifications %}
+                                    {% for notif in recent_notifications %}
+                                    <div class="p-3 hover:bg-slate-50 transition flex items-start gap-3">
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs flex-shrink-0 
+                                            {% if notif.notification_type == 'EMERGENCY' %}bg-rose-100 text-rose-600
+                                            {% elif notif.notification_type == 'PATIENT_REQUEST' %}bg-amber-100 text-amber-700
+                                            {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                            <i class="fa-solid {% if notif.notification_type == 'EMERGENCY' %}fa-triangle-exclamation{% elif notif.notification_type == 'PATIENT_REQUEST' %}fa-key{% elif notif.notification_type == 'APPOINTMENT' %}fa-calendar{% else %}fa-info{% endif %}"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-900 truncate">{{ notif.title }}</p>
+                                            <p class="text-[11px] text-slate-600 line-clamp-2 mt-0.5">{{ notif.message }}</p>
+                                            <span class="text-[10px] text-slate-400 mt-1 block">{{ notif.created_at|timesince }} ago</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="p-4 text-center text-xs text-slate-400">No recent notifications</div>
+                                {% endif %}
+                            </div>
+                            <div class="px-4 py-2 border-t border-slate-100 bg-slate-50 text-center">
+                                <a href="{% url 'doctor:notifications' %}" class="text-xs text-blue-700 font-semibold hover:underline">Notification Center</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Pill Dropdown -->
+                    {% if current_doctor %}
+                    <div class="relative">
+                        <button id="userProfileBtn" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 transition focus:outline-none">
+                            <div class="w-8 h-8 rounded-full bg-blue-700 text-white font-bold flex items-center justify-center text-xs shadow-sm overflow-hidden ring-1 ring-blue-200">
+                                {% if current_doctor.profile_picture %}
+                                    <img src="{{ current_doctor.profile_picture.url }}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{% static 'doctor/images/doctor_avatar_sample_hq.png' %}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+                            <span class="hidden md:inline-block text-xs font-bold text-slate-800">Dr. {{ current_doctor.full_name }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </button>
+
+                        <div id="userProfileMenu" class="hidden absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50">
+                            <div class="px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-blue-200">
+                                    {% if current_doctor.profile_picture %}
+                                        <img src="{{ current_doctor.profile_picture.url }}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <img src="{% static 'doctor/images/doctor_avatar_sample_hq.png' %}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                                    {% endif %}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-xs font-bold text-slate-900 truncate">Dr. {{ current_doctor.full_name }}</p>
+                                    <p class="text-[11px] font-medium text-blue-600 truncate">{{ current_doctor.dental_qualification }}</p>
+                                    <p class="text-[10px] text-slate-400 truncate mt-0.5">{{ current_doctor.clinic_name }}</p>
+                                </div>
+                            </div>
+                            <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-blue-700 font-semibold hover:bg-blue-50">
+                                <i class="fa-solid fa-camera text-blue-600 w-4"></i> Change Profile Picture
+                            </a>
+                            <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">
+                                <i class="fa-solid fa-user-doctor text-slate-400 w-4"></i> Clinic Profile & Details
+                            </a>
+                            <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">
+                                <i class="fa-solid fa-shield-halved text-slate-400 w-4"></i> Security & Password
+                            </a>
+                            <div class="border-t border-slate-100 my-1"></div>
+                            <a href="{% url 'doctor:logout' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-rose-600 hover:bg-rose-50">
+                                <i class="fa-solid fa-arrow-right-from-bracket text-rose-500 w-4"></i> Sign Out
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </header>
+
+            <!-- FLASH ALERTS / MESSAGES -->
+            {% if messages %}
+            <div class="px-4 sm:px-6 pt-4 space-y-2">
+                {% for message in messages %}
+                <div class="auto-dismiss-alert p-3.5 rounded-xl border flex items-center justify-between text-xs sm:text-sm font-medium shadow-sm transition-all
+                    {% if message.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-800
+                    {% elif message.tags == 'error' %}bg-rose-50 border-rose-200 text-rose-800
+                    {% elif message.tags == 'warning' %}bg-amber-50 border-amber-200 text-amber-800
+                    {% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %}">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check text-emerald-600{% elif message.tags == 'error' %}fa-circle-xmark text-rose-600{% elif message.tags == 'warning' %}fa-triangle-exclamation text-amber-600{% else %}fa-circle-info text-blue-600{% endif %} text-base"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-700 ml-4">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- MAIN BODY VIEWPORT -->
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 custom-scrollbar">
+                {% block content %}{% endblock %}
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- GLOBAL IMAGE ZOOM MODAL -->
+    <div id="globalImageModal" class="fixed inset-0 z-50 hidden items-center justify-center image-zoom-overlay p-4" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden p-2" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between px-4 py-2 border-b border-slate-100">
+                <h4 id="globalModalTitle" class="text-sm font-bold text-slate-800">Dental Photo Zoom</h4>
+                <button onclick="closeImageModal()" class="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-2 flex items-center justify-center bg-slate-900 rounded-xl overflow-hidden">
+                <img id="globalModalImage" src="" alt="Zoomed Examination" class="max-h-[75vh] w-auto object-contain rounded">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="{% static 'doctor/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

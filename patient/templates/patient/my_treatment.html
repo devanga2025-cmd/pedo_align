@@ -1,0 +1,272 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}My Treatment - PEDO ALIGN{% endblock %}
+{% block page_title %}My Treatment{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- Top Summary Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 p-6 md:p-8 text-white shadow-xl shadow-blue-500/15">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white mb-3">
+                    <i class="fa-solid fa-tooth"></i> Active Orthodontic Plan
+                </span>
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Your Aligner Journey</h1>
+                <p class="mt-2 text-sm text-blue-50 max-w-xl">
+                    Follow your custom treatment schedule prescribed by Dr. {{ doctor.full_name|default:"Your Doctor" }}. Wear your aligners consistently to achieve your ideal smile!
+                </p>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <a href="{% url 'patient:upload_photos' %}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-blue-700 hover:bg-blue-50 text-xs font-bold rounded-2xl shadow-md transition-all transform hover:scale-[1.02]">
+                    <i class="fa-solid fa-camera"></i> Upload Weekly Photos
+                </a>
+                <a href="{% url 'patient:emergency' %}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow-md transition-all">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Report Issue
+                </a>
+            </div>
+        </div>
+        <i class="fa-solid fa-teeth-open absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-6 pointer-events-none"></i>
+    </div>
+
+    <!-- Treatment Metrics Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Card 1: Current Tray -->
+        <div class="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Current Aligner</span>
+                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+            </div>
+            <div>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-3xl font-extrabold text-blue-700">#{{ plan.current_aligner|default:"1" }}</span>
+                    <span class="text-xs font-semibold text-slate-400">of {{ plan.total_aligners|default:"20" }}</span>
+                </div>
+                <div class="mt-2 text-[11px] text-emerald-600 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-circle-check"></i> Active on teeth
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Frequency -->
+        <div class="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Wear Frequency</span>
+                <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-rotate"></i>
+                </div>
+            </div>
+            <div>
+                <span class="text-2xl font-extrabold text-slate-900">
+                    {{ plan.aligner_frequency_days|default:"14" }} <span class="text-sm font-semibold text-slate-500">Days</span>
+                </span>
+                <p class="mt-2 text-[11px] text-slate-500">per aligner set</p>
+            </div>
+        </div>
+
+        <!-- Card 3: Next Change -->
+        <div class="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Next Change</span>
+                <div class="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+            </div>
+            <div>
+                <span class="text-lg md:text-xl font-extrabold text-slate-900 block truncate">
+                    {{ plan.next_review_date|date:"M d, Y"|default:"Scheduled soon" }}
+                </span>
+                <p class="mt-2 text-[11px] font-bold text-blue-600 flex items-center gap-1">
+                    <i class="fa-solid fa-bell"></i> Reminder active
+                </p>
+            </div>
+        </div>
+
+        <!-- Card 4: Daily Wear Goal -->
+        <div class="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Daily Target</span>
+                <div class="w-8 h-8 rounded-xl bg-pink-50 text-pink-500 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+            </div>
+            <div>
+                <span class="text-2xl font-extrabold text-slate-900">
+                    {{ plan.daily_wear_hours|default:"22" }} <span class="text-sm font-semibold text-slate-500">Hours/day</span>
+                </span>
+                <p class="mt-2 text-[11px] text-pink-600 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-heart"></i> Optimal compliance
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Details Card -->
+    {% if doctor %}
+    <div class="bg-white rounded-3xl p-6 border border-blue-100/80 shadow-sm">
+        <div class="flex items-start md:items-center justify-between flex-col md:flex-row gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-sky-400 p-0.5 shadow-md flex-shrink-0">
+                    {% if doctor.profile_image %}
+                        <img src="{{ doctor.profile_image.url }}" alt="{{ doctor.full_name }}" class="w-full h-full object-cover rounded-2xl">
+                    {% else %}
+                        <div class="w-full h-full bg-white rounded-2xl flex items-center justify-center text-blue-600 text-xl font-extrabold">
+                            {{ doctor.full_name|slice:":1" }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-lg font-bold text-slate-900">Dr. {{ doctor.full_name }}</h2>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-700 uppercase tracking-wider">
+                            Prescribing Orthodontist
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-0.5">
+                        {{ doctor.dental_qualification|default:"BDS, MDS Orthodontics" }} • <span class="font-semibold text-slate-800">{{ doctor.clinic_name }}</span>
+                    </p>
+                    <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-slate-400"></i> {{ doctor.clinic_address|default:"Clinic location on file" }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <a href="{% url 'patient:appointment_request' %}" class="flex-1 md:flex-none text-center px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-2xl transition border border-blue-200">
+                    <i class="fa-solid fa-calendar-plus mr-1"></i> Book Appointment
+                </a>
+                {% if doctor.phone_number %}
+                <a href="tel:{{ doctor.phone_number }}" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition" title="Call Clinic">
+                    <i class="fa-solid fa-phone"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Stage Timeline -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900">Treatment Stage Timeline</h3>
+                <p class="text-xs text-slate-500">Track your step-by-step progress through each numbered aligner set</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-bold">
+                <span class="flex items-center gap-1.5 text-emerald-600"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Completed</span>
+                <span class="flex items-center gap-1.5 text-blue-600"><span class="w-3 h-3 rounded-full bg-blue-600 ring-2 ring-blue-200"></span> Active</span>
+                <span class="flex items-center gap-1.5 text-slate-400"><span class="w-3 h-3 rounded-full bg-slate-200"></span> Upcoming</span>
+            </div>
+        </div>
+
+        {% if stages %}
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+            {% for stage in stages %}
+            <div class="rounded-2xl p-3.5 text-center transition-all 
+                {% if stage.status == 'COMPLETED' %}
+                    bg-emerald-50/80 border border-emerald-200/90 text-emerald-900
+                {% elif stage.status == 'ACTIVE' %}
+                    bg-gradient-to-b from-blue-600 to-sky-500 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-100 scale-105 z-10
+                {% else %}
+                    bg-slate-50 border border-slate-200/80 text-slate-500
+                {% endif %}">
+                
+                <div class="text-[10px] font-bold uppercase tracking-wider mb-1 opacity-80">
+                    Tray
+                </div>
+                <div class="text-2xl font-extrabold mb-1">
+                    #{{ stage.aligner_number }}
+                </div>
+
+                <div class="text-[10px] font-semibold truncate">
+                    {% if stage.status == 'COMPLETED' %}
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i> Done
+                    {% elif stage.status == 'ACTIVE' %}
+                        <span class="inline-block px-2 py-0.5 rounded-full bg-white text-blue-700 text-[9px] font-extrabold uppercase">Current</span>
+                    {% else %}
+                        {{ stage.target_date|date:"M d" }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="p-8 text-center text-slate-400">
+            <i class="fa-solid fa-layer-group text-4xl mb-2 text-slate-300"></i>
+            <p class="text-sm">Timeline will be calculated once your treatment plan is finalized by your doctor.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Doctor Instructions & Wear Guidelines -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Prescribed Instructions -->
+        <div class="bg-white rounded-3xl p-6 border border-blue-100/80 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-file-waveform"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900">Doctor's Clinical Notes</h3>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-700 leading-relaxed space-y-2">
+                    {% if plan.treatment_instructions %}
+                        <p class="whitespace-pre-line">{{ plan.treatment_instructions }}</p>
+                    {% else %}
+                        <p>1. Wear aligners for a minimum of 22 hours per day.</p>
+                        <p>2. Remove aligners only while eating meals or drinking warm/colored beverages.</p>
+                        <p>3. Brush teeth thoroughly before reinserting aligners.</p>
+                        <p>4. Use the silicone bite chewies for 5 minutes twice daily to seat trays firmly.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <span>Start Date: {{ plan.start_date|date:"M d, Y"|default:"Not recorded" }}</span>
+                <span>Est. Completion: {{ plan.expected_completion_date|date:"M d, Y"|default:"Ongoing" }}</span>
+            </div>
+        </div>
+
+        <!-- Aligner Care Essentials -->
+        <div class="bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 rounded-3xl p-6 border border-blue-100 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-white text-blue-600 flex items-center justify-center font-bold shadow-sm">
+                    <i class="fa-solid fa-sparkles"></i>
+                </div>
+                <h3 class="text-base font-bold text-blue-950">Daily Care Essentials</h3>
+            </div>
+
+            <ul class="space-y-3 text-xs text-slate-700">
+                <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                    <span><strong>Keep them safe in their case:</strong> Never wrap aligners in napkins or leave them where pets or little siblings can reach them.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                    <span><strong>Clean with lukewarm water:</strong> Never use hot water, as high temperatures will warp and ruin aligner plastic.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                    <span><strong>Save your previous tray:</strong> Keep tray #{{ plan.current_aligner|default:"1"|add:"-1" }} in its bag just in case an active tray is lost or damaged.</span>
+                </li>
+            </ul>
+
+            <div class="mt-5">
+                <a href="{% url 'patient:upload_photos' %}" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition">
+                    <i class="fa-solid fa-camera"></i> Submit Week Progress Photos
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+

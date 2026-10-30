@@ -1,0 +1,849 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}{{ patient.full_name }} ({{ patient.patient_id }}) - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_list' %}" class="hover:underline">Patients</a> / {{ patient.full_name }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- TOP PATIENT BANNER CARD -->
+    <div class="pa-card p-6 bg-white relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            
+            <!-- Left Info: Avatar, Name, IDs -->
+            <div class="flex items-start sm:items-center gap-4">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-blue-100 text-blue-900 font-black text-2xl flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0 border-2 border-blue-200">
+                    {% if patient.profile_photo %}
+                        <img src="{{ patient.profile_photo.url }}" alt="{{ patient.full_name }}" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ patient.first_name|first }}{{ patient.last_name|first }}
+                    {% endif %}
+                </div>
+
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <h1 class="text-xl sm:text-2xl font-black text-slate-900">{{ patient.full_name }}</h1>
+                        <span class="badge 
+                            {% if patient.treatment_status == 'ACTIVE' %}badge-active
+                            {% elif patient.treatment_status == 'PENDING_CONNECTION' %}badge-pending
+                            {% elif patient.treatment_status == 'COMPLETED' %}badge-completed
+                            {% else %}badge-hold{% endif %}">
+                            {{ patient.get_treatment_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 font-medium">
+                        <span><strong class="text-slate-700">Patient ID:</strong> <span class="font-mono text-blue-700">{{ patient.patient_id }}</span></span>
+                        <span>•</span>
+                        <span><strong class="text-slate-700">Age/Gender:</strong> {{ patient.age }} yrs ({{ patient.gender }})</span>
+                        <span>•</span>
+                        <span><strong class="text-slate-700">Doctor:</strong> Dr. {{ patient.doctor.full_name }}</span>
+                    </div>
+
+                    <!-- Joining Code Pill with Copy Button -->
+                    {% if joining_code %}
+                    <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs">
+                        <span class="text-blue-900 font-semibold"><i class="fa-solid fa-key text-blue-600 mr-1"></i> Joining Code:</span>
+                        <span class="font-mono font-black text-blue-800 tracking-wider text-sm">{{ joining_code.code }}</span>
+                        <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'codeCopyBtn')" id="codeCopyBtn" class="text-blue-600 hover:text-blue-900 ml-1 font-bold">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <span class="text-[10px] text-slate-400">({{ joining_code.get_status_display }})</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                <!-- Advance Aligner Button -->
+                {% if treatment_plan and treatment_plan.current_aligner < treatment_plan.total_aligners %}
+                <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-primary text-xs" title="Advance to next aligner tray">
+                        <i class="fa-solid fa-forward-step"></i> Next Aligner (+1)
+                    </button>
+                </form>
+                {% endif %}
+
+                <!-- Upload Photos -->
+                <a href="{% url 'doctor:photo_upload' patient.id %}" class="btn-accent text-xs">
+                    <i class="fa-solid fa-camera"></i> Upload Photos
+                </a>
+
+                <!-- Schedule Visit -->
+                <a href="{% url 'doctor:appointment_create' %}?patient={{ patient.id }}" class="btn-secondary text-xs">
+                    <i class="fa-solid fa-calendar-plus"></i> Book Visit
+                </a>
+
+                <!-- Edit Profile -->
+                <a href="{% url 'doctor:patient_edit' patient.id %}" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg border border-slate-200" title="Edit Patient Info">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+
+                <!-- Delete -->
+                <a href="{% url 'doctor:patient_delete' patient.id %}" class="p-2 text-rose-400 hover:text-rose-600 rounded-lg border border-slate-200" title="Delete Patient Record">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Aligner Therapy Progress Bar Header Widget -->
+        {% if treatment_plan %}
+        <div class="mt-6 pt-5 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div>
+                <span class="text-slate-400 block uppercase font-bold text-[10px]">Current Stage</span>
+                <span class="text-sm font-extrabold text-blue-900">Aligner #{{ treatment_plan.current_aligner }}</span>
+                <span class="text-slate-500"> / {{ treatment_plan.total_aligners }} sets</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block uppercase font-bold text-[10px]">Compliance Rating</span>
+                <span class="text-sm font-extrabold {% if treatment_plan.compliance_score >= 85 %}text-emerald-700{% elif treatment_plan.compliance_score >= 70 %}text-amber-700{% else %}text-rose-700{% endif %}">
+                    {{ treatment_plan.compliance_score }}%
+                </span>
+                <span class="text-slate-500">({{ treatment_plan.daily_wear_hours }} hrs/day)</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block uppercase font-bold text-[10px]">Tray Change Pace</span>
+                <span class="text-sm font-extrabold text-slate-800">Every {{ treatment_plan.aligner_frequency_days }} days</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block uppercase font-bold text-[10px]">Next Review</span>
+                <span class="text-sm font-extrabold text-slate-800">
+                    {{ treatment_plan.next_review_date|default:"Not Scheduled" }}
+                </span>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 via-sky-500 to-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: {{ treatment_plan.progress_percentage }}%"></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <div class="flex items-center gap-1.5 border-b border-slate-200/80 overflow-x-auto custom-scrollbar pb-1 text-xs font-bold">
+        <a href="?tab=overview" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'overview' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-id-card-clip mr-1.5"></i> Personal Overview
+        </a>
+        <a href="?tab=clinical" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'clinical' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-file-medical mr-1.5"></i> Clinical Intake
+        </a>
+        <a href="?tab=treatment" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'treatment' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-tooth mr-1.5"></i> Treatment Plan
+        </a>
+        <a href="?tab=photos" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'photos' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-camera-retro mr-1.5"></i> Uploaded Photos ({{ photo_uploads.count }})
+        </a>
+        <a href="?tab=compare" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'compare' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-arrows-left-right mr-1.5"></i> Before & After Compare
+        </a>
+        <a href="?tab=progress" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'progress' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-chart-line mr-1.5"></i> Progress Tracking
+        </a>
+        <a href="?tab=appointments" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'appointments' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-calendar-check mr-1.5"></i> Appointments ({{ appointments.count }})
+        </a>
+        <a href="?tab=emergencies" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'emergencies' %}bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-md shadow-rose-500/20{% else %}bg-white text-rose-600 hover:bg-rose-50 border border-rose-200/70{% endif %}">
+            <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Emergencies ({{ emergencies.count }})
+        </a>
+    </div>
+
+    <!-- TAB CONTENTS -->
+
+    <!-- 1. OVERVIEW TAB -->
+    {% if active_tab == 'overview' %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Detailed Personal & Guardian Info -->
+        <div class="pa-card p-6 lg:col-span-2 space-y-6">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center justify-between">
+                    <span><i class="fa-solid fa-user-gear text-blue-600 mr-2"></i> Patient Information</span>
+                    <a href="{% url 'doctor:patient_edit' patient.id %}" class="text-xs text-blue-600 hover:underline normal-case">Edit Details</a>
+                </h3>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4 text-xs">
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Full Name</span>
+                        <span class="font-bold text-slate-800 text-sm">{{ patient.full_name }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Patient ID</span>
+                        <span class="font-mono font-bold text-blue-700">{{ patient.patient_id }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Age / Gender</span>
+                        <span class="font-semibold text-slate-800">{{ patient.age }} Years • {{ patient.gender }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Date of Birth</span>
+                        <span class="font-medium text-slate-700">{{ patient.date_of_birth|default:"Not specified" }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Patient Phone</span>
+                        <span class="font-medium text-slate-700">{{ patient.phone }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Email Address</span>
+                        <span class="font-medium text-slate-700">{{ patient.email|default:"N/A" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parent Guardian Info -->
+            <div class="pt-2">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100">
+                    <i class="fa-solid fa-hands-holding-child text-blue-600 mr-2"></i> Parent / Legal Guardian
+                </h3>
+                <div class="grid grid-cols-2 gap-4 mt-4 text-xs">
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Guardian Name</span>
+                        <span class="font-bold text-slate-800 text-sm">{{ patient.parent_guardian_name|default:"Not recorded" }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-bold uppercase text-[10px]">Guardian Contact</span>
+                        <span class="font-medium text-slate-700">{{ patient.parent_guardian_phone|default:"Same as patient" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clinical Notes -->
+            <div class="pt-2">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100">
+                    <i class="fa-solid fa-notes-medical text-blue-600 mr-2"></i> Initial Doctor Clinical Notes
+                </h3>
+                <p class="text-xs text-slate-700 mt-3 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed">
+                    {{ patient.notes|default:"No initial doctor notes entered yet." }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Right: Joining Code Box & Quick Audit -->
+        <div class="space-y-6">
+            
+            <!-- Joining Code Management Widget -->
+            <div class="pa-card p-6 bg-gradient-to-br from-blue-50/60 to-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-blue-900">Patient Joining Code</h3>
+                    {% if joining_code.is_expired %}
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-700">Expired</span>
+                    {% else %}
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">Active</span>
+                    {% endif %}
+                </div>
+
+                <div class="text-center py-4 bg-white rounded-xl border border-blue-200/80 shadow-sm my-3">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Unique Security Code</span>
+                    <span class="font-mono text-2xl font-black text-blue-800 tracking-widest">{{ joining_code.code }}</span>
+                </div>
+
+                <div class="space-y-1.5 text-[11px] text-slate-500 mb-4">
+                    <p>• <strong>Status:</strong> {{ joining_code.get_status_display }}</p>
+                    <p>• <strong>Expires:</strong> {{ joining_code.expires_at|date:"M d, Y" }}</p>
+                    {% if joining_code.claimed_at %}
+                    <p>• <strong>Claimed:</strong> {{ joining_code.claimed_at|date:"M d, Y H:i" }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'btnCopyCode2')" id="btnCopyCode2" class="btn-primary w-full text-xs">
+                        <i class="fa-regular fa-copy"></i> Copy Joining Code
+                    </button>
+                    <a href="{% url 'doctor:regenerate_code' patient.id %}" onclick="return confirm('Regenerate a new joining code? The old code will be deactivated.');" class="btn-secondary w-full text-xs">
+                        <i class="fa-solid fa-arrows-rotate"></i> Regenerate Code
+                    </a>
+                </div>
+            </div>
+
+            <!-- Activity Logs Mini Feed -->
+            <div class="pa-card p-5">
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 pb-2 border-b border-slate-100">
+                    <i class="fa-solid fa-clock-rotate-left mr-1 text-slate-400"></i> Patient History
+                </h4>
+                <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar text-xs">
+                    {% for log in activity_logs %}
+                    <div class="border-l-2 border-blue-400 pl-2.5 py-0.5">
+                        <span class="font-bold text-slate-800">{{ log.activity_type }}</span>
+                        <p class="text-[11px] text-slate-500">{{ log.description }}</p>
+                        <span class="text-[10px] text-slate-400">{{ log.created_at|date:"M d, H:i" }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-xs text-slate-400">No activity logged yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {% endif %}
+
+    <!-- 2. CLINICAL INTAKE TAB -->
+    {% if active_tab == 'clinical' %}
+    <div class="pa-card p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-file-medical text-blue-600"></i> Comprehensive Clinical Intake & Examination
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Dental and skeletal records saved for {{ patient.full_name }}</p>
+            </div>
+            <a href="{% url 'doctor:clinical_record_edit' patient.id %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Clinical Record
+            </a>
+        </div>
+
+        <!-- Dental and Skeletal Grid -->
+        <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-blue-900 mb-3">Dental & Skeletal Details</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Teeth Present</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.teeth_present }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Overbite</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.overbite }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Deep Bite</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.deep_bite }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Molar Relationship</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.molar_relationship }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Canine Relationship</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.canine_relationship }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Crossbite</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.crossbite }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Molar Occlusion</span>
+                    <span class="font-bold text-slate-800">{{ clinical_record.molar_occlusion }}</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-bold">Oral Habits</span>
+                    <span class="font-bold {% if clinical_record.oral_habits != 'None' %}text-amber-700{% else %}text-slate-800{% endif %}">
+                        {{ clinical_record.oral_habits }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical & Dental History -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Medical History & Allergies</h4>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 min-h-[90px] leading-relaxed">
+                    {{ clinical_record.medical_history|default:"No systemic illnesses or allergies noted." }}
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Dental History</h4>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 min-h-[90px] leading-relaxed">
+                    {{ clinical_record.dental_history|default:"No prior orthodontic treatment or trauma noted." }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Skeletal Notes & Clinical Plan -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Skeletal Examination Notes</h4>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 min-h-[90px] leading-relaxed">
+                    {{ clinical_record.skeletal_notes|default:"Facial symmetry balanced, class I skeletal base." }}
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Clinical Diagnosis & Notes</h4>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 min-h-[90px] leading-relaxed">
+                    {{ clinical_record.doctor_clinical_notes|default:"Patient scheduled for clear aligner therapy." }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 3. TREATMENT PLAN TAB -->
+    {% if active_tab == 'treatment' %}
+    <div class="pa-card p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-list text-blue-600"></i> Individual Treatment Plan
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Parameters for aligner therapy and scheduled milestones</p>
+            </div>
+            <a href="{% url 'doctor:treatment_plan_edit' patient.id %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Treatment Plan
+            </a>
+        </div>
+
+        <!-- Main Plan KPI Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
+                <span class="text-slate-500 block uppercase font-bold text-[10px]">Estimated Duration</span>
+                <span class="text-lg font-black text-blue-900">{{ treatment_plan.estimated_duration_months }} Months</span>
+            </div>
+            <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
+                <span class="text-slate-500 block uppercase font-bold text-[10px]">Total Aligners</span>
+                <span class="text-lg font-black text-blue-900">{{ treatment_plan.total_aligners }} Trays</span>
+            </div>
+            <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
+                <span class="text-slate-500 block uppercase font-bold text-[10px]">Current Stage</span>
+                <span class="text-lg font-black text-emerald-700">Aligner #{{ treatment_plan.current_aligner }}</span>
+            </div>
+            <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
+                <span class="text-slate-500 block uppercase font-bold text-[10px]">Aligner Changing Pace</span>
+                <span class="text-lg font-black text-blue-900">Every {{ treatment_plan.aligner_frequency_days }} Days</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs pt-4 border-t border-slate-100">
+            <div>
+                <span class="text-slate-400 block font-bold uppercase text-[10px]">Treatment Start Date</span>
+                <span class="font-bold text-slate-800">{{ treatment_plan.start_date|default:"Pending Connection" }}</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block font-bold uppercase text-[10px]">Expected Completion</span>
+                <span class="font-bold text-slate-800">{{ treatment_plan.expected_completion_date|default:"Calculated based on duration" }}</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block font-bold uppercase text-[10px]">Next Review Date</span>
+                <span class="font-bold text-slate-800">{{ treatment_plan.next_review_date|default:"To be scheduled" }}</span>
+            </div>
+        </div>
+
+        <!-- Treatment Instructions -->
+        <div class="pt-4 border-t border-slate-100">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Doctor Treatment Instructions for Patient</h4>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-800 leading-relaxed font-medium">
+                {{ treatment_plan.treatment_instructions }}
+            </div>
+        </div>
+
+        <!-- Aligner Stages Visual Roadmap -->
+        <div class="pt-4 border-t border-slate-100">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">Aligner Stages Tracker</h4>
+            <div class="flex flex-wrap gap-2">
+                {% for i in "x"|rjust:treatment_plan.total_aligners %}
+                <div class="w-10 h-10 rounded-lg flex flex-col items-center justify-center text-xs font-bold border transition
+                    {% if forloop.counter < treatment_plan.current_aligner %}
+                        bg-emerald-500 text-white border-emerald-600
+                    {% elif forloop.counter == treatment_plan.current_aligner %}
+                        bg-blue-600 text-white border-blue-700 ring-2 ring-blue-300 ring-offset-1 scale-105
+                    {% else %}
+                        bg-slate-50 text-slate-400 border-slate-200
+                    {% endif %}">
+                    <span class="text-[9px] font-normal leading-none">Tray</span>
+                    <span>#{{ forloop.counter }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 4. UPLOADED PHOTOS TAB -->
+    {% if active_tab == 'photos' %}
+    <div class="space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-camera-retro text-blue-600"></i> Dental Photo Monitoring Gallery
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Weekly patient tracking photos (Upper, Lower, Front, Left, Right views)</p>
+            </div>
+            <a href="{% url 'doctor:photo_upload' patient.id %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-upload"></i> Upload Dental Photos
+            </a>
+        </div>
+
+        {% if photo_uploads %}
+        <div class="space-y-6">
+            {% for upload in photo_uploads %}
+            <div class="pa-card p-5 space-y-4">
+                
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-black px-2.5 py-1 rounded bg-blue-100 text-blue-800">
+                            Week {{ upload.week_number }}
+                        </span>
+                        <span class="text-xs font-semibold text-slate-700">
+                            Aligner Stage #{{ upload.aligner_stage }}
+                        </span>
+                        <span class="text-xs text-slate-400">
+                            Uploaded on {{ upload.upload_date|date:"M d, Y" }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="badge 
+                            {% if upload.tracking_status == 'TRACKING_WELL' %}badge-active
+                            {% elif upload.tracking_status == 'PENDING_REVIEW' %}badge-pending
+                            {% else %}badge-emergency-high{% endif %}">
+                            {{ upload.get_tracking_status_display }}
+                        </span>
+                        <a href="{% url 'doctor:photo_review' upload.id %}" class="btn-secondary text-xs py-1 px-2.5">
+                            <i class="fa-solid fa-pen-nib"></i> Review / Feedback
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 5 Angles Photos Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    
+                    <!-- Front Bite -->
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold uppercase text-slate-500 block text-center">Front Bite</span>
+                        <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                             onclick="openImageModal('{% if upload.front_bite_photo %}{{ upload.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Front Bite - Week {{ upload.week_number }}')">
+                            {% if upload.front_bite_photo %}
+                            <img src="{{ upload.front_bite_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Front Bite">
+                            {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                                <i class="fa-regular fa-image text-xl mb-1"></i> No Image
+                            </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upper Arch -->
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold uppercase text-slate-500 block text-center">Upper Arch</span>
+                        <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                             onclick="openImageModal('{% if upload.upper_arch_photo %}{{ upload.upper_arch_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Upper Arch - Week {{ upload.week_number }}')">
+                            {% if upload.upper_arch_photo %}
+                            <img src="{{ upload.upper_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Upper Arch">
+                            {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                                <i class="fa-regular fa-image text-xl mb-1"></i> No Image
+                            </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lower Arch -->
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold uppercase text-slate-500 block text-center">Lower Arch</span>
+                        <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                             onclick="openImageModal('{% if upload.lower_arch_photo %}{{ upload.lower_arch_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Lower Arch - Week {{ upload.week_number }}')">
+                            {% if upload.lower_arch_photo %}
+                            <img src="{{ upload.lower_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Lower Arch">
+                            {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                                <i class="fa-regular fa-image text-xl mb-1"></i> No Image
+                            </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Occlusion -->
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold uppercase text-slate-500 block text-center">Right Occlusion</span>
+                        <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                             onclick="openImageModal('{% if upload.right_occlusion_photo %}{{ upload.right_occlusion_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Right Occlusion - Week {{ upload.week_number }}')">
+                            {% if upload.right_occlusion_photo %}
+                            <img src="{{ upload.right_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Right Occlusion">
+                            {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                                <i class="fa-regular fa-image text-xl mb-1"></i> No Image
+                            </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Left Occlusion -->
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold uppercase text-slate-500 block text-center">Left Occlusion</span>
+                        <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                             onclick="openImageModal('{% if upload.left_occlusion_photo %}{{ upload.left_occlusion_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Left Occlusion - Week {{ upload.week_number }}')">
+                            {% if upload.left_occlusion_photo %}
+                            <img src="{{ upload.left_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Left Occlusion">
+                            {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                                <i class="fa-regular fa-image text-xl mb-1"></i> No Image
+                            </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Doctor Feedback and Rating Section -->
+                {% if upload.doctor_feedback or upload.reviewed_at %}
+                <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-xs flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 text-xs">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-blue-950">Dr. Feedback (Score: {{ upload.doctor_rating }}/5)</span>
+                            <span class="text-[10px] text-slate-400">Reviewed {{ upload.reviewed_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p class="text-slate-700 mt-1">{{ upload.doctor_feedback }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="pa-card p-12 text-center">
+            <i class="fa-solid fa-camera-retro text-3xl text-slate-300 mb-3 block"></i>
+            <h4 class="text-sm font-bold text-slate-800">No Photo Records Uploaded Yet</h4>
+            <p class="text-xs text-slate-500 mt-1 mb-4">You or the patient can upload weekly tracking photos to assess aligner fit and tooth movement.</p>
+            <a href="{% url 'doctor:photo_upload' patient.id %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-camera mr-1"></i> Upload First Photos
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 5. BEFORE & AFTER COMPARE TAB -->
+    {% if active_tab == 'compare' %}
+    <div class="pa-card p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-left-right text-blue-600"></i> Side-by-Side Before & After Comparison
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Drag slider or inspect side-by-side orthodontic progress</p>
+            </div>
+        </div>
+
+        {% if photo_uploads.count >= 2 %}
+        <!-- Interactive Slider Component -->
+        <div class="max-w-2xl mx-auto">
+            <div class="compare-container h-80 sm:h-96 w-full shadow-lg relative bg-slate-900 rounded-2xl overflow-hidden">
+                <!-- Before image (base) -->
+                {% with before=photo_uploads.last %}
+                <img src="{% if before.front_bite_photo %}{{ before.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}" alt="Before" class="w-full h-full object-cover">
+                <span class="absolute bottom-3 left-3 bg-slate-900/70 text-white text-[11px] font-bold px-2.5 py-1 rounded-md backdrop-blur">
+                    BEFORE (Week {{ before.week_number }})
+                </span>
+                {% endwith %}
+
+                <!-- After image (overlay) -->
+                {% with after=photo_uploads.first %}
+                <div class="compare-image-after" style="width: 50%;">
+                    <img src="{% if after.front_bite_photo %}{{ after.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}" alt="After" class="w-full h-full object-cover max-w-none" style="width: 100%;">
+                    <span class="absolute bottom-3 right-3 bg-blue-600/80 text-white text-[11px] font-bold px-2.5 py-1 rounded-md backdrop-blur">
+                        LATEST (Week {{ after.week_number }})
+                    </span>
+                </div>
+                {% endwith %}
+
+                <!-- Slider Divider Handle -->
+                <div class="compare-slider-handle" style="left: 50%;">
+                    <div class="compare-handle-circle">
+                        <i class="fa-solid fa-left-right text-xs"></i>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-xs text-slate-400 mt-3"><i class="fa-solid fa-hand-pointer mr-1"></i> Drag slider left and right to inspect alignment improvement</p>
+        </div>
+        {% else %}
+        <div class="p-12 text-center text-xs text-slate-400">
+            <i class="fa-solid fa-images text-3xl mb-2 text-slate-300 block"></i>
+            At least two photo monitoring upload sessions are required for Before-and-After comparison.
+            <div class="mt-3">
+                <a href="{% url 'doctor:photo_upload' patient.id %}" class="btn-primary text-xs">Upload New Photo Set</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 6. PROGRESS TRACKING TAB -->
+    {% if active_tab == 'progress' %}
+    <div class="pa-card p-6 sm:p-8 space-y-6">
+        <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-blue-600"></i> Aligner Wear Compliance & Progress
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">Tracking patient adherence to aligner wear schedules</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                <span class="text-slate-400 uppercase font-bold text-[10px] block">Overall Treatment Progress</span>
+                <span class="text-2xl font-black text-blue-700 mt-1 block">{{ treatment_plan.progress_percentage }}%</span>
+                <span class="text-xs text-slate-500">{{ treatment_plan.current_aligner }} of {{ treatment_plan.total_aligners }} Trays</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                <span class="text-slate-400 uppercase font-bold text-[10px] block">Daily Wear Time</span>
+                <span class="text-2xl font-black text-emerald-700 mt-1 block">{{ treatment_plan.daily_wear_hours }} hrs/day</span>
+                <span class="text-xs text-slate-500">Target: 22 hours</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                <span class="text-slate-400 uppercase font-bold text-[10px] block">Compliance Score</span>
+                <span class="text-2xl font-black text-blue-900 mt-1 block">{{ treatment_plan.compliance_score }}%</span>
+                <span class="text-xs text-emerald-600 font-semibold">Excellent Adherence</span>
+            </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-blue-50/60 border border-blue-100 text-xs text-blue-900 space-y-1">
+            <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Orthodontic Progress Observations:</p>
+            <p>• Patient is consistently wearing aligners above recommended hours.</p>
+            <p>• Incisor alignment tracking within planned digital setup tolerance.</p>
+            <p>• No signs of tracking lag or unseated aligner borders detected.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 7. APPOINTMENTS TAB -->
+    {% if active_tab == 'appointments' %}
+    <div class="pa-card p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-check text-blue-600"></i> In-Clinic Appointments & Delivery Sessions
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Visits scheduled for {{ patient.full_name }}</p>
+            </div>
+            <a href="{% url 'doctor:appointment_create' %}?patient={{ patient.id }}" class="btn-primary text-xs">
+                <i class="fa-solid fa-plus"></i> Schedule New Visit
+            </a>
+        </div>
+
+        {% if appointments %}
+        <div class="divide-y divide-slate-100">
+            {% for appt in appointments %}
+            <div class="py-4 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 text-purple-700 flex flex-col items-center justify-center font-bold text-xs flex-shrink-0">
+                        <span class="text-[9px] uppercase font-semibold text-purple-500">{{ appt.scheduled_date|date:"M" }}</span>
+                        <span class="text-base font-black leading-none">{{ appt.scheduled_date|date:"d" }}</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">{{ appt.get_appointment_type_display }}</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            <i class="fa-regular fa-clock mr-1"></i>{{ appt.scheduled_time|time:"g:i A" }} ({{ appt.duration_minutes }} minutes)
+                        </p>
+                        {% if appt.notes %}
+                        <p class="text-xs text-slate-600 mt-1 italic">"{{ appt.notes }}"</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="badge 
+                        {% if appt.status == 'UPCOMING' %}badge-pending
+                        {% elif appt.status == 'COMPLETED' %}badge-active
+                        {% else %}badge-emergency-high{% endif %}">
+                        {{ appt.get_status_display }}
+                    </span>
+                    {% if appt.status == 'UPCOMING' %}
+                    <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="COMPLETED">
+                        <button type="submit" class="btn-secondary py-1 px-2.5 text-xs text-emerald-700 hover:bg-emerald-50">
+                            Mark Completed
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="p-8 text-center text-xs text-slate-400">
+            No appointments booked yet. Click "+ Schedule New Visit" above.
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 8. EMERGENCIES TAB -->
+    {% if active_tab == 'emergencies' %}
+    <div class="pa-card p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> Emergency Alerts & Difficulties
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Tooth pain, aligner discomfort, or broken trays reported for this patient</p>
+            </div>
+            <a href="{% url 'doctor:emergency_create' %}" class="btn-primary text-xs bg-rose-600 hover:bg-rose-700">
+                <i class="fa-solid fa-plus"></i> Log Emergency Issue
+            </a>
+        </div>
+
+        {% if emergencies %}
+        <div class="space-y-4">
+            {% for em in emergencies %}
+            <div class="p-4 rounded-xl border {% if em.status == 'RESOLVED' %}bg-slate-50 border-slate-200{% else %}bg-rose-50/40 border-rose-200{% endif %}">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-slate-900">{{ em.get_issue_type_display }}</span>
+                            <span class="badge {% if em.severity == 'CRITICAL' %}badge-emergency-high{% else %}badge-emergency-med{% endif %}">
+                                {{ em.get_severity_display }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-700 mt-1 leading-relaxed">{{ em.description }}</p>
+                        <span class="text-[10px] text-slate-400 mt-1 block">Reported on {{ em.reported_at|date:"M d, Y H:i" }}</span>
+                    </div>
+
+                    <div>
+                        {% if em.status != 'RESOLVED' %}
+                        <a href="{% url 'doctor:emergency_respond' em.id %}" class="btn-primary text-xs py-1 px-3">
+                            Respond
+                        </a>
+                        {% else %}
+                        <span class="text-xs text-emerald-700 font-bold bg-emerald-100 px-2.5 py-1 rounded-md">
+                            <i class="fa-solid fa-check mr-1"></i> Resolved
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if em.doctor_response %}
+                <div class="mt-3 pt-3 border-t border-slate-200 text-xs bg-white/70 p-3 rounded-lg">
+                    <strong class="text-slate-800">Doctor Advice:</strong>
+                    <p class="text-slate-600 mt-0.5">{{ em.doctor_response }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="p-8 text-center text-xs text-slate-400">
+            <i class="fa-solid fa-shield-heart text-3xl text-slate-300 mb-2 block"></i>
+            No emergency issues or discomfort reported by this patient.
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

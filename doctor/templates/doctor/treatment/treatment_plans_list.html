@@ -1,0 +1,122 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Treatment Plans - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Treatment Plans{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-list text-blue-600"></i> Orthodontic Treatment Plans
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Active aligner prescriptions, stage wear times, and clinical completion tracking
+            </p>
+        </div>
+
+        <!-- Filter Status -->
+        <div class="flex flex-wrap items-center gap-1.5">
+            <a href="?status=ALL" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                All Plans ({{ plans.count }})
+            </a>
+            {% for code, label in status_choices %}
+            <a href="?status={{ code }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == code %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Treatment Plans Cards Grid -->
+    {% if plans %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for plan in plans %}
+        <div class="pa-card p-5 flex flex-col justify-between pa-card-hover">
+            <div>
+                <!-- Top patient info & status -->
+                <div class="flex items-start justify-between gap-2 mb-3">
+                    <div>
+                        <a href="{% url 'doctor:patient_detail' plan.patient.id %}?tab=treatment" class="font-bold text-sm text-slate-900 hover:text-blue-700 block">
+                            {{ plan.patient.full_name }}
+                        </a>
+                        <span class="text-[11px] text-slate-400 font-mono">{{ plan.patient.patient_id }}</span>
+                    </div>
+
+                    <span class="badge 
+                        {% if plan.status == 'Active / In Progress' %}badge-active
+                        {% elif plan.status == 'Completed' %}badge-completed
+                        {% else %}badge-pending{% endif %}">
+                        {{ plan.status }}
+                    </span>
+                </div>
+
+                <!-- Aligner Stage Display -->
+                <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl my-3">
+                    <div class="flex items-center justify-between text-xs mb-1.5">
+                        <span class="font-bold text-blue-950">Aligner Stage</span>
+                        <span class="font-black text-blue-700">Tray #{{ plan.current_aligner }} of {{ plan.total_aligners }}</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2">
+                        <span>Pace: {{ plan.aligner_frequency_days }} days/tray</span>
+                        <span>{{ plan.progress_percentage }}% complete</span>
+                    </div>
+                </div>
+
+                <!-- Parameters list -->
+                <div class="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Duration:</span>
+                        <span class="font-semibold text-slate-800">{{ plan.estimated_duration_months }} Months</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Daily Wear:</span>
+                        <span class="font-semibold text-slate-800">{{ plan.daily_wear_hours }} hrs/day</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Compliance:</span>
+                        <span class="font-bold {% if plan.compliance_score >= 85 %}text-emerald-700{% else %}text-amber-700{% endif %}">{{ plan.compliance_score }}%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Next Review:</span>
+                        <span class="font-medium text-slate-700">{{ plan.next_review_date|default:"Unscheduled" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                {% if plan.current_aligner < plan.total_aligners %}
+                <form method="POST" action="{% url 'doctor:advance_aligner' plan.patient.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-primary py-1 px-2.5 text-xs">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Stage +1
+                    </button>
+                </form>
+                {% else %}
+                <span class="text-xs font-bold text-emerald-700">Finished</span>
+                {% endif %}
+
+                <a href="{% url 'doctor:treatment_plan_edit' plan.patient.id %}" class="btn-secondary py-1 px-3 text-xs">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Plan
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="pa-card p-12 text-center text-xs text-slate-400">
+        <i class="fa-solid fa-clipboard-list text-3xl mb-2 text-slate-300 block"></i>
+        No treatment plans found for this filter.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

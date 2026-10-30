@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Login - PEDO ALIGN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
+</head>
+<body class="h-full flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 antialiased">
+
+    <div class="w-full max-w-md">
+        
+        <!-- Brand Card -->
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden">
+            
+            <!-- Glowing Logo Header Banner with assent/bg.png -->
+            <div class="relative bg-cover bg-center p-6 text-center border-b border-blue-100/80" style="background-image: url('{% static 'bg.png' %}?v=2305');">
+                <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" alt="PEDO ALIGN DOCTOR PORTAL" onerror="this.src='/static/sidebar_glowing_logo.png'" class="max-w-[210px] mx-auto h-auto object-contain drop-shadow-sm">
+                <p class="text-xs text-blue-950 font-bold mt-1.5">Orthodontic Treatment Monitoring & Patient Portal</p>
+            </div>
+
+            <div class="p-8 sm:p-10">
+                <div class="mb-6 text-center">
+                    <h2 class="text-lg font-bold text-slate-900">Doctor Portal Login</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Enter your doctor credentials to access your dashboard</p>
+                </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-5 space-y-2">
+                {% for message in messages %}
+                <div class="p-3 rounded-lg text-xs font-semibold {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-envelope text-sm"></i>
+                        </div>
+                        <input type="email" name="email" required placeholder="doctor@clinic.com" class="form-input pl-10" autofocus>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
+                        <a href="{% url 'doctor:forgot_password' %}" class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-lock text-sm"></i>
+                        </div>
+                        <input type="password" name="password" required placeholder="••••••••" class="form-input pl-10">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full btn-primary py-3 text-sm font-bold shadow-md hover:shadow-lg transition">
+                        <i class="fa-solid fa-right-to-bracket mr-1"></i> Sign In to Dashboard
+                    </button>
+                </div>
+
+            </form>
+
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-600">
+                    New doctor on PEDO ALIGN?
+                    <a href="{% url 'doctor:register' %}" class="font-bold text-blue-600 hover:text-blue-800 hover:underline ml-1">Create Doctor Account</a>
+                </p>
+            </div>
+
+            </div><!-- /p-8 -->
+
+        </div>
+
+        <!-- Patient Portal link hint -->
+        <div class="mt-6 text-center">
+            <a href="{% url 'doctor:patient_join_portal' %}" class="inline-flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-blue-700 bg-white/70 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm transition">
+                <i class="fa-solid fa-key text-blue-600"></i> Are you a patient? <b>Enter Joining Code here</b>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

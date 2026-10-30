@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PEDO ALIGN - Clinical Caseload Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { font-size: 11pt; color: #000; background: #fff; }
+            .pa-print-card { border: 1px solid #ddd; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-6 antialiased text-slate-900">
+
+    <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-xl shadow-lg border border-slate-200">
+        
+        <!-- Print Toolbar (Hidden on print) -->
+        <div class="no-print pb-6 mb-6 border-b border-slate-200 flex items-center justify-between">
+            <a href="{% url 'doctor:reports_analytics' %}" class="text-xs font-semibold text-slate-600 hover:text-blue-700">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
+            </a>
+            <button onclick="window.print()" class="px-4 py-2 bg-blue-700 text-white rounded-lg font-bold text-xs shadow hover:bg-blue-800 transition">
+                <i class="fa-solid fa-print mr-1.5"></i> Print / Save as PDF
+            </button>
+        </div>
+
+        <!-- Official Report Header -->
+        <div class="flex items-start justify-between pb-6 border-b-2 border-slate-900 mb-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{% static 'doctor/images/logo.jpeg' %}" alt="PEDO ALIGN" class="h-12 w-12 object-contain rounded-xl border border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-black text-blue-900 leading-none">PEDO <span class="text-sky-500">ALIGN</span></h2>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Orthodontic Clinical Practice</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Orthodontic Clinical Practice Report</p>
+                <p class="text-xs text-slate-400">Generated: {{ generated_date|date:"F d, Y - H:i" }} UTC</p>
+            </div>
+
+            <div class="text-right text-xs text-slate-600">
+                <h3 class="font-bold text-slate-900 text-sm">Dr. {{ doctor.full_name }}</h3>
+                <p>{{ doctor.dental_qualification }}</p>
+                <p class="font-semibold text-blue-900">{{ doctor.clinic_name }}</p>
+                <p class="text-[11px] text-slate-500 max-w-xs">{{ doctor.clinic_address }}</p>
+                <p class="text-[11px] text-slate-500">Phone: {{ doctor.phone_number }}</p>
+            </div>
+        </div>
+
+        <!-- Caseload Summary Metrics -->
+        <div class="grid grid-cols-3 gap-4 mb-6 text-center text-xs">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Total Patients</span>
+                <span class="text-xl font-bold text-slate-900">{{ total_count }}</span>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Active Treatments</span>
+                <span class="text-xl font-bold text-blue-700">{{ active_count }}</span>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Completed Cases</span>
+                <span class="text-xl font-bold text-emerald-700">{{ completed_count }}</span>
+            </div>
+        </div>
+
+        <!-- Patient Records Table -->
+        <div class="mb-8">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">Patient Caseload Registry</h4>
+            <table class="w-full text-left text-xs border border-slate-200 border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px] border-b border-slate-200">
+                        <th class="p-2 border-r border-slate-200">ID</th>
+                        <th class="p-2 border-r border-slate-200">Patient Name</th>
+                        <th class="p-2 border-r border-slate-200">Age / Gender</th>
+                        <th class="p-2 border-r border-slate-200">Status</th>
+                        <th class="p-2 border-r border-slate-200">Aligner Stage</th>
+                        <th class="p-2 border-r border-slate-200">Compliance</th>
+                        <th class="p-2">Occlusion / Record</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for pt in patients %}
+                    <tr>
+                        <td class="p-2 font-mono text-[11px] border-r border-slate-200">{{ pt.patient_id }}</td>
+                        <td class="p-2 font-bold text-slate-900 border-r border-slate-200">{{ pt.full_name }}</td>
+                        <td class="p-2 text-slate-700 border-r border-slate-200">{{ pt.age }}y • {{ pt.gender }}</td>
+                        <td class="p-2 border-r border-slate-200 font-semibold">{{ pt.get_treatment_status_display }}</td>
+                        <td class="p-2 border-r border-slate-200">
+                            {% if pt.treatment_plan %}
+                            Stage #{{ pt.treatment_plan.current_aligner }}/{{ pt.treatment_plan.total_aligners }} ({{ pt.treatment_plan.progress_percentage }}%)
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="p-2 border-r border-slate-200">
+                            {% if pt.treatment_plan %}{{ pt.treatment_plan.compliance_score }}%{% else %}—{% endif %}
+                        </td>
+                        <td class="p-2 text-[11px] text-slate-600">
+                            {% if pt.clinical_record %}{{ pt.clinical_record.molar_relationship }}, {{ pt.clinical_record.teeth_present }}{% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="p-4 text-center text-slate-400">No patients recorded in caseload.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Doctor Certification / Sign-off Block -->
+        <div class="pt-8 border-t border-slate-200 flex justify-between text-xs text-slate-500">
+            <div>
+                <p>Confidential Medical Record — For Clinical Use Only.</p>
+                <p class="mt-0.5 text-[10px]">PEDO ALIGN Orthodontic Patient Management System</p>
+            </div>
+            <div class="text-right">
+                <div class="h-10 border-b border-slate-300 w-48 mb-1"></div>
+                <p class="font-bold text-slate-800">Dr. {{ doctor.full_name }}</p>
+                <p class="text-[10px]">Attending Orthodontist / Dental Specialist</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+

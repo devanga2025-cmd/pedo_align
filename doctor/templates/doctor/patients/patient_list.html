@@ -1,0 +1,283 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Patients Management - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Patients{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header & Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-users text-blue-600"></i> Patient Management
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Showing {{ patients.count }} of {{ total_count }} enrolled patients under Dr. {{ doctor.full_name }}
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a href="{% url 'doctor:export_patients_csv' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-file-csv text-emerald-600"></i> Export CSV
+            </a>
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-user-plus"></i> Add New Patient
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="pa-card p-4">
+        <form method="GET" class="flex flex-col md:flex-row gap-3 items-center justify-between">
+            
+            <!-- Search Input -->
+            <div class="relative w-full md:w-96">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </div>
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, patient ID, phone, or joining code..." class="form-input pl-9 text-xs">
+            </div>
+
+            <!-- Status Filter Pills -->
+            <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+                <a href="?status=ALL{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
+                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == 'ALL' %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                    All ({{ total_count }})
+                </a>
+                {% for code, label in status_choices %}
+                <a href="?status={{ code }}{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
+                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == code %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- View Mode Switch -->
+            <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0">
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=grid" class="p-2 text-xs {% if view_mode == 'grid' %}bg-white text-blue-600 font-bold shadow-sm{% else %}text-slate-400 hover:text-slate-700{% endif %}" title="Grid Cards View">
+                    <i class="fa-solid fa-grid-2"></i> Cards
+                </a>
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=table" class="p-2 text-xs {% if view_mode == 'table' %}bg-white text-blue-600 font-bold shadow-sm{% else %}text-slate-400 hover:text-slate-700{% endif %}" title="Table View">
+                    <i class="fa-solid fa-table-list"></i> Table
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Patients Output -->
+    {% if patients %}
+
+        {% if view_mode == 'table' %}
+        <!-- TABLE VIEW -->
+        <div class="pa-card overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
+                            <th class="py-3 px-4">Patient</th>
+                            <th class="py-3 px-4">Patient ID</th>
+                            <th class="py-3 px-4">Age / Gender</th>
+                            <th class="py-3 px-4">Contact</th>
+                            <th class="py-3 px-4">Treatment Status</th>
+                            <th class="py-3 px-4">Aligner Stage</th>
+                            <th class="py-3 px-4">Joining Code</th>
+                            <th class="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for pt in patients %}
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="py-3 px-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-xs flex-shrink-0">
+                                        {{ pt.first_name|first }}{{ pt.last_name|first }}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 hover:text-blue-700 block">
+                                            {{ pt.full_name }}
+                                        </a>
+                                        {% if pt.parent_guardian_name %}
+                                        <span class="text-[10px] text-slate-400">Guardian: {{ pt.parent_guardian_name }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3 px-4 font-mono font-medium text-slate-700">{{ pt.patient_id }}</td>
+                            <td class="py-3 px-4 text-slate-700">{{ pt.age }} yrs • {{ pt.gender }}</td>
+                            <td class="py-3 px-4 text-slate-700">
+                                <div>{{ pt.phone }}</div>
+                                {% if pt.email %}<div class="text-[10px] text-slate-400">{{ pt.email }}</div>{% endif %}
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="badge 
+                                    {% if pt.treatment_status == 'ACTIVE' %}badge-active
+                                    {% elif pt.treatment_status == 'PENDING_CONNECTION' %}badge-pending
+                                    {% elif pt.treatment_status == 'COMPLETED' %}badge-completed
+                                    {% else %}badge-hold{% endif %}">
+                                    {{ pt.get_treatment_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4">
+                                {% if pt.treatment_plan %}
+                                <div class="w-28">
+                                    <div class="flex justify-between text-[10px] font-bold text-slate-700 mb-1">
+                                        <span>#{{ pt.treatment_plan.current_aligner }}</span>
+                                        <span>of {{ pt.treatment_plan.total_aligners }}</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <span class="text-slate-400">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4">
+                                {% if pt.joining_code %}
+                                <span class="inline-flex items-center gap-1 font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                    {{ pt.joining_code.code }}
+                                </span>
+                                {% else %}
+                                <span class="text-slate-400">None</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-secondary py-1 px-2.5 text-xs" title="View Profile">
+                                        <i class="fa-solid fa-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'doctor:patient_edit' pt.id %}" class="p-1.5 text-slate-400 hover:text-slate-700 rounded" title="Edit Patient">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- GRID CARDS VIEW -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for pt in patients %}
+            <div class="pa-card p-5 pa-card-hover flex flex-col justify-between">
+                <div>
+                    <!-- Top row: Avatar, Name, Status Badge -->
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-full bg-blue-100 text-blue-800 font-extrabold flex items-center justify-center text-sm shadow-inner flex-shrink-0">
+                                {% if pt.profile_photo %}
+                                    <img src="{{ pt.profile_photo.url }}" alt="{{ pt.full_name }}" class="w-full h-full object-cover rounded-full">
+                                {% else %}
+                                    {{ pt.first_name|first }}{{ pt.last_name|first }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 text-sm hover:text-blue-700 transition">
+                                    {{ pt.full_name }}
+                                </a>
+                                <p class="text-[11px] text-slate-500 font-mono">{{ pt.patient_id }}</p>
+                            </div>
+                        </div>
+
+                        <span class="badge 
+                            {% if pt.treatment_status == 'ACTIVE' %}badge-active
+                            {% elif pt.treatment_status == 'PENDING_CONNECTION' %}badge-pending
+                            {% elif pt.treatment_status == 'COMPLETED' %}badge-completed
+                            {% else %}badge-hold{% endif %} flex-shrink-0">
+                            {{ pt.get_treatment_status_display }}
+                        </span>
+                    </div>
+
+                    <!-- Meta Details -->
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 mb-3">
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Demographics</span>
+                            <span class="font-semibold text-slate-800">{{ pt.age }} yrs</span> • {{ pt.gender }}
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Guardian</span>
+                            <span class="truncate block font-medium">{{ pt.parent_guardian_name|default:"Self / Patient" }}</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Phone / WhatsApp</span>
+                            <span class="font-medium text-slate-700"><i class="fa-solid fa-phone text-[10px] text-slate-400 mr-1"></i>{{ pt.phone }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Aligner Progress Bar -->
+                    {% if pt.treatment_plan %}
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between text-xs mb-1">
+                            <span class="text-slate-500 font-medium">Aligner Progress</span>
+                            <span class="font-bold text-blue-700">Stage {{ pt.treatment_plan.current_aligner }} of {{ pt.treatment_plan.total_aligners }} ({{ pt.treatment_plan.progress_percentage }}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Joining Code Pill -->
+                    {% if pt.joining_code %}
+                    <div class="p-2.5 rounded-lg bg-blue-50/70 border border-blue-200/60 flex items-center justify-between text-xs mb-4">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-key text-blue-600 text-xs"></i>
+                            <span class="text-slate-500 font-medium">Code:</span>
+                            <span class="font-mono font-bold text-blue-900 tracking-wider">{{ pt.joining_code.code }}</span>
+                        </div>
+                        <button type="button" onclick="copyToClipboard('{{ pt.joining_code.code }}', 'copyBtn{{ pt.id }}')" id="copyBtn{{ pt.id }}" class="text-[11px] font-bold text-blue-700 hover:text-blue-900">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <a href="{% url 'doctor:patient_edit' pt.id %}" class="text-xs text-slate-500 hover:text-slate-800 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit
+                    </a>
+                    <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-primary py-1.5 px-3 text-xs">
+                        <span>Open Profile</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    {% else %}
+        <!-- Empty State -->
+        <div class="pa-card p-12 text-center max-w-md mx-auto">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+                <i class="fa-solid fa-user-xmark"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">No Patients Found</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-5">
+                {% if query %}
+                    No patients match your search term "{{ query }}". Try clearing the search.
+                {% else %}
+                    You have not added any patients yet. Click below to enroll your first orthodontic patient.
+                {% endif %}
+            </p>
+            {% if query %}
+                <a href="{% url 'doctor:patient_list' %}" class="btn-secondary text-xs">Clear Filter</a>
+            {% else %}
+                <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs">
+                    <i class="fa-solid fa-user-plus mr-1"></i> Add First Patient
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

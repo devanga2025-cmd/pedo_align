@@ -1,0 +1,315 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}Upload Teeth Photos - PEDO ALIGN{% endblock %}
+{% block page_title %}Upload Teeth Photos{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Hero Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 p-6 md:p-8 text-white shadow-xl shadow-blue-500/15">
+        <div class="relative z-10 max-w-xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white mb-3">
+                <i class="fa-solid fa-camera"></i> Weekly Dental Monitoring
+            </span>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Upload Your Teeth Photos</h1>
+            <p class="mt-2 text-sm text-blue-50/90 leading-relaxed">
+                Take photos of your smile from 5 angles so Dr. {{ doctor.full_name|default:"Your Doctor" }} can review your tooth movement, confirm tracking fidelity, and approve your next aligner set!
+            </p>
+        </div>
+        <i class="fa-solid fa-camera-retro absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+    </div>
+
+    <!-- Friendly Photo Tips Carousel/Box -->
+    <div class="bg-white rounded-3xl p-5 md:p-6 border border-blue-100/80 shadow-sm">
+        <h3 class="text-xs font-extrabold text-blue-700 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-lightbulb text-amber-500"></i> Tips for Perfect Clinical Photos
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs text-slate-600">
+            <div class="p-3 bg-blue-50/60 rounded-2xl flex items-start gap-2.5">
+                <i class="fa-solid fa-sun text-amber-500 mt-0.5 text-sm"></i>
+                <div>
+                    <h5 class="font-bold text-slate-900">Bright Lighting</h5>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Stand facing a window or under a well-lit bathroom lamp.</p>
+                </div>
+            </div>
+            <div class="p-3 bg-blue-50/60 rounded-2xl flex items-start gap-2.5">
+                <i class="fa-solid fa-teeth text-blue-500 mt-0.5 text-sm"></i>
+                <div>
+                    <h5 class="font-bold text-slate-900">Bite Down Completely</h5>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Bite firmly on your back molars with lips pulled back.</p>
+                </div>
+            </div>
+            <div class="p-3 bg-blue-50/60 rounded-2xl flex items-start gap-2.5">
+                <i class="fa-solid fa-mobile-screen text-emerald-500 mt-0.5 text-sm"></i>
+                <div>
+                    <h5 class="font-bold text-slate-900">Hold Still & Focus</h5>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Ensure teeth are sharply focused without motion blur.</p>
+                </div>
+            </div>
+            <div class="p-3 bg-blue-50/60 rounded-2xl flex items-start gap-2.5">
+                <i class="fa-solid fa-wand-magic-sparkles text-purple-500 mt-0.5 text-sm"></i>
+                <div>
+                    <h5 class="font-bold text-slate-900">No Beauty Filters</h5>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Natural unedited shots allow the doctor to see exact alignment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Form Card -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6" id="photoUploadForm">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl text-xs font-medium space-y-1">
+                {% for err in form.non_field_errors %}
+                    <p><i class="fa-solid fa-circle-exclamation mr-1"></i> {{ err }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Week Number Selector -->
+            <div class="max-w-xs">
+                <label for="{{ form.week_number.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Treatment Week / Check-in <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold text-xs pointer-events-none">
+                        Week #
+                    </span>
+                    <input type="number" name="week_number" id="id_week_number" value="{{ form.week_number.value|default:1 }}" min="1" max="150"
+                           class="w-full pl-20 pr-4 py-2.5 rounded-2xl border border-blue-200 bg-blue-50/30 text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                {% if form.week_number.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.week_number.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- 5 Photo Upload Cards Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                        Upload Teeth Angles (5 Views)
+                    </label>
+                    <span class="text-[11px] text-slate-400">Front view is required; other views highly recommended</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
+                    <!-- 1. Front Smile View (Required) -->
+                    <div class="photo-card rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-500 bg-blue-50/30 hover:bg-blue-50/60 p-4 text-center cursor-pointer transition relative group flex flex-col items-center justify-between min-h-[220px]"
+                         onclick="document.getElementById('photo_front_input').click()">
+                        {{ form.photo_front }}
+                        <div class="w-full flex justify-between items-center text-[10px] font-bold text-blue-700 mb-2">
+                            <span>1. FRONT VIEW</span>
+                            <span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 uppercase text-[9px]">Required</span>
+                        </div>
+                        
+                        <div class="preview-container w-28 h-28 rounded-xl bg-white border border-blue-100 flex items-center justify-center overflow-hidden my-auto shadow-sm" id="preview_front">
+                            <div class="text-center p-2 text-slate-400 group-hover:text-blue-600 transition">
+                                <i class="fa-solid fa-face-smile text-3xl mb-1 text-blue-400"></i>
+                                <p class="text-[10px] font-bold">Center Smile</p>
+                            </div>
+                        </div>
+
+                        <span class="mt-2 text-xs font-bold text-blue-600 group-hover:underline">
+                            <i class="fa-solid fa-camera mr-1"></i> Choose / Take
+                        </span>
+                        {% if form.photo_front.errors %}
+                            <p class="text-[10px] text-rose-600 mt-1 font-bold">{{ form.photo_front.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- 2. Left Bite View -->
+                    <div class="photo-card rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 hover:bg-blue-50/40 p-4 text-center cursor-pointer transition relative group flex flex-col items-center justify-between min-h-[220px]"
+                         onclick="document.getElementById('photo_left_input').click()">
+                        {{ form.photo_left }}
+                        <div class="w-full flex justify-between items-center text-[10px] font-bold text-slate-600 mb-2">
+                            <span>2. LEFT VIEW</span>
+                            <span class="text-slate-400 text-[9px]">Optional</span>
+                        </div>
+                        
+                        <div class="preview-container w-28 h-28 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden my-auto shadow-sm" id="preview_left">
+                            <div class="text-center p-2 text-slate-400 group-hover:text-blue-600 transition">
+                                <i class="fa-solid fa-teeth text-3xl mb-1 text-slate-400"></i>
+                                <p class="text-[10px] font-bold">Left Molars</p>
+                            </div>
+                        </div>
+
+                        <span class="mt-2 text-xs font-bold text-slate-600 group-hover:text-blue-600">
+                            <i class="fa-solid fa-camera mr-1"></i> Choose / Take
+                        </span>
+                    </div>
+
+                    <!-- 3. Right Bite View -->
+                    <div class="photo-card rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 hover:bg-blue-50/40 p-4 text-center cursor-pointer transition relative group flex flex-col items-center justify-between min-h-[220px]"
+                         onclick="document.getElementById('photo_right_input').click()">
+                        {{ form.photo_right }}
+                        <div class="w-full flex justify-between items-center text-[10px] font-bold text-slate-600 mb-2">
+                            <span>3. RIGHT VIEW</span>
+                            <span class="text-slate-400 text-[9px]">Optional</span>
+                        </div>
+                        
+                        <div class="preview-container w-28 h-28 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden my-auto shadow-sm" id="preview_right">
+                            <div class="text-center p-2 text-slate-400 group-hover:text-blue-600 transition">
+                                <i class="fa-solid fa-teeth text-3xl mb-1 text-slate-400"></i>
+                                <p class="text-[10px] font-bold">Right Molars</p>
+                            </div>
+                        </div>
+
+                        <span class="mt-2 text-xs font-bold text-slate-600 group-hover:text-blue-600">
+                            <i class="fa-solid fa-camera mr-1"></i> Choose / Take
+                        </span>
+                    </div>
+
+                    <!-- 4. Upper Teeth View -->
+                    <div class="photo-card rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 hover:bg-blue-50/40 p-4 text-center cursor-pointer transition relative group flex flex-col items-center justify-between min-h-[220px]"
+                         onclick="document.getElementById('photo_upper_input').click()">
+                        {{ form.photo_upper }}
+                        <div class="w-full flex justify-between items-center text-[10px] font-bold text-slate-600 mb-2">
+                            <span>4. UPPER ARCH</span>
+                            <span class="text-slate-400 text-[9px]">Optional</span>
+                        </div>
+                        
+                        <div class="preview-container w-28 h-28 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden my-auto shadow-sm" id="preview_upper">
+                            <div class="text-center p-2 text-slate-400 group-hover:text-blue-600 transition">
+                                <i class="fa-solid fa-circle-arrow-up text-3xl mb-1 text-slate-400"></i>
+                                <p class="text-[10px] font-bold">Top Teeth View</p>
+                            </div>
+                        </div>
+
+                        <span class="mt-2 text-xs font-bold text-slate-600 group-hover:text-blue-600">
+                            <i class="fa-solid fa-camera mr-1"></i> Choose / Take
+                        </span>
+                    </div>
+
+                    <!-- 5. Lower Teeth View -->
+                    <div class="photo-card rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 hover:bg-blue-50/40 p-4 text-center cursor-pointer transition relative group flex flex-col items-center justify-between min-h-[220px]"
+                         onclick="document.getElementById('photo_lower_input').click()">
+                        {{ form.photo_lower }}
+                        <div class="w-full flex justify-between items-center text-[10px] font-bold text-slate-600 mb-2">
+                            <span>5. LOWER ARCH</span>
+                            <span class="text-slate-400 text-[9px]">Optional</span>
+                        </div>
+                        
+                        <div class="preview-container w-28 h-28 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden my-auto shadow-sm" id="preview_lower">
+                            <div class="text-center p-2 text-slate-400 group-hover:text-blue-600 transition">
+                                <i class="fa-solid fa-circle-arrow-down text-3xl mb-1 text-slate-400"></i>
+                                <p class="text-[10px] font-bold">Bottom Teeth View</p>
+                            </div>
+                        </div>
+
+                        <span class="mt-2 text-xs font-bold text-slate-600 group-hover:text-blue-600">
+                            <i class="fa-solid fa-camera mr-1"></i> Choose / Take
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Notes Field -->
+            <div>
+                <label for="{{ form.patient_notes.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Notes for Doctor (Optional)
+                </label>
+                {{ form.patient_notes }}
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-md shadow-blue-500/25 transition-all transform active:scale-[0.99]">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Submit Photos for Doctor Review
+            </button>
+        </form>
+    </div>
+
+    <!-- Recent Submissions History Card -->
+    {% if recent_uploads %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Past Photo Submissions
+        </h3>
+
+        <div class="divide-y divide-slate-100">
+            {% for upload in recent_uploads %}
+            <div class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
+                        {% if upload.front_bite_photo %}
+                            <img src="{{ upload.front_bite_photo.url }}" alt="Week {{ upload.week_number }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-slate-400">
+                                <i class="fa-solid fa-image"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-sm font-bold text-slate-900">Week {{ upload.week_number }} Photos</h4>
+                            {% if upload.tracking_status == 'TRACKING_WELL' %}
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase">
+                                    <i class="fa-solid fa-circle-check"></i> On Schedule
+                                </span>
+                            {% elif upload.tracking_status == 'NEEDS_ATTENTION' %}
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 uppercase">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Needs Attention
+                                </span>
+                            {% else %}
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 uppercase">
+                                    <i class="fa-solid fa-hourglass-half"></i> In Review
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Submitted on {{ upload.upload_date|date:"M d, Y" }}</p>
+                        {% if upload.doctor_feedback %}
+                        <div class="mt-2 p-2.5 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-900">
+                            <strong>Dr. {{ doctor.full_name }}:</strong> "{{ upload.doctor_feedback }}"
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-xs text-slate-500 font-medium">
+                    {% if upload.patient_notes %}
+                        <span class="italic text-slate-500">"{{ upload.patient_notes|truncatechars:50 }}"</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Client-side image preview script -->
+<script>
+    function setupImagePreview(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input || !preview) return;
+
+        input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    preview.innerHTML = `<img src="${evt.target.result}" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupImagePreview('photo_front_input', 'preview_front');
+        setupImagePreview('photo_left_input', 'preview_left');
+        setupImagePreview('photo_right_input', 'preview_right');
+        setupImagePreview('photo_upper_input', 'preview_upper');
+        setupImagePreview('photo_lower_input', 'preview_lower');
+    });
+</script>
+{% endblock %}

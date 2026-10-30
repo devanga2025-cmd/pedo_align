@@ -1,0 +1,100 @@
+{% extends 'patient/base.html' %}
+{% load static %}
+
+{% block title %}Request Appointment - PEDO ALIGN{% endblock %}
+{% block page_title %}Request Appointment{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Top Banner -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 p-6 md:p-8 text-white shadow-xl shadow-blue-500/15">
+        <div class="relative z-10">
+            <a href="{% url 'patient:appointments' %}" class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-100 hover:text-white mb-2 transition">
+                <i class="fa-solid fa-arrow-left"></i> Back to Appointments
+            </a>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Request an Appointment</h1>
+            <p class="mt-1 text-sm text-blue-50">
+                Choose your preferred date and time to visit Dr. {{ patient.doctor.full_name }} at {{ patient.doctor.clinic_name }}.
+            </p>
+        </div>
+        <i class="fa-solid fa-calendar-plus absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+    </div>
+
+    <!-- Booking Form Card -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+        <form method="POST" class="space-y-5">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-2xl text-xs font-medium space-y-1">
+                {% for err in form.non_field_errors %}
+                    <p><i class="fa-solid fa-circle-exclamation mr-1"></i> {{ err }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Appointment Date -->
+            <div>
+                <label for="{{ form.appointment_date.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Preferred Visit Date <span class="text-rose-500">*</span>
+                </label>
+                {{ form.appointment_date }}
+                {% if form.appointment_date.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.appointment_date.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Preferred Time Slot -->
+            <div>
+                <label for="{{ form.preferred_time.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Preferred Time Slot <span class="text-rose-500">*</span>
+                </label>
+                {{ form.preferred_time }}
+                {% if form.preferred_time.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.preferred_time.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Reason for Visit -->
+            <div>
+                <label for="{{ form.reason.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Reason for Visit <span class="text-rose-500">*</span>
+                </label>
+                {{ form.reason }}
+                {% if form.reason.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.reason.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Notes -->
+            <div>
+                <label for="{{ form.notes.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Additional Notes for Clinic (Optional)
+                </label>
+                {{ form.notes }}
+                <p class="text-[11px] text-slate-400 mt-1">E.g., "Need to pick up next aligner set before our family vacation."</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-2 flex items-center gap-3">
+                <button type="submit" 
+                        class="flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-md shadow-blue-500/25 transition-all transform active:scale-[0.99]">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Appointment Request
+                </button>
+                <a href="{% url 'patient:appointments' %}" class="px-5 py-3.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+        <!-- Information note -->
+        <div class="mt-6 pt-5 border-t border-slate-100 flex items-start gap-2.5 text-xs text-slate-500">
+            <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+            <span>The clinic reception will review your requested time slot and confirm your booking via portal notification.</span>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+

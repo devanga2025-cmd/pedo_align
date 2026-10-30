@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Registration - PEDO ALIGN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
+</head>
+<body class="min-h-full py-10 px-4 flex items-center justify-center bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 antialiased">
+
+    <div class="w-full max-w-2xl">
+        
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden">
+            
+            <!-- Glowing Header Banner with assent/bg.png -->
+            <div class="relative bg-cover bg-center p-6 text-center border-b border-blue-100/80" style="background-image: url('{% static 'bg.png' %}?v=2305');">
+                <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" alt="PEDO ALIGN DOCTOR PORTAL" onerror="this.src='/static/sidebar_glowing_logo.png'" class="max-w-[210px] mx-auto h-auto object-contain drop-shadow-sm">
+                <p class="text-xs text-blue-950 font-bold mt-1.5">Create your verified Doctor Account</p>
+            </div>
+
+            <div class="p-8 sm:p-10">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-slate-900">Doctor Registration</h2>
+                    <p class="text-xs text-slate-500 mt-1">Join the PEDO ALIGN network to monitor pediatric and teen aligner cases</p>
+                </div>
+
+            <!-- Errors / Messages -->
+            {% if form.errors %}
+            <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+                <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Please fix the errors below:</p>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p class="pl-4">• <strong>{{ field.label }}:</strong> {{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p class="pl-4">• {{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Registration Form -->
+            <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Doctor Full Name *</label>
+                        {{ form.full_name }}
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Phone Number *</label>
+                        {{ form.phone_number }}
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Dental Qualification *</label>
+                        {{ form.dental_qualification }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Clinic / Hospital Name *</label>
+                    {{ form.clinic_name }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Clinic Address *</label>
+                    {{ form.clinic_address }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Doctor Profile Picture (Optional)</label>
+                    {{ form.profile_picture }}
+                    <p class="text-[11px] text-slate-400 mt-0.5">Upload a portrait or clinic picture (JPG, PNG). You can also add or change this later.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password (min 8 chars) *</label>
+                        {{ form.password }}
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Confirm Password *</label>
+                        {{ form.confirm_password }}
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full btn-primary py-3 text-sm font-bold shadow-md hover:shadow-lg transition">
+                        <i class="fa-solid fa-user-check mr-1"></i> Complete Registration & Access Dashboard
+                    </button>
+                </div>
+
+            </form>
+
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-600">
+                    Already registered?
+                    <a href="{% url 'doctor:login' %}" class="font-bold text-blue-600 hover:text-blue-800 hover:underline ml-1">Sign In to Doctor Portal</a>
+                </p>
+            </div>
+
+            </div><!-- /p-8 -->
+
+        </div>
+
+    </div>
+
+</body>
+</html>

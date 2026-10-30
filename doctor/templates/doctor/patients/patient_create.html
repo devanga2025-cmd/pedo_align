@@ -1,0 +1,151 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Add New Patient - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_list' %}" class="hover:underline">Patients</a> / Add New{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-blue-600"></i> New Patient Intake
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Enroll a new pediatric or teen orthodontic patient under Dr. {{ doctor.full_name }}
+            </p>
+        </div>
+        <a href="{% url 'doctor:patient_list' %}" class="btn-secondary text-xs">
+            <i class="fa-solid fa-arrow-left"></i> Back to Patients
+        </a>
+    </div>
+
+    <!-- Joining Code Banner Notice -->
+    <div class="bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-200/80 rounded-xl p-4 flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 text-sm shadow-sm">
+            <i class="fa-solid fa-key"></i>
+        </div>
+        <div>
+            <h4 class="text-xs font-bold text-blue-900">Automatic Unique Joining Code Generation</h4>
+            <p class="text-xs text-blue-800/80 mt-0.5 leading-relaxed">
+                Once you save this patient, the system will immediately generate a cryptographically secure, individual joining code (e.g. <code>PA-XXXXXX</code>) valid for 14 days. You can share this code with the patient or parent to initiate remote monitoring.
+            </p>
+        </div>
+    </div>
+
+    <!-- Errors -->
+    {% if form.errors %}
+    <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+        <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Please correct the form errors:</p>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p class="pl-4">• <strong>{{ field.label }}:</strong> {{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Patient Creation Form -->
+    <form method="POST" enctype="multipart/form-data" class="pa-card p-6 sm:p-8 space-y-6">
+        {% csrf_token %}
+
+        <!-- 1. Patient Demographics -->
+        <div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-id-card text-blue-600"></i> Personal Information
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">First Name *</label>
+                    {{ form.first_name }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Last Name *</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Age (Years) *</label>
+                    {{ form.age }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Gender *</label>
+                    {{ form.gender }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Date of Birth</label>
+                    {{ form.date_of_birth }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient Email (Optional)</label>
+                    {{ form.email }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient Phone / WhatsApp *</label>
+                    {{ form.phone }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Parent / Guardian Info (Pedodontic Care) -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Contact (For Pedo / Teen Patients)
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Parent / Guardian Full Name</label>
+                    {{ form.parent_guardian_name }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Parent Phone / WhatsApp</label>
+                    {{ form.parent_guardian_phone }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Treatment Parameters -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Parameters & Notes
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Treatment Duration (Months)</label>
+                    {{ form.treatment_duration_months }}
+                    <span class="text-[11px] text-slate-400 block mt-1">Default 12 months (approx. 24 aligner stages)</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Profile Photo (Optional)</label>
+                    {{ form.profile_photo }}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Initial Case Overview / Clinical Observations</label>
+                {{ form.notes }}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+            <a href="{% url 'doctor:patient_list' %}" class="btn-secondary text-xs">Cancel</a>
+            <button type="submit" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-check mr-1"></i> Save Patient & Generate Joining Code
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

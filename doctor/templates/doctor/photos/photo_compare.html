@@ -1,0 +1,117 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Photo Comparison - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_detail' patient.id %}?tab=photos" class="hover:underline">Photos</a> / Compare{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-arrows-left-right text-blue-600"></i> Dental Progress Comparison Tool
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Visual alignment comparison for <strong class="text-slate-800">{{ patient.full_name }}</strong> (ID: {{ patient.patient_id }})
+            </p>
+        </div>
+        <a href="{% url 'doctor:patient_detail' patient.id %}?tab=photos" class="btn-secondary text-xs">
+            <i class="fa-solid fa-arrow-left"></i> Return to Patient
+        </a>
+    </div>
+
+    {% if photos.count >= 2 %}
+    <!-- 1. Interactive Slider Comparison -->
+    <div class="pa-card p-6">
+        <h3 class="text-sm font-bold text-slate-900 mb-1">Interactive Before-and-After Slider</h3>
+        <p class="text-xs text-slate-500 mb-6">Drag the vertical bar to compare baseline dental alignment against current progress</p>
+
+        <div class="max-w-3xl mx-auto">
+            <div class="compare-container h-96 w-full shadow-xl relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-200">
+                <!-- Base image (Before) -->
+                {% with before=photos.last %}
+                <img src="{% if before.front_bite_photo %}{{ before.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}" alt="Baseline" class="w-full h-full object-cover">
+                <span class="absolute bottom-4 left-4 bg-slate-900/80 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur shadow">
+                    BASELINE / BEFORE (Week {{ before.week_number }})
+                </span>
+                {% endwith %}
+
+                <!-- Overlay image (After / Latest) -->
+                {% with after=photos.first %}
+                <div class="compare-image-after" style="width: 50%;">
+                    <img src="{% if after.front_bite_photo %}{{ after.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}" alt="Latest" class="w-full h-full object-cover max-w-none" style="width: 100%;">
+                    <span class="absolute bottom-4 right-4 bg-blue-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur shadow">
+                        LATEST (Week {{ after.week_number }}, Tray #{{ after.aligner_stage }})
+                    </span>
+                </div>
+                {% endwith %}
+
+                <!-- Center Divider Handle -->
+                <div class="compare-slider-handle" style="left: 50%;">
+                    <div class="compare-handle-circle">
+                        <i class="fa-solid fa-left-right text-xs"></i>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-xs text-slate-400 mt-3">
+                <i class="fa-solid fa-hand-pointer mr-1"></i> Click and drag the handle left or right across the smile
+            </p>
+        </div>
+    </div>
+
+    <!-- 2. Side-by-Side Dual Image Comparison Grid -->
+    <div class="pa-card p-6">
+        <h3 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">
+            Side-by-Side Angle Comparison
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Side: Baseline -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Baseline / Start of Care</span>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">Week {{ photos.last.week_number }}</span>
+                </div>
+                <div class="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+                    {% if photos.last.front_bite_photo %}
+                    <img src="{{ photos.last.front_bite_photo.url }}" class="w-full h-full object-cover" alt="Baseline">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-slate-600"><strong>Notes:</strong> {{ photos.last.patient_notes|default:"Initial diagnostic scan photos." }}</p>
+            </div>
+
+            <!-- Right Side: Latest -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Latest Progress</span>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">Week {{ photos.first.week_number }} (Tray #{{ photos.first.aligner_stage }})</span>
+                </div>
+                <div class="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+                    {% if photos.first.front_bite_photo %}
+                    <img src="{{ photos.first.front_bite_photo.url }}" class="w-full h-full object-cover" alt="Latest">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-slate-600"><strong>Doctor Review:</strong> {{ photos.first.doctor_feedback|default:"Tracking well according to virtual prescription." }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="pa-card p-12 text-center text-xs text-slate-400">
+        <i class="fa-solid fa-images text-3xl mb-2 text-slate-300 block"></i>
+        At least two sets of uploaded monitoring photos are required to run comparisons.
+        <div class="mt-4">
+            <a href="{% url 'doctor:photo_upload' patient.id %}" class="btn-primary text-xs">Upload Photo Set</a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+

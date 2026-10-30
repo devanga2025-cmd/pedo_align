@@ -1,0 +1,105 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Edit Treatment Plan - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:treatment_plans' %}" class="hover:underline">Treatment Plans</a> / {{ patient.full_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-list text-blue-600"></i> Edit Treatment Plan
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Patient: <strong class="text-slate-800">{{ patient.full_name }}</strong> (ID: {{ patient.patient_id }})
+            </p>
+        </div>
+        <a href="{% url 'doctor:patient_detail' patient.id %}?tab=treatment" class="btn-secondary text-xs">
+            <i class="fa-solid fa-arrow-left"></i> Return to Patient
+        </a>
+    </div>
+
+    <form method="POST" class="pa-card p-6 sm:p-8 space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-blue-600"></i> Aligner Parameters & Progression
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Total Number of Aligners *</label>
+                    {{ form.total_aligners }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Current Aligner Stage *</label>
+                    {{ form.current_aligner }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Aligner Changing Frequency (Days) *</label>
+                    {{ form.aligner_frequency_days }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Duration (Months)</label>
+                    {{ form.estimated_duration_months }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Start Date</label>
+                    {{ form.start_date }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Expected Completion Date</label>
+                    {{ form.expected_completion_date }}
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-gauge-high text-blue-600"></i> Compliance & Status
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Plan Status *</label>
+                    {{ form.status }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Compliance Score (0-100%)</label>
+                    {{ form.compliance_score }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Daily Wear Hours</label>
+                    {{ form.daily_wear_hours }}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Next Review Date</label>
+                {{ form.next_review_date }}
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Instructions for Patient</label>
+                {{ form.treatment_instructions }}
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+            <a href="{% url 'doctor:patient_detail' patient.id %}?tab=treatment" class="btn-secondary text-xs">Cancel</a>
+            <button type="submit" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-check mr-1"></i> Save Treatment Plan
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

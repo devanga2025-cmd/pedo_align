@@ -1,0 +1,127 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Edit Clinical Record - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:clinical_records' %}" class="hover:underline">Clinical Records</a> / {{ patient.full_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-file-medical text-blue-600"></i> Clinical Intake & Examination Form
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Patient: <strong class="text-slate-800">{{ patient.full_name }}</strong> (ID: {{ patient.patient_id }}, Age: {{ patient.age }})
+            </p>
+        </div>
+        <a href="{% url 'doctor:patient_detail' patient.id %}?tab=clinical" class="btn-secondary text-xs">
+            <i class="fa-solid fa-arrow-left"></i> Return to Patient
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" class="pa-card p-6 sm:p-8 space-y-6">
+        {% csrf_token %}
+
+        <!-- 1. Dental and Skeletal Details -->
+        <div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-tooth text-blue-600"></i> Dental and Skeletal Details
+            </h3>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Teeth Present / Dentition Stage *</label>
+                {{ form.teeth_present }}
+                <span class="text-[11px] text-slate-400 block mt-1">e.g. Full Mixed Dentition (Class II, 24 erupted), Primary Dentition, Permanent</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Overbite</label>
+                    {{ form.overbite }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Deep Bite</label>
+                    {{ form.deep_bite }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Molar Relationship</label>
+                    {{ form.molar_relationship }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Canine Relationship</label>
+                    {{ form.canine_relationship }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Crossbite</label>
+                    {{ form.crossbite }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Molar Occlusion</label>
+                    {{ form.molar_occlusion }}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Oral Habits (Thumb Sucking, Tongue Thrust, Mouth Breathing, etc.)</label>
+                {{ form.oral_habits }}
+            </div>
+        </div>
+
+        <!-- 2. Medical & Dental History -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-heart-pulse text-blue-600"></i> Medical & Dental History
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Medical History & Known Allergies</label>
+                    {{ form.medical_history }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Dental History & Previous Treatments</label>
+                    {{ form.dental_history }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Skeletal Notes & Recommendations -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-notes-medical text-blue-600"></i> Skeletal Pattern & Doctor Notes
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Skeletal Pattern & Facial Profile</label>
+                    {{ form.skeletal_notes }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Doctor Clinical Recommendations</label>
+                    {{ form.doctor_clinical_notes }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+            <a href="{% url 'doctor:patient_detail' patient.id %}?tab=clinical" class="btn-secondary text-xs">Cancel</a>
+            <button type="submit" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-check mr-1"></i> Save Clinical Record
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

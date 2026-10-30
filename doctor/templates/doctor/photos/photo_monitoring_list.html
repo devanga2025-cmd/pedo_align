@@ -1,0 +1,176 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Photo Monitoring - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}Photo Monitoring{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-camera-retro text-blue-600"></i> Dental Photo Monitoring Feed
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Weekly progress submissions from patients: Upper arch, Lower arch, Front bite, and Occlusions
+            </p>
+        </div>
+
+        <!-- Filter Status -->
+        <div class="flex flex-wrap items-center gap-1.5">
+            <a href="?status=ALL" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                All ({{ uploads.count }})
+            </a>
+            {% for code, label in status_choices %}
+            <a href="?status={{ code }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == code %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Uploads List -->
+    {% if uploads %}
+    <div class="space-y-5">
+        {% for upload in uploads %}
+        <div class="pa-card p-5 pa-card-hover space-y-4">
+            
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'doctor:patient_detail' upload.patient.id %}" class="font-bold text-sm text-slate-900 hover:text-blue-700">
+                        {{ upload.patient.full_name }}
+                    </a>
+                    <span class="text-xs font-mono text-slate-400">({{ upload.patient.patient_id }})</span>
+                    <span class="text-xs font-bold px-2.5 py-0.5 rounded bg-blue-100 text-blue-800">
+                        Week {{ upload.week_number }}
+                    </span>
+                    <span class="text-xs text-slate-500">
+                        Stage #{{ upload.aligner_stage }}
+                    </span>
+                    <span class="text-xs text-slate-400">
+                        {{ upload.upload_date|date:"M d, Y" }}
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="badge 
+                        {% if upload.tracking_status == 'TRACKING_WELL' %}badge-active
+                        {% elif upload.tracking_status == 'PENDING_REVIEW' %}badge-pending
+                        {% else %}badge-emergency-high{% endif %}">
+                        {{ upload.get_tracking_status_display }}
+                    </span>
+                    <a href="{% url 'doctor:photo_review' upload.id %}" class="btn-primary py-1 px-3 text-xs">
+                        <i class="fa-solid fa-pen-nib mr-1"></i> Doctor Review
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5 Photo Thumbnails with click to zoom -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                
+                <!-- Front Bite -->
+                <div>
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Front Bite</span>
+                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                         onclick="openImageModal('{% if upload.front_bite_photo %}{{ upload.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Front Bite - {{ upload.patient.full_name }}')">
+                        {% if upload.front_bite_photo %}
+                        <img src="{{ upload.front_bite_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Front Bite">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upper Arch -->
+                <div>
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Upper Arch</span>
+                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                         onclick="openImageModal('{% if upload.upper_arch_photo %}{{ upload.upper_arch_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Upper Arch - {{ upload.patient.full_name }}')">
+                        {% if upload.upper_arch_photo %}
+                        <img src="{{ upload.upper_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Upper Arch">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lower Arch -->
+                <div>
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Lower Arch</span>
+                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                         onclick="openImageModal('{% if upload.lower_arch_photo %}{{ upload.lower_arch_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Lower Arch - {{ upload.patient.full_name }}')">
+                        {% if upload.lower_arch_photo %}
+                        <img src="{{ upload.lower_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Lower Arch">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Occlusion -->
+                <div>
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Right Occlusion</span>
+                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                         onclick="openImageModal('{% if upload.right_occlusion_photo %}{{ upload.right_occlusion_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Right Occlusion - {{ upload.patient.full_name }}')">
+                        {% if upload.right_occlusion_photo %}
+                        <img src="{{ upload.right_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Right Occlusion">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Left Occlusion -->
+                <div>
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Left Occlusion</span>
+                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                         onclick="openImageModal('{% if upload.left_occlusion_photo %}{{ upload.left_occlusion_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Left Occlusion - {{ upload.patient.full_name }}')">
+                        {% if upload.left_occlusion_photo %}
+                        <img src="{{ upload.left_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Left Occlusion">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {% if upload.doctor_feedback %}
+            <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-xs flex items-center justify-between">
+                <div>
+                    <span class="font-bold text-blue-950">Doctor Review (Rating: {{ upload.doctor_rating }}/5):</span>
+                    <span class="text-slate-700 ml-1">{{ upload.doctor_feedback }}</span>
+                </div>
+                <span class="text-[10px] text-slate-400 flex-shrink-0">{{ upload.reviewed_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="pa-card p-12 text-center text-xs text-slate-400">
+        <i class="fa-solid fa-camera-retro text-3xl mb-2 text-slate-300 block"></i>
+        No dental monitoring photos found.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
