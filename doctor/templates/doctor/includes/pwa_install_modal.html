@@ -8,7 +8,7 @@
     <!-- Animated pulsing arrow pointing directly to the browser's 3-dot menu (top-right) -->
     <div class="flex items-center gap-2 animate-bounce mr-1 sm:mr-3 mt-1">
         <span class="bg-blue-600 text-white font-black text-xs px-3 py-1.5 rounded-full shadow-xl border border-blue-400">
-            Tap here! 👆
+            Look here! Tap the 3 dots (⋮) ↗
         </span>
         <i class="fa-solid fa-arrow-up text-3xl text-amber-300 drop-shadow-md"></i>
     </div>
@@ -17,7 +17,7 @@
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs">
-                    <i class="fa-solid fa-download"></i>
+                    <i class="fa-solid fa-mobile-screen-button"></i>
                 </div>
                 <h4 class="text-xs font-black text-slate-900">Install PEDO ALIGN</h4>
             </div>
@@ -29,7 +29,7 @@
         <div class="space-y-2.5 text-xs text-slate-700">
             <div class="flex items-start gap-2.5">
                 <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 font-black text-[11px] flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-                <p>Tap the <strong>3 dots menu (<i class="fa-solid fa-ellipsis-vertical text-blue-600"></i>)</strong> in the top-right corner of Chrome.</p>
+                <p>Tap the <strong>3 vertical dots (<i class="fa-solid fa-ellipsis-vertical text-blue-600"></i>)</strong> in Chrome's top-right corner above.</p>
             </div>
             <div class="flex items-start gap-2.5">
                 <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-black text-[11px] flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
@@ -37,12 +37,12 @@
             </div>
             <div class="flex items-start gap-2.5">
                 <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-black text-[11px] flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-                <p>Tap <strong>Install</strong>. The app icon will appear on your phone home screen immediately!</p>
+                <p>Tap <strong>Install</strong>. PEDO ALIGN appears on your phone home screen!</p>
             </div>
         </div>
 
         <button type="button" onclick="closePwaPointer()" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-black text-xs shadow-sm transition active:scale-95 text-center block">
-            Got it, Show Menu
+            Close Pointer & Tap ⋮ Above
         </button>
     </div>
 </div>
@@ -50,7 +50,7 @@
 
 <!-- Mobile Phone Install Guide Modal -->
 <div id="pwaInstallModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-blue-100 text-center space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-blue-100 text-center space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
         
         <!-- Header -->
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -60,7 +60,7 @@
                 </div>
                 <div>
                     <h3 class="text-base font-black text-slate-900">Install PEDO ALIGN</h3>
-                    <p class="text-xs text-slate-500">Fast 1-tap mobile app on your phone</p>
+                    <p class="text-xs text-slate-500">Fast mobile app on your phone home screen</p>
                 </div>
             </div>
             <button type="button" onclick="closePWAInstallModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
@@ -93,19 +93,19 @@
         </div>
 
         <!-- Platform Instructions -->
-        <div id="pwaPlatformInstructions" class="bg-blue-50/60 border border-blue-100/90 rounded-2xl p-4 text-xs text-slate-700 text-left space-y-2">
+        <div id="pwaPlatformInstructions" class="bg-blue-50/60 border border-blue-100/90 rounded-2xl p-4 text-xs text-slate-700 text-left space-y-3">
             <!-- Dynamic instructions populated by JS -->
         </div>
 
         <!-- Action Buttons -->
         <div class="space-y-2 pt-1">
             <button type="button" id="pwaDirectActionBtn" onclick="handleDirectInstallClick()" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center justify-center gap-2 active:scale-95">
-                <i class="fa-solid fa-download"></i>
-                <span id="pwaDirectActionBtnText">Install on Phone (2-Step Guide)</span>
+                <i class="fa-solid fa-hand-pointer text-amber-300"></i>
+                <span id="pwaDirectActionBtnText">Show Me Where to Tap (Top-Right)</span>
             </button>
 
             <button type="button" onclick="closePWAInstallModal()" class="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
-                Close
+                Close Guide
             </button>
         </div>
     </div>
@@ -113,6 +113,7 @@
 
 <script>
     let pwaDeferredPrompt = null;
+    let pointerTimer = null;
 
     // Capture browser beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -166,11 +167,10 @@
         }
 
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (!isIOS) {
-            // On Android Chrome when native prompt is pending/HTTP, show the top menu pointer
-            showPwaPointer();
-        } else {
+        if (isIOS) {
             showPWAInstallModal('ios');
+        } else {
+            showPWAInstallModal('android');
         }
     }
 
@@ -199,10 +199,21 @@
 
     function showPwaPointer() {
         const pointer = document.getElementById('pwaTopMenuPointer');
-        if (pointer) pointer.classList.remove('hidden');
+        if (pointer) {
+            pointer.classList.remove('hidden');
+            if (pointerTimer) clearTimeout(pointerTimer);
+            // Auto close after 12 seconds so it never traps the user
+            pointerTimer = setTimeout(() => {
+                closePwaPointer();
+            }, 12000);
+        }
     }
 
     function closePwaPointer() {
+        if (pointerTimer) {
+            clearTimeout(pointerTimer);
+            pointerTimer = null;
+        }
         const pointer = document.getElementById('pwaTopMenuPointer');
         if (pointer) pointer.classList.add('hidden');
     }
@@ -226,6 +237,7 @@
         const btnAndroid = document.getElementById('pwaTabAndroid');
         const btnIOS = document.getElementById('pwaTabIOS');
         const container = document.getElementById('pwaPlatformInstructions');
+        const actionBtnText = document.getElementById('pwaDirectActionBtnText');
 
         const activeClass = 'flex-1 py-1.5 px-2 rounded-xl transition flex items-center justify-center gap-1 bg-white text-blue-700 shadow-xs font-bold';
         const inactiveClass = 'flex-1 py-1.5 px-2 rounded-xl transition flex items-center justify-center gap-1 text-slate-600 hover:text-slate-900 font-semibold';
@@ -236,29 +248,69 @@
         if (!container) return;
 
         if (platform === 'ios') {
+            if (actionBtnText && !pwaDeferredPrompt) actionBtnText.innerText = 'Got It (Follow Safari Steps)';
             container.innerHTML = `
-                <div class="space-y-2">
-                    <p class="font-extrabold text-slate-900 flex items-center gap-1.5">
-                        <i class="fa-brands fa-apple text-slate-800 text-sm"></i> iPhone & iPad Safari:
+                <div class="space-y-2.5">
+                    <p class="font-extrabold text-slate-900 flex items-center gap-1.5 text-xs">
+                        <i class="fa-brands fa-apple text-slate-800 text-sm"></i> iPhone & iPad (Safari Browser):
                     </p>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed font-medium">
-                        <li>Tap the <strong>Share</strong> icon <i class="fa-solid fa-arrow-up-from-bracket text-blue-600"></i> in Safari</li>
-                        <li>Scroll down and tap <strong>"Add to Home Screen"</strong> <i class="fa-solid fa-square-plus text-emerald-600"></i></li>
-                        <li>Tap <strong>Add</strong> at the top-right corner to finish</li>
-                    </ol>
+                    <div class="bg-white rounded-xl p-2.5 border border-blue-100 space-y-2 text-[11px] text-slate-700">
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                            <p>Tap the <strong>Share</strong> button <i class="fa-solid fa-arrow-up-from-bracket text-blue-600 mx-0.5"></i> at the bottom toolbar of Safari.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                            <p>Scroll down and tap <strong class="text-emerald-700 font-bold">"Add to Home Screen"</strong> <i class="fa-solid fa-square-plus text-emerald-600 mx-0.5"></i>.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded-full bg-slate-100 text-slate-700 font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                            <p>Tap <strong>Add</strong> at top-right. The PEDO ALIGN app is now installed!</p>
+                        </div>
+                    </div>
                 </div>
             `;
         } else {
+            if (actionBtnText && !pwaDeferredPrompt) actionBtnText.innerText = 'Show Me Where to Tap (Top-Right)';
             container.innerHTML = `
-                <div class="space-y-2">
-                    <p class="font-extrabold text-slate-900 flex items-center gap-1.5">
-                        <i class="fa-brands fa-android text-emerald-500 text-sm"></i> Android Phone (Chrome):
+                <div class="space-y-2.5">
+                    <!-- Illustrated Chrome Bar -->
+                    <div class="bg-slate-900 text-white rounded-xl p-2.5 shadow-inner flex items-center justify-between text-[11px] font-mono">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-lock text-slate-400 text-[10px]"></i>
+                            <span class="text-slate-300 text-[10px] truncate">52.63.166.199</span>
+                        </div>
+                        <div class="flex items-center gap-2 pl-2">
+                            <span class="w-4 h-4 rounded-sm border border-slate-500 text-[9px] flex items-center justify-center text-slate-400">1</span>
+                            <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center animate-pulse text-xs">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <p class="font-extrabold text-slate-900 flex items-center gap-1.5 text-xs">
+                        <i class="fa-brands fa-android text-emerald-500 text-sm"></i> Android Phone (Google Chrome):
                     </p>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed font-medium">
-                        <li>Tap the <strong>3 dots (⋮)</strong> at the top-right of your browser</li>
-                        <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></li>
-                        <li>Tap <strong>Install</strong> to add directly to your phone screen</li>
-                    </ol>
+                    
+                    <div class="bg-white rounded-xl p-2.5 border border-blue-100 space-y-2 text-[11px] text-slate-700">
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-700 font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                            <p>Tap the <strong>3 vertical dots (<i class="fa-solid fa-ellipsis-vertical text-blue-600"></i>)</strong> in Chrome's top-right corner.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                            <p>In the menu, tap <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded-full bg-slate-100 text-slate-700 font-black text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                            <p>Tap <strong>Install</strong>. The PEDO ALIGN app is added directly to your phone screen!</p>
+                        </div>
+                    </div>
+
+                    <div class="p-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 text-[10px] text-emerald-800">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>
+                        <span>Installs instantly with 0 MB storage, full-screen view & tray notifications!</span>
+                    </div>
                 </div>
             `;
         }
