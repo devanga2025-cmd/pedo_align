@@ -99,12 +99,17 @@
 
         <!-- Action Buttons -->
         <div class="space-y-2 pt-1">
-            <button type="button" id="pwaDirectActionBtn" onclick="handleDirectInstallClick()" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center justify-center gap-2 active:scale-95">
-                <i class="fa-solid fa-hand-pointer text-amber-300"></i>
-                <span id="pwaDirectActionBtnText">Show Me Where to Tap (Top-Right)</span>
+            <a href="/download/app/" download="PedoAlign.apk" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-download"></i>
+                <span>Download PedoAlign.apk Directly</span>
+            </a>
+
+            <button type="button" id="pwaDirectActionBtn" onclick="handleDirectInstallClick()" class="w-full py-2.5 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-hand-pointer text-blue-600"></i>
+                <span id="pwaDirectActionBtnText">Or Tap Chrome 3 Dots (Top-Right)</span>
             </button>
 
-            <button type="button" onclick="closePWAInstallModal()" class="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
+            <button type="button" onclick="closePWAInstallModal()" class="w-full py-2 rounded-xl text-slate-400 hover:text-slate-600 font-semibold text-xs transition">
                 Close Guide
             </button>
         </div>
@@ -153,25 +158,10 @@
         window.addEventListener('DOMContentLoaded', registerPWAServiceWorker);
     }
 
-    // Trigger Phone Install
+    // Trigger Phone Install & Direct APK Download
     function triggerPWAInstall() {
-        if (pwaDeferredPrompt) {
-            // Direct native installation dialog immediately!
-            pwaDeferredPrompt.prompt();
-            pwaDeferredPrompt.userChoice.then(() => {
-                pwaDeferredPrompt = null;
-                closePWAInstallModal();
-                closePwaPointer();
-            });
-            return;
-        }
-
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            showPWAInstallModal('ios');
-        } else {
-            showPWAInstallModal('android');
-        }
+        // Direct download APK file in mobile!
+        window.location.href = '/download/app/';
     }
 
     function handleDirectInstallClick() {

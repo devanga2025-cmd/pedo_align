@@ -3087,3 +3087,31 @@ def manifest_view(request):
     return response
 
 
+def download_apk_view(request):
+    """
+    Directly streams and downloads the official Android APK file (PedoAlign.apk)
+    to the user's mobile device with application/vnd.android.package-archive headers.
+    """
+    import os
+    from django.conf import settings
+    from django.http import FileResponse, Http404
+
+    apk_file = os.path.join(settings.BASE_DIR, 'doctor', 'static', 'app', 'PedoAlign.apk')
+    if not os.path.exists(apk_file):
+        apk_file = os.path.join(settings.BASE_DIR, 'scratch', 'PedoAlign.apk')
+
+    if not os.path.exists(apk_file):
+        raise Http404("APK file not found.")
+
+    response = FileResponse(
+        open(apk_file, 'rb'),
+        content_type='application/vnd.android.package-archive',
+        as_attachment=True,
+        filename='PedoAlign.apk'
+    )
+    response['Content-Length'] = os.path.getsize(apk_file)
+    response['Cache-Control'] = 'public, max-age=86400'
+    return response
+
+
+

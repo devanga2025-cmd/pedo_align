@@ -197,11 +197,11 @@
                     <span>Settings</span>
                 </a>
 
-                <!-- Install App Button -->
-                <button type="button" onclick="triggerPWAInstall()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 transition text-left font-bold text-sm">
-                    <i class="fa-solid fa-mobile-screen-button w-5 text-center text-base"></i>
-                    <span>Install App</span>
-                </button>
+                <!-- Download Mobile APK Button -->
+                <a href="/download/app/" download="PedoAlign.apk" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 transition text-left font-bold text-sm cursor-pointer">
+                    <i class="fa-solid fa-download w-5 text-center text-base"></i>
+                    <span>Download Mobile APK</span>
+                </a>
 
                 <!-- 13. Logout -->
                 <a href="{% url 'doctor:logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors">

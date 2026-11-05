@@ -1126,6 +1126,19 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
             title__icontains='Hospital Visit'
         ).exists())
 
+    def test_direct_apk_download_endpoints(self):
+        """Test that /download/app/ and /download/apk/ return the valid Android APK with correct headers."""
+        resp1 = self.client.get('/download/app/')
+        self.assertEqual(resp1.status_code, 200)
+        self.assertEqual(resp1['Content-Type'], 'application/vnd.android.package-archive')
+        self.assertIn('attachment; filename="PedoAlign.apk"', resp1['Content-Disposition'])
+
+        resp2 = self.client.get('/download/apk/')
+        self.assertEqual(resp2.status_code, 200)
+        self.assertEqual(resp2['Content-Type'], 'application/vnd.android.package-archive')
+        self.assertIn('attachment; filename="PedoAlign.apk"', resp2['Content-Disposition'])
+
+
 
 
 

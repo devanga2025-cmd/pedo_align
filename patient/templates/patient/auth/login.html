@@ -331,12 +331,12 @@
 
             <!-- Install Button -->
             <div class="flex items-center gap-2">
-                <button type="button" 
-                        onclick="triggerPWAInstall()" 
-                        class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
-                    <span>Install App on Phone</span>
-                </button>
+                <a href="/download/app/" 
+                   download="PedoAlign.apk"
+                   class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Install App on Phone (APK)</span>
+                </a>
 
                 <button type="button" 
                         onclick="showPWAInstallModal('android')" 
@@ -348,7 +348,7 @@
             </div>
 
             <p class="text-[10px] text-slate-400 font-medium">
-                Adds directly to your phone screen via Chrome &bull; 0 MB download &bull; Instant tray alerts
+                Tap to download the official Android APK directly to your mobile phone
             </p>
         </div>
 
