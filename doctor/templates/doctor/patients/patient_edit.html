@@ -41,7 +41,11 @@
                 <i class="fa-solid fa-id-card text-blue-600"></i> Personal Information
             </h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient Category *</label>
+                    {{ form.patient_category }}
+                </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">First Name *</label>
                     {{ form.first_name }}
@@ -54,6 +58,13 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                        <span>Date of Birth</span>
+                        <span class="text-[10px] text-blue-600 font-semibold"><i class="fa-solid fa-calculator mr-1"></i>Auto-calculates Age</span>
+                    </label>
+                    {{ form.date_of_birth }}
+                </div>
+                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Age *</label>
                     {{ form.age }}
                 </div>
@@ -61,13 +72,9 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Gender *</label>
                     {{ form.gender }}
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Date of Birth</label>
-                    {{ form.date_of_birth }}
-                </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
                     {{ form.email }}
@@ -76,13 +83,17 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Phone *</label>
                     {{ form.phone }}
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Prescribed Visit Frequency *</label>
+                    {{ form.appointment_frequency }}
+                </div>
             </div>
         </div>
 
         <!-- Guardian Info -->
         <div class="pt-2">
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Details
+                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Details (For Child Patients)
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -91,8 +102,19 @@
                     {{ form.parent_guardian_name }}
                 </div>
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Relationship</label>
+                    {{ form.parent_guardian_relationship }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Phone</label>
                     {{ form.parent_guardian_phone }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Email</label>
+                    {{ form.parent_guardian_email }}
                 </div>
             </div>
         </div>
@@ -139,4 +161,34 @@
     </form>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        const dobInput = document.getElementById('id_date_of_birth');
+        const ageInput = document.getElementById('id_age');
+        if (dobInput && ageInput) {
+            function calculateAge() {
+                if (!dobInput.value) return;
+                const dob = new Date(dobInput.value);
+                if (isNaN(dob.getTime())) return;
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                if (age >= 0) {
+                    ageInput.value = age;
+                    ageInput.classList.add('ring-2', 'ring-emerald-400');
+                    setTimeout(() => ageInput.classList.remove('ring-2', 'ring-emerald-400'), 1500);
+                }
+            }
+            dobInput.addEventListener('change', calculateAge);
+            dobInput.addEventListener('input', calculateAge);
+            dobInput.addEventListener('blur', calculateAge);
+        }
+    })();
+</script>
 {% endblock %}

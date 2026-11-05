@@ -13,9 +13,12 @@ urlpatterns = [
 
     # Connect with Doctor (Joining Code)
     path('connect/', views.connect_doctor_view, name='connect_doctor'),
+    path('api/connection-status/', views.check_connection_status_api, name='api_connection_status'),
 
     # Core Treatment & Care
     path('treatment/', views.my_treatment_view, name='my_treatment'),
+    path('prescriptions/<int:presc_id>/', views.prescription_view, name='prescription_view'),
+    path('prescriptions/<int:presc_id>/print/', views.prescription_print_view, name='prescription_print'),
     path('photos/upload/', views.upload_photos_view, name='upload_photos'),
     path('progress/', views.treatment_progress_view, name='progress'),
 
@@ -27,6 +30,7 @@ urlpatterns = [
     # Notifications
     path('notifications/', views.notifications_view, name='notifications'),
     path('notifications/<int:notif_id>/read/', views.mark_notification_read_view, name='mark_notification_read'),
+    path('notifications/read-all/', views.mark_all_notifications_read_view, name='mark_all_notifications_read'),
 
     # Emergency & Profile
     path('emergency/', views.emergency_help_view, name='emergency'),

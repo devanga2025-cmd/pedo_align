@@ -14,11 +14,14 @@
                 <i class="fa-solid fa-users text-blue-600"></i> Patient Management
             </h1>
             <p class="text-xs text-slate-500 mt-1">
-                Showing {{ patients.count }} of {{ total_count }} enrolled patients under Dr. {{ doctor.full_name }}
+                Showing {{ patients.count }} of {{ total_count }} active patients &bull; <span class="font-extrabold text-blue-700">{{ lifetime_count }} Total Monitored in Career</span> ({{ archived_count }} Completed/Archived)
             </p>
         </div>
 
         <div class="flex items-center gap-2">
+            <a href="{% url 'doctor:archived_patients' %}" class="btn-secondary text-xs bg-amber-50/70 border-amber-200 text-amber-900 hover:bg-amber-100/70 shadow-xs">
+                <i class="fa-solid fa-box-archive text-amber-600"></i> Archived Patients ({{ archived_count }})
+            </a>
             <a href="{% url 'doctor:export_patients_csv' %}" class="btn-secondary text-xs">
                 <i class="fa-solid fa-file-csv text-emerald-600"></i> Export CSV
             </a>
@@ -30,18 +33,18 @@
 
     <!-- Filters & Search Toolbar -->
     <div class="pa-card p-4">
-        <form method="GET" class="flex flex-col md:flex-row gap-3 items-center justify-between">
+        <form method="GET" class="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
             
             <!-- Search Input -->
-            <div class="relative w-full md:w-96">
+            <div class="relative w-full xl:w-96">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </div>
-                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, patient ID, phone, or joining code..." class="form-input pl-9 text-xs">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, patient ID, phone, or joining code..." class="form-input pl-9 text-xs w-full">
             </div>
 
             <!-- Status Filter Pills -->
-            <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+            <div class="flex flex-wrap items-center gap-1.5 w-full xl:w-auto">
                 <a href="?status=ALL{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
                    class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == 'ALL' %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                     All ({{ total_count }})
@@ -52,6 +55,10 @@
                     {{ label }}
                 </a>
                 {% endfor %}
+                <a href="?status=ARCHIVED{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
+                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == 'ARCHIVED' %}bg-amber-600 text-white shadow-sm{% else %}bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200{% endif %}" title="View Completed and Archived Patient Accounts">
+                    <i class="fa-solid fa-box-archive text-[10px] mr-1"></i> Archived ({{ archived_count }})
+                </a>
             </div>
 
             <!-- View Mode Switch -->
@@ -96,11 +103,22 @@
                                         {{ pt.first_name|first }}{{ pt.last_name|first }}
                                     </div>
                                     <div>
-                                        <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 hover:text-blue-700 block">
-                                            {{ pt.full_name }}
-                                        </a>
+                                        <div class="flex items-center gap-1.5">
+                                            <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 hover:text-blue-700">
+                                                {{ pt.full_name }}
+                                            </a>
+                                            {% if pt.patient_category == 'CHILD' %}
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-sky-100 text-sky-800">
+                                                <i class="fa-solid fa-child"></i> Child
+                                            </span>
+                                            {% else %}
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-800">
+                                                <i class="fa-solid fa-user"></i> Adult
+                                            </span>
+                                            {% endif %}
+                                        </div>
                                         {% if pt.parent_guardian_name %}
-                                        <span class="text-[10px] text-slate-400">Guardian: {{ pt.parent_guardian_name }}</span>
+                                        <span class="text-[10px] text-slate-400 block">Guardian: {{ pt.parent_guardian_name }}{% if pt.parent_guardian_phone %} ({{ pt.parent_guardian_phone }}){% endif %}</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -152,6 +170,12 @@
                                     <a href="{% url 'doctor:patient_edit' pt.id %}" class="p-1.5 text-slate-400 hover:text-slate-700 rounded" title="Edit Patient">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
+                                    <button type="button" 
+                                            onclick="openDeleteAccountModal('{{ pt.id }}', '{{ pt.full_name|escapejs }}', '{{ pt.patient_id|escapejs }}')"
+                                            class="p-1.5 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 transition" 
+                                            title="Delete Patient Account (Treatment Completed)">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -164,7 +188,7 @@
         {% else %}
 
         <!-- GRID CARDS VIEW -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
             {% for pt in patients %}
             <div class="pa-card p-5 pa-card-hover flex flex-col justify-between">
                 <div>
@@ -241,9 +265,17 @@
 
                 <!-- Footer Actions -->
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <a href="{% url 'doctor:patient_edit' pt.id %}" class="text-xs text-slate-500 hover:text-slate-800 font-medium flex items-center gap-1">
-                        <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit
-                    </a>
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'doctor:patient_edit' pt.id %}" class="text-xs text-slate-500 hover:text-slate-800 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit
+                        </a>
+                        <button type="button" 
+                                onclick="openDeleteAccountModal('{{ pt.id }}', '{{ pt.full_name|escapejs }}', '{{ pt.patient_id|escapejs }}')"
+                                class="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 transition px-1.5 py-0.5 rounded hover:bg-rose-50"
+                                title="Delete Patient Account (Treatment Completed)">
+                            <i class="fa-solid fa-trash-can text-[11px]"></i> Delete A/C
+                        </button>
+                    </div>
                     <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-primary py-1.5 px-3 text-xs">
                         <span>Open Profile</span>
                         <i class="fa-solid fa-arrow-right text-[10px]"></i>
@@ -279,5 +311,90 @@
         </div>
     {% endif %}
 
+    <!-- Modal for Deleting Patient Account after Treatment Completion -->
+    <div id="deleteAccountModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-rose-100 animate-in fade-in zoom-in-95 duration-150">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-trash-can text-base"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-900">Delete Patient Account (A/C)</h3>
+                        <p class="text-[11px] text-slate-500">Treatment Completion & Access Revocation</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDeleteAccountModal()" class="text-slate-400 hover:text-slate-600 text-sm p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Clarification Notice -->
+            <div class="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-950 space-y-2">
+                <div class="font-black flex items-center gap-1.5 text-amber-900">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> What happens when this A/C is deleted:
+                </div>
+                <ul class="list-disc pl-4 space-y-1 text-[11px] text-amber-900/90 leading-relaxed">
+                    <li><strong>Patient Login Blocked:</strong> The patient will be permanently prevented from logging in using their email, password, or joining code credentials.</li>
+                    <li><strong>Doctor History 100% Preserved:</strong> All pre-op photos, radiographs, prescriptions, and aligner progress remain completely intact in your <strong>Archived Patients</strong> records.</li>
+                    <li><strong>Career Statistics:</strong> This patient will still be counted in your total career monitored patient records.</li>
+                </ul>
+            </div>
+
+            <form method="POST" id="deleteAccountForm" action="" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient</label>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 flex items-center justify-between">
+                        <span id="deleteModalPatientName">Patient Name</span>
+                        <span id="deleteModalPatientId" class="font-mono text-blue-700 text-[11px]">PA-PT-0000</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Completion Note / Reason</label>
+                    <input type="text" name="reason" value="Treatment completed successfully - patient discharged." class="form-input text-xs" placeholder="e.g. Treatment completed, aligner series finished...">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeDeleteAccountModal()" class="btn-secondary text-xs py-2 px-4">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can"></i> Confirm Delete Patient A/C
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    function openDeleteAccountModal(patientId, patientName, patientIdCode) {
+        const modal = document.getElementById('deleteAccountModal');
+        const form = document.getElementById('deleteAccountForm');
+        const nameEl = document.getElementById('deleteModalPatientName');
+        const idEl = document.getElementById('deleteModalPatientId');
+        
+        if (form) form.action = `/patients/${patientId}/delete-account/`;
+        if (nameEl) nameEl.innerText = patientName;
+        if (idEl) idEl.innerText = patientIdCode;
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeDeleteAccountModal() {
+        const modal = document.getElementById('deleteAccountModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function copyToClipboard(text, btnId) {
+        navigator.clipboard.writeText(text).then(function() {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> Copied';
+                setTimeout(() => { btn.innerHTML = originalHtml; }, 1800);
+            }
+        });
+    }
+</script>
 {% endblock %}

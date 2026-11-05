@@ -18,6 +18,13 @@
                 <p class="mt-2 text-sm text-blue-50 max-w-xl">
                     Follow your custom treatment schedule prescribed by Dr. {{ doctor.full_name|default:"Your Doctor" }}. Wear your aligners consistently to achieve your ideal smile!
                 </p>
+                <div class="mt-3 flex items-center gap-3 text-xs font-semibold text-blue-100 flex-wrap">
+                    <span><i class="fa-solid fa-calendar-day mr-1"></i> Start: <strong>{{ record.treatment_start_date|date:"M d, Y"|default:"Active Care" }}</strong></span>
+                    <span>•</span>
+                    <span><i class="fa-solid fa-clock mr-1"></i> Current Month: <strong>Month {{ current_treatment_month }} of {{ record.treatment_duration_months|default:12 }}</strong></span>
+                    <span>•</span>
+                    <span><i class="fa-solid fa-circle-check mr-1"></i> Status: <strong>{{ record.get_treatment_status_display|default:"Active" }}</strong></span>
+                </div>
             </div>
 
             <!-- Quick Action Buttons -->
@@ -38,18 +45,22 @@
         <!-- Card 1: Current Tray -->
         <div class="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-slate-400 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Current Aligner</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Current Tray</span>
                 <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
                     <i class="fa-solid fa-layer-group"></i>
                 </div>
             </div>
             <div>
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-3xl font-extrabold text-blue-700">#{{ plan.current_aligner|default:"1" }}</span>
-                    <span class="text-xs font-semibold text-slate-400">of {{ plan.total_aligners|default:"20" }}</span>
+                    <span class="text-3xl font-extrabold text-blue-700">#{{ plan.current_aligner|stringformat:"02d"|default:"01" }}</span>
+                    <span class="text-xs font-semibold text-slate-400">of {{ plan.total_aligners|stringformat:"02d"|default:"20" }}</span>
                 </div>
-                <div class="mt-2 text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-circle-check"></i> Active on teeth
+                <div class="mt-2 text-[11px] {% if plan.is_paused %}text-amber-600{% else %}text-emerald-600{% endif %} font-bold flex items-center gap-1">
+                    {% if plan.is_paused %}
+                        <i class="fa-solid fa-pause"></i> Schedule Paused
+                    {% else %}
+                        <i class="fa-solid fa-circle-check"></i> Active on teeth
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -64,26 +75,26 @@
             </div>
             <div>
                 <span class="text-2xl font-extrabold text-slate-900">
-                    {{ plan.aligner_frequency_days|default:"14" }} <span class="text-sm font-semibold text-slate-500">Days</span>
+                    Every {{ plan.aligner_frequency_days|default:"10" }} <span class="text-sm font-semibold text-slate-500">Days</span>
                 </span>
-                <p class="mt-2 text-[11px] text-slate-500">per aligner set</p>
+                <p class="mt-2 text-[11px] text-slate-500">Doctor prescribed cadence</p>
             </div>
         </div>
 
-        <!-- Card 3: Next Change -->
+        <!-- Card 3: Next Change Date -->
         <div class="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-slate-400 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Next Change</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Next Tray #{{ plan.next_aligner|stringformat:"02d" }}</span>
                 <div class="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-sm">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
             </div>
             <div>
                 <span class="text-lg md:text-xl font-extrabold text-slate-900 block truncate">
-                    {{ plan.next_review_date|date:"M d, Y"|default:"Scheduled soon" }}
+                    {{ plan.computed_next_change_date|date:"M d, Y"|default:"Scheduled soon" }}
                 </span>
                 <p class="mt-2 text-[11px] font-bold text-blue-600 flex items-center gap-1">
-                    <i class="fa-solid fa-bell"></i> Reminder active
+                    <i class="fa-solid fa-bell"></i> Tray switch reminder active
                 </p>
             </div>
         </div>
@@ -101,20 +112,606 @@
                     {{ plan.daily_wear_hours|default:"22" }} <span class="text-sm font-semibold text-slate-500">Hours/day</span>
                 </span>
                 <p class="mt-2 text-[11px] text-pink-600 font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-heart"></i> Optimal compliance
+                    <i class="fa-solid fa-heart"></i> Optimal tooth movement
                 </p>
             </div>
         </div>
     </div>
+
+    <!-- ======================================================== -->
+    <!-- COMPLETE 12-STAGE VISUAL TREATMENT TIMELINE (Section 11) -->
+    <!-- ======================================================== -->
+    {% if timeline_stages %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-route text-blue-600"></i> Complete 12-Stage Visual Treatment Journey
+                </h3>
+                <p class="text-xs text-slate-500">Track your progress across every clinical milestone planned by your doctor</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-bold">
+                <span class="flex items-center gap-1.5 text-emerald-600"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Completed</span>
+                <span class="flex items-center gap-1.5 text-blue-600"><span class="w-3 h-3 rounded-full bg-blue-600 ring-2 ring-blue-200"></span> Current</span>
+                <span class="flex items-center gap-1.5 text-slate-400"><span class="w-3 h-3 rounded-full bg-slate-200"></span> Upcoming</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+            {% for stg in timeline_stages %}
+            <div class="p-4 rounded-2xl border transition-all flex flex-col justify-between
+                {% if stg.is_completed %}
+                    bg-emerald-50/60 border-emerald-200 text-emerald-950
+                {% elif stg.is_current %}
+                    bg-gradient-to-b from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-100
+                {% else %}
+                    bg-slate-50 border-slate-200/80 text-slate-600
+                {% endif %}">
+                
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black
+                            {% if stg.is_completed %}
+                                bg-emerald-500 text-white
+                            {% elif stg.is_current %}
+                                bg-white text-blue-700 font-extrabold shadow-sm
+                            {% else %}
+                                bg-slate-200 text-slate-600
+                            {% endif %}">
+                            {% if stg.is_completed %}
+                                <i class="fa-solid fa-check"></i>
+                            {% else %}
+                                {{ stg.stage_number }}
+                            {% endif %}
+                        </span>
+
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider
+                            {% if stg.is_completed %}
+                                bg-emerald-200 text-emerald-900
+                            {% elif stg.is_current %}
+                                bg-white/20 text-white backdrop-blur-xs
+                            {% else %}
+                                bg-slate-200 text-slate-600
+                            {% endif %}">
+                            {% if stg.is_completed %}Done{% elif stg.is_current %}Active{% else %}Upcoming{% endif %}
+                        </span>
+                    </div>
+
+                    <h4 class="text-xs font-bold leading-snug line-clamp-2">
+                        {{ stg.name }}
+                    </h4>
+                    <p class="text-[11px] mt-1 leading-relaxed opacity-85">
+                        {{ stg.description }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ======================================================== -->
+    <!-- DOCTOR TREATMENT MEDIA SECTION (Section 9)               -->
+    <!-- ======================================================== -->
+    {% if doctor_media %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border-2 border-indigo-200/80 shadow-md space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-indigo-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg flex-shrink-0 shadow-md shadow-indigo-500/25">
+                    <i class="fa-solid fa-film"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-base font-extrabold text-slate-900">Doctor Clinical Media & Guidance</h3>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-100 text-indigo-800 uppercase tracking-wider">
+                            v{{ doctor_media.version }} Active
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">Custom video guidance & dental photography uploaded by Dr. {{ doctor.full_name }}</p>
+                </div>
+            </div>
+            <span class="text-xs font-bold text-slate-400">
+                <i class="fa-regular fa-calendar mr-1"></i> Uploaded: {{ doctor_media.upload_date|date:"M d, Y" }}
+            </span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2 text-xs">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-extrabold text-indigo-950">Prescribed Operation:</span>
+                    <span class="font-black text-indigo-800 bg-white px-3 py-1 rounded-lg border border-indigo-200 shadow-xs">
+                        <i class="fa-solid fa-bullseye text-indigo-600 mr-1"></i> {{ doctor_media.operation_name|default:record.current_operation|default:"Turn Quest" }}
+                    </span>
+                    <span class="font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                        <i class="fa-solid fa-camera mr-1"></i> {{ doctor_media.get_update_frequency_display|default:record.get_monitoring_frequency_display|default:"Weekly Update" }} Protocol
+                    </span>
+                    <span class="text-slate-600 font-semibold">Stage: {{ doctor_media.treatment_stage }}</span>
+                </div>
+                {% if media_history.count > 1 %}
+                <span class="text-slate-500 text-[11px]">{{ media_history.count }} media updates on file</span>
+                {% endif %}
+            </div>
+
+            <!-- Diagnosed Clinical Problem -->
+            {% if doctor_media.patient_problem or record.diagnosed_problem %}
+            <div class="p-3 bg-white rounded-xl border border-indigo-100 text-xs">
+                <span class="font-black text-indigo-950 block mb-0.5">
+                    <i class="fa-solid fa-stethoscope text-indigo-600 mr-1"></i> Diagnosed Clinical Problem:
+                </span>
+                <p class="text-slate-700 leading-relaxed whitespace-pre-line">{{ doctor_media.patient_problem|default:record.diagnosed_problem }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Video & Photo Media Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Video Column -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-video text-indigo-600"></i> Doctor Instructional Video
+                </h4>
+                {% if doctor_media.video %}
+                <div class="rounded-2xl overflow-hidden bg-slate-950 shadow-md border border-slate-800 aspect-video flex items-center justify-center">
+                    <video controls preload="metadata" class="w-full h-full object-contain">
+                        <source src="{{ doctor_media.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                {% if doctor_media.video_description %}
+                <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">
+                    <strong>Video Description:</strong> {{ doctor_media.video_description }}
+                </p>
+                {% endif %}
+                {% else %}
+                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-8 text-center text-xs text-slate-400">
+                    <i class="fa-solid fa-video-slash text-2xl text-slate-300 mb-2 block"></i>
+                    No demonstration video attached for this stage.
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Photo Column -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-image text-indigo-600"></i> Clinical Treatment Photograph
+                </h4>
+                {% if doctor_media.photo %}
+                <div class="rounded-2xl overflow-hidden bg-slate-50 shadow-md border border-slate-200 aspect-video flex items-center justify-center relative group">
+                    <img src="{{ doctor_media.photo.url }}" alt="Doctor Treatment Photo" class="w-full h-full object-contain">
+                    <a href="{{ doctor_media.photo.url }}" target="_blank" class="absolute bottom-2 right-2 px-3 py-1 bg-slate-900/80 hover:bg-slate-900 text-white text-[11px] font-bold rounded-lg backdrop-blur-xs transition">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center mr-1"></i> Expand Photo
+                    </a>
+                </div>
+                {% if doctor_media.photo_description %}
+                <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">
+                    <strong>Photo Description:</strong> {{ doctor_media.photo_description }}
+                </p>
+                {% endif %}
+                {% else %}
+                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-8 text-center text-xs text-slate-400">
+                    <i class="fa-regular fa-image text-2xl text-slate-300 mb-2 block"></i>
+                    No clinical photo attached for this stage.
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Doctor Instructions -->
+        {% if doctor_media.doctor_instructions %}
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/90 text-xs">
+            <h4 class="font-bold text-blue-950 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-user-doctor text-blue-600"></i> Doctor's Specific Wear & Technique Instructions:
+            </h4>
+            <p class="text-slate-700 leading-relaxed whitespace-pre-line">{{ doctor_media.doctor_instructions }}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ======================================================== -->
+    <!-- TURN QUEST / TREATMENT SEQUENCE (Section 8)              -->
+    <!-- ======================================================== -->
+    {% if treatment_turns %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-blue-600"></i> Turn Quest / Treatment Sequence Stages
+                </h3>
+                <p class="text-xs text-slate-500">Individual sequential milestones prescribed and tracked by your doctor</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-blue-100 text-blue-800">
+                {{ treatment_turns.count }} Stages Prescribed
+            </span>
+        </div>
+
+        <div class="space-y-3">
+            {% for turn in treatment_turns %}
+            <div class="p-4 rounded-2xl border transition-all
+                {% if turn.status == 'COMPLETED' %}
+                    bg-emerald-50/40 border-emerald-200/80
+                {% elif turn.status == 'IN_PROGRESS' %}
+                    bg-blue-50/60 border-blue-200/90 ring-2 ring-blue-100
+                {% else %}
+                    bg-slate-50/60 border-slate-200/70
+                {% endif %} flex flex-col md:flex-row md:items-start justify-between gap-4">
+                
+                <div class="space-y-1.5 flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-black text-slate-900">Turn #{{ turn.turn_number }}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase
+                            {% if turn.status == 'COMPLETED' %}bg-emerald-100 text-emerald-800
+                            {% elif turn.status == 'IN_PROGRESS' %}bg-blue-600 text-white
+                            {% elif turn.status == 'PAUSED' %}bg-amber-100 text-amber-800
+                            {% else %}bg-slate-200 text-slate-700{% endif %}">
+                            {{ turn.get_status_display }}
+                        </span>
+                        {% if turn.start_date %}
+                        <span class="text-xs text-slate-400">Started: {{ turn.start_date|date:"M d, Y" }}</span>
+                        {% endif %}
+                        {% if turn.completion_date %}
+                        <span class="text-xs text-slate-500 font-semibold">• Target: {{ turn.completion_date|date:"M d, Y" }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if turn.instructions %}
+                    <p class="text-xs text-slate-700 leading-relaxed">
+                        <strong class="text-slate-900">Instructions:</strong> {{ turn.instructions }}
+                    </p>
+                    {% endif %}
+
+                    {% if turn.doctor_remarks %}
+                    <p class="text-[11px] text-blue-900 font-medium">
+                        <i class="fa-solid fa-comment-dots mr-1"></i> Doctor Remarks: {{ turn.doctor_remarks }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                {% if turn.next_turn_date %}
+                <div class="text-right flex-shrink-0 text-xs">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase">Next Turn Date</span>
+                    <span class="font-extrabold text-blue-700">{{ turn.next_turn_date|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ======================================================== -->
+    <!-- DEDICATED TRAY / ALIGNER MANAGEMENT SECTION              -->
+    <!-- ======================================================== -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-cubes-stacked text-blue-600"></i> Tray & Aligner Schedule Management
+                </h3>
+                <p class="text-xs text-slate-500">Doctor-supervised clear aligner progression and wear details</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-black bg-blue-100 text-blue-800">
+                    Active: Tray #{{ plan.current_aligner|stringformat:"02d" }}
+                </span>
+                <span class="px-3 py-1 rounded-full text-xs font-black bg-sky-100 text-sky-800">
+                    Next: Tray #{{ plan.next_aligner|stringformat:"02d" }}
+                </span>
+            </div>
+        </div>
+
+        {% if plan.is_paused %}
+        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
+            <i class="fa-solid fa-circle-exclamation text-amber-600 text-lg mt-0.5"></i>
+            <div>
+                <p class="font-bold text-sm">Tray Advancement Temporarily Paused by Doctor</p>
+                <p class="mt-0.5">{{ plan.pause_reason|default:"Your doctor has paused your tray schedule for clinical monitoring. Please continue wearing your current tray until further notice." }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tray Schedule Details Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <span class="text-slate-400 font-bold uppercase text-[10px] block mb-1">Total Prescribed Trays</span>
+                <span class="text-xl font-black text-slate-900">{{ plan.total_aligners|stringformat:"02d" }} Sets</span>
+                <p class="text-[11px] text-slate-500 mt-1">Upper & Lower series</p>
+            </div>
+
+            <div class="p-4 bg-blue-50/60 rounded-2xl border border-blue-100">
+                <span class="text-blue-500 font-bold uppercase text-[10px] block mb-1">Current Tray In Mouth</span>
+                <span class="text-xl font-black text-blue-700">Tray #{{ plan.current_aligner|stringformat:"02d" }}</span>
+                <p class="text-[11px] text-blue-600/80 mt-1">Stage {{ plan.progress_percentage }}% complete</p>
+            </div>
+
+            <div class="p-4 bg-sky-50/60 rounded-2xl border border-sky-100">
+                <span class="text-sky-500 font-bold uppercase text-[10px] block mb-1">Next Tray In Box</span>
+                <span class="text-xl font-black text-sky-700">Tray #{{ plan.next_aligner|stringformat:"02d" }}</span>
+                <p class="text-[11px] text-sky-600/80 mt-1">Ready for next switch</p>
+            </div>
+
+            <div class="p-4 bg-cyan-50/60 rounded-2xl border border-cyan-100">
+                <span class="text-cyan-600 font-bold uppercase text-[10px] block mb-1">Next Change Date</span>
+                <span class="text-base font-black text-cyan-800">{{ plan.computed_next_change_date|date:"M d, Y"|default:"TBD by Doctor" }}</span>
+                <p class="text-[11px] text-cyan-700/80 mt-1">Switch every {{ plan.aligner_frequency_days|default:"10" }} days</p>
+            </div>
+        </div>
+
+        <!-- Schedule Lock Notice (Important Requirement 8) -->
+        <div class="p-4 rounded-2xl bg-blue-50/80 border border-blue-200/90 flex items-start gap-3 text-xs text-blue-950">
+            <i class="fa-solid fa-lock text-blue-600 text-lg mt-0.5 flex-shrink-0"></i>
+            <div class="space-y-1">
+                <p class="font-bold">Doctor-Prescribed Aligner Schedule Locked</p>
+                <p class="text-blue-900 leading-relaxed">
+                    To maintain safe orthodontic biomechanics and prevent tooth root damage, all tray changing schedules are strictly controlled by Dr. {{ doctor.full_name|default:"Your Doctor" }}. Patients cannot independently modify prescribed tray dates. If your aligner feels loose or ill-fitting, please contact the clinic or submit a photo check-in.
+                </p>
+            </div>
+        </div>
+
+        <!-- Doctor Instructions -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-user-doctor text-blue-600"></i> Doctor's Tray Wear Instructions
+            </h4>
+            <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">{{ plan.treatment_instructions|default:"Wear aligners 20-22 hours daily. Change aligners strictly as scheduled. Clean with soft brush and lukewarm water." }}</p>
+        </div>
+
+        <!-- Previous Tray History Table -->
+        {% if tray_history %}
+        <div>
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Your Tray History</h4>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden">
+                    <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+                        <tr>
+                            <th class="p-2.5">Tray Stage</th>
+                            <th class="p-2.5">Start Date</th>
+                            <th class="p-2.5">Completion Date</th>
+                            <th class="p-2.5">Status</th>
+                            <th class="p-2.5">Doctor Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        {% for t in tray_history %}
+                        <tr>
+                            <td class="p-2.5 font-bold font-mono text-blue-700">Tray #{{ t.tray_number|stringformat:"02d" }}</td>
+                            <td class="p-2.5">{{ t.started_on|date:"M d, Y" }}</td>
+                            <td class="p-2.5">{{ t.completed_on|date:"M d, Y"|default:"Active" }}</td>
+                            <td class="p-2.5">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold {% if t.status == 'Completed' %}bg-emerald-100 text-emerald-800{% elif t.status == 'Paused' %}bg-amber-100 text-amber-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                                    {{ t.status }}
+                                </span>
+                            </td>
+                            <td class="p-2.5 text-slate-500 text-[11px]">{{ t.doctor_notes|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- UPPER AND LOWER ARCH MONITORING (Requirement 3)          -->
+    <!-- ======================================================== -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        
+        <!-- A. UPPER ARCH CARD -->
+        <div class="bg-white rounded-3xl p-6 border-2 border-blue-200/80 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-blue-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Upper Arch (Maxillary)</h3>
+                        <p class="text-[10px] text-slate-400">Doctor-shared progress & status</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800">
+                    {{ plan.upper_arch_status|default:"Aligning & Leveling" }}
+                </span>
+            </div>
+
+            <!-- Upper Arch Photo -->
+            <div class="h-48 w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center">
+                {% if plan.upper_arch_photo %}
+                    <img src="{{ plan.upper_arch_photo.url }}" alt="Upper Arch Photo" class="w-full h-full object-contain">
+                {% else %}
+                    <div class="text-center text-slate-400 p-4">
+                        <i class="fa-solid fa-tooth text-4xl mb-1 text-blue-200"></i>
+                        <p class="text-xs font-medium">Upper arch clinical scan on file at clinic</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Upper Arch Notes -->
+            <div class="p-3.5 bg-blue-50/60 rounded-2xl border border-blue-100 text-xs">
+                <strong class="text-blue-900 block mb-1">Doctor Upper Arch Notes:</strong>
+                <p class="text-slate-700 leading-relaxed">{{ plan.upper_arch_notes|default:"Upper arch expanding and aligning smoothly according to prescription." }}</p>
+            </div>
+
+            <!-- Upper Arch History Timeline -->
+            {% if upper_history %}
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Upper Arch Progression Log</span>
+                <div class="space-y-1.5 max-h-32 overflow-y-auto text-xs pr-1">
+                    {% for h in upper_history %}
+                    <div class="p-2 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-slate-800">Stage #{{ h.stage_number }}: {{ h.status }}</span>
+                            {% if h.notes %}<p class="text-[10px] text-slate-500 line-clamp-1">{{ h.notes }}</p>{% endif %}
+                        </div>
+                        <span class="text-[10px] text-slate-400">{{ h.created_at|date:"M d" }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- B. LOWER ARCH CARD -->
+        <div class="bg-white rounded-3xl p-6 border-2 border-cyan-200/80 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-cyan-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Lower Arch (Mandibular)</h3>
+                        <p class="text-[10px] text-slate-400">Doctor-shared progress & status</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-cyan-100 text-cyan-800">
+                    {{ plan.lower_arch_status|default:"Aligning & Leveling" }}
+                </span>
+            </div>
+
+            <!-- Lower Arch Photo -->
+            <div class="h-48 w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center">
+                {% if plan.lower_arch_photo %}
+                    <img src="{{ plan.lower_arch_photo.url }}" alt="Lower Arch Photo" class="w-full h-full object-contain">
+                {% else %}
+                    <div class="text-center text-slate-400 p-4">
+                        <i class="fa-solid fa-tooth text-4xl mb-1 text-cyan-200"></i>
+                        <p class="text-xs font-medium">Lower arch clinical scan on file at clinic</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Lower Arch Notes -->
+            <div class="p-3.5 bg-cyan-50/60 rounded-2xl border border-cyan-100 text-xs">
+                <strong class="text-cyan-900 block mb-1">Doctor Lower Arch Notes:</strong>
+                <p class="text-slate-700 leading-relaxed">{{ plan.lower_arch_notes|default:"Lower arch crowding resolving with planned interproximal spaces." }}</p>
+            </div>
+
+            <!-- Lower Arch History Timeline -->
+            {% if lower_history %}
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Lower Arch Progression Log</span>
+                <div class="space-y-1.5 max-h-32 overflow-y-auto text-xs pr-1">
+                    {% for h in lower_history %}
+                    <div class="p-2 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-slate-800">Stage #{{ h.stage_number }}: {{ h.status }}</span>
+                            {% if h.notes %}<p class="text-[10px] text-slate-500 line-clamp-1">{{ h.notes }}</p>{% endif %}
+                        </div>
+                        <span class="text-[10px] text-slate-400">{{ h.created_at|date:"M d" }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- DIGITAL PRESCRIPTIONS SHEET HISTORY (Section 6)          -->
+    <!-- ======================================================== -->
+    {% if prescriptions %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-prescription text-blue-600"></i> Prescriptions & Medication Sheets
+                </h3>
+                <p class="text-xs text-slate-500">Official prescriptions prescribed by Dr. {{ doctor.full_name }}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-cyan-100 text-cyan-800">
+                {{ prescriptions.count }} Records
+            </span>
+        </div>
+
+        <div class="space-y-3">
+            {% for presc in prescriptions %}
+            <div class="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-black text-slate-900">Prescription #{{ presc.id }}</span>
+                        <span class="text-xs text-slate-400">• {{ presc.prescription_date|date:"F j, Y" }}</span>
+                    </div>
+                    <p class="text-xs text-slate-800 font-semibold">
+                        Diagnosis / Findings: <span class="text-blue-700">{{ presc.diagnosis }}</span>
+                    </p>
+                    <p class="text-xs text-slate-600 line-clamp-2">
+                        <strong>Prescribed Medicines:</strong> {{ presc.medicines_data }}
+                    </p>
+                    {% if presc.special_instructions %}
+                    <p class="text-[11px] text-slate-500">
+                        <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> {{ presc.special_instructions }}
+                    </p>
+                    {% endif %}
+                    {% if presc.next_followup_date %}
+                    <p class="text-[11px] text-purple-700 font-semibold">
+                        <i class="fa-regular fa-calendar-check mr-1"></i> Next Follow-up: {{ presc.next_followup_date|date:"M d, Y" }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a href="{% url 'patient:prescription_view' presc.id %}" class="btn-patient-secondary py-2 px-3.5 text-xs">
+                        <i class="fa-solid fa-eye mr-1"></i> View Sheet
+                    </a>
+                    <a href="{% url 'patient:prescription_print' presc.id %}" target="_blank" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-sm transition">
+                        <i class="fa-solid fa-print mr-1"></i> Print / Download PDF
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ======================================================== -->
+    <!-- MONTHLY TREATMENT PROGRESS NOTES (Section 7)             -->
+    <!-- ======================================================== -->
+    {% if monthly_notes %}
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-check text-blue-600"></i> Monthly Clinical Progress Notes
+                </h3>
+                <p class="text-xs text-slate-500">Monthly observations recorded during routine alignment evaluations</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">
+                Month {{ current_treatment_month }} Ongoing
+            </span>
+        </div>
+
+        <div class="space-y-3">
+            {% for note in monthly_notes %}
+            <div class="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 space-y-1">
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-blue-800">Month #{{ note.month_number }} Evaluation</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                            {{ note.status_update }}
+                        </span>
+                    </div>
+                    <span class="text-slate-400 font-semibold">{{ note.note_date|date:"M d, Y" }}</span>
+                </div>
+                <p class="text-xs text-slate-700 leading-relaxed pt-1">
+                    {{ note.notes }}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Doctor Details Card -->
     {% if doctor %}
     <div class="bg-white rounded-3xl p-6 border border-blue-100/80 shadow-sm">
         <div class="flex items-start md:items-center justify-between flex-col md:flex-row gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-sky-400 p-0.5 shadow-md flex-shrink-0">
-                    {% if doctor.profile_image %}
-                        <img src="{{ doctor.profile_image.url }}" alt="{{ doctor.full_name }}" class="w-full h-full object-cover rounded-2xl">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-500 to-sky-400 p-0.5 shadow-md flex-shrink-0">
+                    {% if doctor.profile_picture %}
+                        <img src="{{ doctor.profile_picture.url }}" alt="{{ doctor.full_name }}" class="w-full h-full object-cover rounded-2xl">
                     {% else %}
                         <div class="w-full h-full bg-white rounded-2xl flex items-center justify-center text-blue-600 text-xl font-extrabold">
                             {{ doctor.full_name|slice:":1" }}
@@ -125,11 +722,14 @@
                     <div class="flex items-center gap-2">
                         <h2 class="text-lg font-bold text-slate-900">Dr. {{ doctor.full_name }}</h2>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-700 uppercase tracking-wider">
-                            Prescribing Orthodontist
+                            {{ doctor.specialization|default:"Prescribing Orthodontist" }}
                         </span>
                     </div>
                     <p class="text-xs text-slate-600 mt-0.5">
                         {{ doctor.dental_qualification|default:"BDS, MDS Orthodontics" }} • <span class="font-semibold text-slate-800">{{ doctor.clinic_name }}</span>
+                        {% if doctor.ksdc_registration_number %}
+                            • <span class="font-mono text-slate-600 font-bold">KSDC Reg: {{ doctor.ksdc_registration_number }}</span>
+                        {% endif %}
                     </p>
                     <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5">
                         <i class="fa-solid fa-location-dot text-slate-400"></i> {{ doctor.clinic_address|default:"Clinic location on file" }}
@@ -269,4 +869,3 @@
 
 </div>
 {% endblock %}
-

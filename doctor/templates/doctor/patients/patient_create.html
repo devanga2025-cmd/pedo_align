@@ -11,15 +11,37 @@
     <div class="flex items-center justify-between pb-2 border-b border-slate-200">
         <div>
             <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-blue-600"></i> New Patient Intake
+                <i class="fa-solid fa-user-plus text-blue-600"></i> New Patient Clinical Intake & Examination
             </h1>
             <p class="text-xs text-slate-500 mt-1">
-                Enroll a new pediatric or teen orthodontic patient under Dr. {{ doctor.full_name }}
+                Record the initial clinical examination, dental history, and treatment schedule.
             </p>
         </div>
         <a href="{% url 'doctor:patient_list' %}" class="btn-secondary text-xs">
             <i class="fa-solid fa-arrow-left"></i> Back to Patients
         </a>
+    </div>
+
+    <!-- Doctor Information Card (Section 1 Requirement) -->
+    <div class="bg-gradient-to-r from-[#011f55] via-blue-900 to-indigo-950 rounded-2xl p-4 sm:p-5 text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-sky-300 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fa-solid fa-user-doctor"></i>
+            </div>
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-sky-200 block">Examining Doctor & Clinic</span>
+                <h3 class="text-base font-extrabold text-white">Dr. {{ doctor.full_name }}</h3>
+                <p class="text-xs text-blue-100 font-medium">{{ doctor.specialization|default:doctor.dental_qualification }} • {{ doctor.clinic_name }}</p>
+            </div>
+        </div>
+        <div class="text-left sm:text-right text-xs text-blue-200">
+            {% if doctor.ksdc_registration_number %}
+            <p><span class="text-white font-bold">KSDC Reg:</span> <span class="font-mono">{{ doctor.ksdc_registration_number }}</span></p>
+            {% elif doctor.license_number %}
+            <p><span class="text-white font-bold">License:</span> <span class="font-mono">{{ doctor.license_number }}</span></p>
+            {% endif %}
+            <p class="text-[11px] text-blue-300 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i> {{ doctor.clinic_address|truncatechars:35 }}</p>
+        </div>
     </div>
 
     <!-- Joining Code Banner Notice -->
@@ -30,7 +52,7 @@
         <div>
             <h4 class="text-xs font-bold text-blue-900">Automatic Unique Joining Code Generation</h4>
             <p class="text-xs text-blue-800/80 mt-0.5 leading-relaxed">
-                Once you save this patient, the system will immediately generate a cryptographically secure, individual joining code (e.g. <code>PA-XXXXXX</code>) valid for 14 days. You can share this code with the patient or parent to initiate remote monitoring.
+                Saving this clinical intake will generate a secure patient joining code (e.g. <code>PA-XXXXXX</code>) valid for 14 days to link the patient or guardian's mobile/web portal.
             </p>
         </div>
     </div>
@@ -51,13 +73,18 @@
     <form method="POST" enctype="multipart/form-data" class="pa-card p-6 sm:p-8 space-y-6">
         {% csrf_token %}
 
-        <!-- 1. Patient Demographics -->
+        <!-- 1. Patient Demographics & Category -->
         <div>
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-id-card text-blue-600"></i> Personal Information
+                <i class="fa-solid fa-id-card text-blue-600"></i> Patient Demographics & Category
             </h3>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient Category *</label>
+                    {{ form.patient_category }}
+                    <span class="text-[10px] text-slate-400 mt-1 block">Child Patient or Adult Patient</span>
+                </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">First Name *</label>
                     {{ form.first_name }}
@@ -70,6 +97,13 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                        <span>Date of Birth</span>
+                        <span class="text-[10px] text-blue-600 font-semibold"><i class="fa-solid fa-calculator mr-1"></i>Auto-calculates Age</span>
+                    </label>
+                    {{ form.date_of_birth }}
+                </div>
+                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Age (Years) *</label>
                     {{ form.age }}
                 </div>
@@ -77,13 +111,9 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Gender *</label>
                     {{ form.gender }}
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Date of Birth</label>
-                    {{ form.date_of_birth }}
-                </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Patient Email (Optional)</label>
                     {{ form.email }}
@@ -92,13 +122,17 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Patient Phone / WhatsApp *</label>
                     {{ form.phone }}
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Frequency</label>
+                    {{ form.appointment_frequency }}
+                </div>
             </div>
         </div>
 
-        <!-- 2. Parent / Guardian Info (Pedodontic Care) -->
+        <!-- 2. Parent / Guardian Info (Required for Children) -->
         <div class="pt-2">
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Contact (For Pedo / Teen Patients)
+                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Details (For Child Patients)
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -107,23 +141,54 @@
                     {{ form.parent_guardian_name }}
                 </div>
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Relationship (Father, Mother, Guardian)</label>
+                    {{ form.parent_guardian_relationship }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Parent Phone / WhatsApp</label>
                     {{ form.parent_guardian_phone }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Parent Email Address</label>
+                    {{ form.parent_guardian_email }}
                 </div>
             </div>
         </div>
 
-        <!-- 3. Treatment Parameters -->
+        <!-- 3. Medical & Dental History (Section 1 Requirement) -->
         <div class="pt-2">
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Parameters & Notes
+                <i class="fa-solid fa-file-waveform text-blue-600"></i> Medical & Dental History
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Treatment Duration (Months)</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Medical History</label>
+                    {{ form.medical_history }}
+                    <span class="text-[10px] text-slate-400 block mt-1">Allergies, systemic illnesses, ongoing medications</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Dental History</label>
+                    {{ form.dental_history }}
+                    <span class="text-[10px] text-slate-400 block mt-1">Previous orthodontic/dental care, dental trauma, fluoride habits</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Treatment Duration & Parameters (Section 7 Requirement) -->
+        <div class="pt-2">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-clock text-blue-600"></i> Treatment Duration
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Expected Treatment Duration (Months)</label>
                     {{ form.treatment_duration_months }}
-                    <span class="text-[11px] text-slate-400 block mt-1">Default 12 months (approx. 24 aligner stages)</span>
+                    <span class="text-[10px] text-slate-400 block mt-1">e.g. 1, 2, 3, 4, 5, 6, 9, 12, or custom months</span>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Profile Photo (Optional)</label>
@@ -132,8 +197,35 @@
             </div>
 
             <div class="mt-4">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Initial Case Overview / Clinical Observations</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Initial Clinical Examination Observations</label>
                 {{ form.notes }}
+            </div>
+        </div>
+
+        <!-- 5. Appointment Scheduling – 20-Day Follow-Up (Section 4 Requirement) -->
+        <div class="pt-2 bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200/80 rounded-2xl p-5">
+            <div class="flex items-start gap-3">
+                <div class="pt-0.5">
+                    {{ form.schedule_20day_followup }}
+                </div>
+                <div class="flex-1">
+                    <label for="id_schedule_20day_followup" class="text-sm font-black text-slate-900 cursor-pointer flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-blue-600"></i> Schedule Initial 20-Day Follow-Up Appointment
+                    </label>
+                    <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                        Follow-up interval is 20 days by default. The system will create the appointment and automatically dispatch a notification to the patient.
+                    </p>
+
+                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Follow-Up Date (Default +20 Days, Configurable)</label>
+                            <input type="date" name="custom_followup_date" value="{{ default_20day_date }}" class="form-input text-xs">
+                        </div>
+                        <div class="flex items-center text-xs text-slate-500 pt-5">
+                            <span><i class="fa-solid fa-bell text-amber-500 mr-1"></i> Patient notification includes doctor name, clinic name, date, time & instructions.</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -141,11 +233,44 @@
         <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
             <a href="{% url 'doctor:patient_list' %}" class="btn-secondary text-xs">Cancel</a>
             <button type="submit" class="btn-primary text-xs shadow-md">
-                <i class="fa-solid fa-check mr-1"></i> Save Patient & Generate Joining Code
+                <i class="fa-solid fa-check mr-1"></i> Save Clinical Record & Register Patient
             </button>
         </div>
 
     </form>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        const dobInput = document.getElementById('id_date_of_birth');
+        const ageInput = document.getElementById('id_age');
+        if (dobInput && ageInput) {
+            function calculateAge() {
+                if (!dobInput.value) return;
+                const dob = new Date(dobInput.value);
+                if (isNaN(dob.getTime())) return;
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+                if (age >= 0) {
+                    ageInput.value = age;
+                    ageInput.classList.add('ring-2', 'ring-emerald-400');
+                    setTimeout(() => ageInput.classList.remove('ring-2', 'ring-emerald-400'), 1500);
+                }
+            }
+            dobInput.addEventListener('change', calculateAge);
+            dobInput.addEventListener('input', calculateAge);
+            dobInput.addEventListener('blur', calculateAge);
+            if (dobInput.value && !ageInput.value) {
+                calculateAge();
+            }
+        }
+    })();
+</script>
 {% endblock %}

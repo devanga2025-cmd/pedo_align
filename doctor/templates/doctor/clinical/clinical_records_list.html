@@ -18,16 +18,21 @@
             </p>
         </div>
 
-        <form method="GET" class="relative w-full sm:w-72">
-            <input type="text" name="q" value="{{ query }}" placeholder="Search patient or diagnosis..." class="form-input text-xs pl-8">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-        </form>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <form method="GET" class="relative w-full sm:w-64">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search patient or diagnosis..." class="form-input text-xs pl-8">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+            </form>
+            <a href="{% url 'doctor:export_patients_csv' %}" class="btn-primary text-xs flex items-center gap-2 py-2 px-4 shadow-sm whitespace-nowrap">
+                <i class="fa-solid fa-download"></i> Download Report
+            </a>
+        </div>
     </div>
 
     <!-- Table of Clinical Records -->
     {% if records %}
     <div class="pa-card overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto custom-scrollbar">
             <table class="w-full text-left text-xs border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">

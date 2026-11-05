@@ -26,6 +26,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'config.middleware.AutoLoginDashboardRedirectMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -93,8 +94,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'doctor:login'
-LOGIN_REDIRECT_URL = 'doctor:dashboard'
-LOGOUT_REDIRECT_URL = 'doctor:login'
+LOGIN_URL = 'doctor:landing'
+LOGIN_REDIRECT_URL = 'doctor:landing'
+LOGOUT_REDIRECT_URL = 'doctor:landing'
+
+# Session Persistence - keep doctor & patient signed in for 90 days
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 90  # 90 days persistent login
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

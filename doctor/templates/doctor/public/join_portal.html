@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Join Portal - PEDO ALIGN</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
@@ -16,16 +24,26 @@
         <div class="bg-white rounded-3xl shadow-2xl border border-blue-100 p-8 sm:p-10">
             
             <!-- Logo Header -->
-            <div class="text-center mb-8">
-                <div class="flex justify-center mb-3">
-                    <img src="{% static 'doctor/images/logo.jpeg' %}" alt="PEDO ALIGN" class="h-20 w-20 object-contain rounded-2xl shadow-md border border-slate-100">
+            <div class="text-center mb-6">
+                <div class="flex justify-center mb-2">
+                    <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" 
+                         alt="PEDO ALIGN" 
+                         onerror="this.src='/static/doctor/images/logo.jpeg'" 
+                         class="max-w-[200px] h-auto object-contain drop-shadow-sm">
                 </div>
-                <h2 class="text-2xl font-black text-slate-900 tracking-tight">PEDO <span class="text-sky-500">ALIGN</span></h2>
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider my-2">
                     <i class="fa-solid fa-link"></i> Patient Connection Portal
                 </div>
                 <h3 class="text-xl font-bold text-slate-800">Connect to Your Orthodontist</h3>
                 <p class="text-xs text-slate-500 mt-1">Enter the unique joining code given by your dental doctor to activate treatment tracking</p>
+            </div>
+
+            <!-- Instant Access Highlight Banner -->
+            <div class="mb-5 bg-gradient-to-r from-blue-50 via-sky-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-3.5 text-xs text-blue-900 flex items-start gap-2.5">
+                <i class="fa-solid fa-wand-magic-sparkles text-blue-600 text-sm mt-0.5 flex-shrink-0"></i>
+                <div class="leading-relaxed">
+                    <strong>Fast & Passwordless:</strong> Enter your unique code (e.g. <strong>PA-XXXXXX</strong>). If your doctor has approved your treatment, you will land directly on your Treatment Dashboard!
+                </div>
             </div>
 
             {% if success_info %}
@@ -49,8 +67,13 @@
                 <p class="text-xs text-slate-500">
                     Dr. {{ success_info.doctor_name }} has been notified. Once approved, you can start submitting your weekly aligner tracking photos.
                 </p>
-                <div class="pt-2">
-                    <a href="{% url 'doctor:patient_join_portal' %}" class="btn-secondary text-xs w-full">Connect Another Code</a>
+                <div class="pt-2 space-y-2">
+                    <a href="{% url 'patient:dashboard' %}" class="btn-primary text-xs w-full py-3 flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-gauge"></i> Open Treatment Dashboard & Status Tracker
+                    </a>
+                    <a href="{% url 'doctor:patient_join_portal' %}" class="btn-secondary text-xs w-full block text-center py-2.5">
+                        Connect Another Code
+                    </a>
                 </div>
             </div>
 
@@ -58,13 +81,19 @@
 
             <!-- Errors -->
             {% if form.errors %}
-            <div class="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
-                <p class="font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Could not connect code:</p>
+            <div class="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-2">
+                <p class="font-bold text-sm"><i class="fa-solid fa-circle-exclamation mr-1"></i> Could not connect code:</p>
                 {% for field in form %}
                     {% for error in field.errors %}
                         <p>• {{ error }}</p>
                     {% endfor %}
                 {% endfor %}
+
+                <div class="pt-2 border-t border-rose-200/80 mt-2">
+                    <a href="/patient/login/" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-sm transition">
+                        <i class="fa-solid fa-right-to-bracket"></i> Go to Patient Login &rarr;
+                    </a>
+                </div>
             </div>
             {% endif %}
 
@@ -83,21 +112,21 @@
                 </div>
 
                 <div class="border-t border-slate-100 pt-3">
-                    <p class="text-xs font-bold text-slate-800 mb-2">Patient Details</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <p class="text-xs font-bold text-slate-800 mb-1">Patient Details <span class="text-[11px] font-normal text-slate-500">(Optional if clinic already registered you)</span></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">First Name *</label>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">First Name</label>
                             {{ form.patient_first_name }}
                         </div>
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Last Name *</label>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Last Name</label>
                             {{ form.patient_last_name }}
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Phone / WhatsApp Number *</label>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Phone / WhatsApp Number</label>
                     {{ form.phone }}
                 </div>
 
@@ -106,9 +135,9 @@
                     {{ form.request_notes }}
                 </div>
 
-                <div class="pt-3">
-                    <button type="submit" class="w-full btn-primary py-3.5 text-sm font-bold shadow-lg shadow-blue-700/20">
-                        <i class="fa-solid fa-paper-plane mr-1.5"></i> Verify Code & Send Connection Request
+                <div class="pt-2">
+                    <button type="submit" class="w-full btn-primary py-3.5 text-sm font-bold shadow-lg shadow-blue-700/20 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Connect & Open Dashboard
                     </button>
                 </div>
 
@@ -116,11 +145,13 @@
 
             {% endif %}
 
-            <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <a href="{% url 'doctor:login' %}" class="text-blue-600 hover:underline font-semibold">
-                    <i class="fa-solid fa-stethoscope mr-1"></i> Doctor Portal Login
+            <div class="mt-8 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+                <a href="{% url 'patient:login' %}" class="text-blue-600 hover:underline font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-user"></i> Patient Login Portal
                 </a>
-                <span>PEDO ALIGN Secure Health</span>
+                <a href="{% url 'doctor:login' %}" class="text-slate-600 hover:text-blue-600 hover:underline font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-stethoscope"></i> Doctor Portal Login
+                </a>
             </div>
 
         </div>

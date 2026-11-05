@@ -7,170 +7,202 @@
 {% block content %}
 <div class="space-y-6">
 
-    <!-- Header -->
+    <!-- Top Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-camera-retro text-blue-600"></i> Dental Photo Monitoring Feed
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 text-[11px] font-extrabold uppercase tracking-wider">
+                    <i class="fa-solid fa-camera mr-1"></i> Clinical Monitoring Hub
+                </span>
+                <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-800 text-[11px] font-extrabold uppercase tracking-wider">
+                    Step 4 Operation Protocol
+                </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1 flex items-center gap-2">
+                Dental Photo Monitoring
             </h1>
-            <p class="text-xs text-slate-500 mt-1">
-                Weekly progress submissions from patients: Upper arch, Lower arch, Front bite, and Occlusions
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl">
+                Table of completed-intake patients ready for Step 4 operation prescription (Turn Quest / Custom Operations). Click <strong>Open</strong> to diagnose the clinical problem and initiate photo monitoring.
             </p>
         </div>
 
-        <!-- Filter Status -->
-        <div class="flex flex-wrap items-center gap-1.5">
-            <a href="?status=ALL" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-                All ({{ uploads.count }})
-            </a>
-            {% for code, label in status_choices %}
-            <a href="?status={{ code }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == code %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-                {{ label }}
-            </a>
-            {% endfor %}
+        <!-- Quick Summary Stats -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <div class="px-3.5 py-2 rounded-2xl bg-white border border-blue-100 shadow-xs text-center">
+                <span class="text-[10px] font-bold text-slate-400 uppercase block">Completed Intake</span>
+                <span class="text-lg font-black text-blue-700">{{ eligible_patients|length }}</span>
+            </div>
+            <div class="px-3.5 py-2 rounded-2xl bg-white border border-indigo-100 shadow-xs text-center">
+                <span class="text-[10px] font-bold text-slate-400 uppercase block">Active Operations</span>
+                <span class="text-lg font-black text-indigo-700">{{ active_operations.count }}</span>
+            </div>
         </div>
     </div>
 
-    <!-- Uploads List -->
-    {% if uploads %}
-    <div class="space-y-5">
-        {% for upload in uploads %}
-        <div class="pa-card p-5 pa-card-hover space-y-4">
-            
-            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <a href="{% url 'doctor:patient_detail' upload.patient.id %}" class="font-bold text-sm text-slate-900 hover:text-blue-700">
-                        {{ upload.patient.full_name }}
-                    </a>
-                    <span class="text-xs font-mono text-slate-400">({{ upload.patient.patient_id }})</span>
-                    <span class="text-xs font-bold px-2.5 py-0.5 rounded bg-blue-100 text-blue-800">
-                        Week {{ upload.week_number }}
-                    </span>
-                    <span class="text-xs text-slate-500">
-                        Stage #{{ upload.aligner_stage }}
-                    </span>
-                    <span class="text-xs text-slate-400">
-                        {{ upload.upload_date|date:"M d, Y" }}
-                    </span>
+    <!-- ======================================================== -->
+    <!-- COMPLETED INTAKE PATIENTS TABLE (STEP 4)                 -->
+    <!-- ======================================================== -->
+    <div class="pa-card p-6 bg-white border-2 border-blue-200 shadow-sm rounded-3xl space-y-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-lg shadow-md shadow-blue-500/20 flex-shrink-0">
+                    <i class="fa-solid fa-table-list"></i>
                 </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="badge 
-                        {% if upload.tracking_status == 'TRACKING_WELL' %}badge-active
-                        {% elif upload.tracking_status == 'PENDING_REVIEW' %}badge-pending
-                        {% else %}badge-emergency-high{% endif %}">
-                        {{ upload.get_tracking_status_display }}
-                    </span>
-                    <a href="{% url 'doctor:photo_review' upload.id %}" class="btn-primary py-1 px-3 text-xs">
-                        <i class="fa-solid fa-pen-nib mr-1"></i> Doctor Review
-                    </a>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                            Completed Intake Patients (Step 4 Operation Ready)
+                        </h2>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 uppercase">
+                            {{ eligible_patients|length }} Eligible
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Only patients who have completed Step 1 (3 Pre-op Photos), Step 2 (Radiographs), and Step 3 (Hospital Appointment) appear in this table.
+                    </p>
                 </div>
             </div>
 
-            <!-- 5 Photo Thumbnails with click to zoom -->
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                
-                <!-- Front Bite -->
-                <div>
-                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Front Bite</span>
-                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
-                         onclick="openImageModal('{% if upload.front_bite_photo %}{{ upload.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Front Bite - {{ upload.patient.full_name }}')">
-                        {% if upload.front_bite_photo %}
-                        <img src="{{ upload.front_bite_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Front Bite">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
-                        {% endif %}
-                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-                        </div>
-                    </div>
+            <!-- Search table filter -->
+            <div class="w-full sm:w-64">
+                <div class="relative">
+                    <input type="text" id="intakeTableSearch" onkeyup="filterIntakeTable()"
+                           placeholder="Search eligible patients..."
+                           class="form-input text-xs pl-8 pr-3 py-1.5 rounded-xl border-slate-200">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                 </div>
-
-                <!-- Upper Arch -->
-                <div>
-                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Upper Arch</span>
-                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
-                         onclick="openImageModal('{% if upload.upper_arch_photo %}{{ upload.upper_arch_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Upper Arch - {{ upload.patient.full_name }}')">
-                        {% if upload.upper_arch_photo %}
-                        <img src="{{ upload.upper_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Upper Arch">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
-                        {% endif %}
-                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lower Arch -->
-                <div>
-                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Lower Arch</span>
-                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
-                         onclick="openImageModal('{% if upload.lower_arch_photo %}{{ upload.lower_arch_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Lower Arch - {{ upload.patient.full_name }}')">
-                        {% if upload.lower_arch_photo %}
-                        <img src="{{ upload.lower_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Lower Arch">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
-                        {% endif %}
-                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Occlusion -->
-                <div>
-                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Right Occlusion</span>
-                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
-                         onclick="openImageModal('{% if upload.right_occlusion_photo %}{{ upload.right_occlusion_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Right Occlusion - {{ upload.patient.full_name }}')">
-                        {% if upload.right_occlusion_photo %}
-                        <img src="{{ upload.right_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Right Occlusion">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
-                        {% endif %}
-                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Left Occlusion -->
-                <div>
-                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1 text-center">Left Occlusion</span>
-                    <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
-                         onclick="openImageModal('{% if upload.left_occlusion_photo %}{{ upload.left_occlusion_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}', 'Left Occlusion - {{ upload.patient.full_name }}')">
-                        {% if upload.left_occlusion_photo %}
-                        <img src="{{ upload.left_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Left Occlusion">
-                        {% else %}
-                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
-                        {% endif %}
-                        <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                            <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-
-            {% if upload.doctor_feedback %}
-            <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-xs flex items-center justify-between">
-                <div>
-                    <span class="font-bold text-blue-950">Doctor Review (Rating: {{ upload.doctor_rating }}/5):</span>
-                    <span class="text-slate-700 ml-1">{{ upload.doctor_feedback }}</span>
-                </div>
-                <span class="text-[10px] text-slate-400 flex-shrink-0">{{ upload.reviewed_at|date:"M d, Y" }}</span>
-            </div>
-            {% endif %}
-
         </div>
-        {% endfor %}
+
+        {% if eligible_patients %}
+        <div class="overflow-x-auto custom-scrollbar rounded-2xl border border-slate-200">
+            <table class="w-full text-left text-xs" id="eligiblePatientsTable">
+                <thead class="bg-slate-50/80 text-[10px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                    <tr>
+                        <th class="py-3 px-4">Patient Profile</th>
+                        <th class="py-3 px-4">Guardian / Contact</th>
+                        <th class="py-3 px-4">Completed Intake Verification</th>
+                        <th class="py-3 px-4">Operation Status</th>
+                        <th class="py-3 px-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for p in eligible_patients %}
+                    <tr class="hover:bg-blue-50/30 transition patient-row">
+                        <!-- Profile Column -->
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-black text-xs shadow-2xs flex-shrink-0">
+                                    {{ p.first_name|slice:":1" }}{{ p.last_name|slice:":1" }}
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <a href="{% url 'doctor:step4_operation' p.id %}" class="font-bold text-sm text-slate-900 hover:text-blue-700 transition">
+                                            {{ p.full_name }}
+                                        </a>
+                                        <span class="font-mono text-[10px] text-slate-400">({{ p.patient_id }})</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 mt-0.5">
+                                        {{ p.age }} yrs • {{ p.gender }}
+                                        {% if p.patient_category == 'CHILD' %}
+                                        • <span class="font-bold text-sky-700">Child</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Guardian Column -->
+                        <td class="py-3.5 px-4 text-slate-600">
+                            {% if p.parent_guardian_name %}
+                            <div class="font-semibold text-slate-800">{{ p.parent_guardian_name }}</div>
+                            <div class="text-[11px] text-slate-400">
+                                {{ p.parent_guardian_relationship|default:"Parent" }} • {{ p.parent_guardian_phone|default:p.phone }}
+                            </div>
+                            {% else %}
+                            <div class="text-slate-700 font-medium">{{ p.phone }}</div>
+                            <div class="text-[11px] text-slate-400">Self / Patient</div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Completed Intake Verification Column -->
+                        <td class="py-3.5 px-4">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                    <i class="fa-solid fa-check text-emerald-600"></i> Step 1: {{ p.preoperative_photos.count }} Photos
+                                </span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                    <i class="fa-solid fa-check text-emerald-600"></i> Step 2: {{ p.radiographs.count }} X-rays
+                                </span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                    <i class="fa-solid fa-check text-emerald-600"></i> Step 3: Visit Scheduled
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Operation Status Column -->
+                        <td class="py-3.5 px-4">
+                            {% if p.treatment_media.exists %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200">
+                                <i class="fa-solid fa-bullseye text-indigo-600"></i> {{ p.current_operation|default:'Turn Quest' }}
+                                <span class="text-[9px] font-extrabold bg-white text-indigo-700 px-1.5 py-0.2 rounded border border-indigo-200">
+                                    {{ p.get_monitoring_frequency_display }}
+                                </span>
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                <i class="fa-solid fa-clock-rotate-left text-amber-600"></i> Pending Step 4 Prescription
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Action Open Button -->
+                        <td class="py-3.5 px-4 text-right">
+                            <a href="{% url 'doctor:step4_operation' p.id %}"
+                               class="btn-primary py-1.5 px-4 text-xs font-black inline-flex items-center gap-1.5 shadow-sm hover:scale-[1.02] transition whitespace-nowrap">
+                                <i class="fa-solid fa-folder-open"></i> Open
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <!-- Empty State: No patients completed Steps 1-3 yet -->
+        <div class="p-8 text-center rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 mx-auto flex items-center justify-center text-xl">
+                <i class="fa-solid fa-user-clock"></i>
+            </div>
+            <h3 class="text-sm font-extrabold text-slate-800">No Patients Waiting for Step 4 Operation Diagnosis</h3>
+            <p class="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                Only patients who have completed all initial 3 intake steps (Step 1: 3 Pre-op Photos, Step 2: Radiographs, and Step 3: Hospital Appointment) appear in this table.
+            </p>
+            <div class="pt-2">
+                <a href="{% url 'doctor:treatment_plans' %}" class="btn-secondary text-xs inline-flex items-center gap-1.5 py-1.5 px-3">
+                    <i class="fa-solid fa-folder-open"></i> Go to Treatment Plans
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
-    {% else %}
-    <div class="pa-card p-12 text-center text-xs text-slate-400">
-        <i class="fa-solid fa-camera-retro text-3xl mb-2 text-slate-300 block"></i>
-        No dental monitoring photos found.
-    </div>
-    {% endif %}
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterIntakeTable() {
+        const input = document.getElementById("intakeTableSearch");
+        const filter = input.value.toLowerCase();
+        const rows = document.querySelectorAll("#eligiblePatientsTable tbody .patient-row");
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    }
+</script>
 {% endblock %}

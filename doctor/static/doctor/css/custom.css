@@ -192,7 +192,26 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     border: 1px solid #fed7aa;
 }
 
-/* Sidebar scrollbar */
+/* Global & Sidebar scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.35);
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.55);
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
     width: 5px;
     height: 5px;

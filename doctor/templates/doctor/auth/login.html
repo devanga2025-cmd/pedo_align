@@ -5,6 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Login - PEDO ALIGN</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PEDO ALIGN">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
@@ -86,13 +99,37 @@
         </div>
 
         <!-- Patient Portal link hint -->
-        <div class="mt-6 text-center">
-            <a href="{% url 'doctor:patient_join_portal' %}" class="inline-flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-blue-700 bg-white/70 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm transition">
-                <i class="fa-solid fa-key text-blue-600"></i> Are you a patient? <b>Enter Joining Code here</b>
-            </a>
+        <div class="mt-6 text-center space-y-2">
+            <div>
+                <a href="{% url 'patient:login' %}" class="inline-flex items-center gap-2 text-xs font-bold text-blue-700 hover:text-blue-900 bg-white/90 backdrop-blur px-5 py-2.5 rounded-full border border-blue-200 shadow-sm transition">
+                    <i class="fa-solid fa-user-tag text-blue-600"></i> Are you a Patient? <b>Patient Portal Login &rarr;</b>
+                </a>
+            </div>
+            <div>
+                <a href="{% url 'doctor:patient_join_portal' %}" class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-500 hover:text-slate-800 transition">
+                    <i class="fa-solid fa-key text-slate-400"></i> Have a new joining code? Enter code here
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Install PWA Box -->
+        <div class="mt-4 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 border border-slate-200/90 text-center space-y-2 shadow-xs">
+            <div class="flex items-center justify-between text-left">
+                <div>
+                    <h3 class="text-xs font-black text-slate-800">Install PEDO ALIGN Doctor App</h3>
+                    <p class="text-[11px] text-slate-500">Fast access to patient records, approvals & monitoring</p>
+                </div>
+                <button type="button" 
+                        onclick="triggerPWAInstall()" 
+                        class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Install</span>
+                </button>
+            </div>
         </div>
 
     </div>
 
+    {% include 'doctor/includes/pwa_install_modal.html' %}
 </body>
 </html>

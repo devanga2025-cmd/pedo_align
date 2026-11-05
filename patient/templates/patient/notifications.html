@@ -20,11 +20,16 @@
                 </p>
             </div>
 
-            {% if unread_count > 0 %}
-            <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-white text-blue-700 shadow-md self-start sm:self-center">
-                {{ unread_count }} Unread Alert{{ unread_count|pluralize }}
-            </span>
-            {% endif %}
+            <div class="flex items-center gap-2 self-start sm:self-center">
+                {% if unread_count > 0 %}
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-white text-blue-700 shadow-md">
+                    {{ unread_count }} Unread Alert{{ unread_count|pluralize }}
+                </span>
+                <a href="{% url 'patient:mark_all_notifications_read' %}" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-check-double"></i> Mark all read
+                </a>
+                {% endif %}
+            </div>
         </div>
         <i class="fa-solid fa-bell-ring absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
     </div>
@@ -40,25 +45,29 @@
                 
                 <!-- Type Icon -->
                 <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg flex-shrink-0 shadow-sm
-                    {% if notif.notification_type == 'ALIGNER_CHANGE' %}
+                    {% if notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
                         bg-blue-100 text-blue-600
-                    {% elif notif.notification_type == 'PHOTO_REMINDER' %}
+                    {% elif notif.notification_type == 'PHOTO_REMINDER' or notif.notification_type == 'PHOTO_SUBMISSION' %}
                         bg-pink-100 text-pink-600
-                    {% elif notif.notification_type == 'DOCTOR_FEEDBACK' %}
+                    {% elif notif.notification_type == 'DOCTOR_FEEDBACK' or notif.notification_type == 'DOCTOR_INSTRUCTION' %}
                         bg-purple-100 text-purple-600
-                    {% elif notif.notification_type == 'APPOINTMENT_REMINDER' %}
+                    {% elif notif.notification_type == 'APPOINTMENT' or notif.notification_type == 'APPOINTMENT_REMINDER' %}
                         bg-amber-100 text-amber-600
+                    {% elif notif.notification_type == 'EMERGENCY_RESPONSE' %}
+                        bg-rose-100 text-rose-600
                     {% else %}
                         bg-sky-100 text-sky-600
                     {% endif %}">
-                    {% if notif.notification_type == 'ALIGNER_CHANGE' %}
+                    {% if notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
                         <i class="fa-solid fa-teeth-open"></i>
-                    {% elif notif.notification_type == 'PHOTO_REMINDER' %}
+                    {% elif notif.notification_type == 'PHOTO_REMINDER' or notif.notification_type == 'PHOTO_SUBMISSION' %}
                         <i class="fa-solid fa-camera"></i>
-                    {% elif notif.notification_type == 'DOCTOR_FEEDBACK' %}
+                    {% elif notif.notification_type == 'DOCTOR_FEEDBACK' or notif.notification_type == 'DOCTOR_INSTRUCTION' %}
                         <i class="fa-solid fa-user-doctor"></i>
-                    {% elif notif.notification_type == 'APPOINTMENT_REMINDER' %}
+                    {% elif notif.notification_type == 'APPOINTMENT' or notif.notification_type == 'APPOINTMENT_REMINDER' %}
                         <i class="fa-solid fa-calendar-check"></i>
+                    {% elif notif.notification_type == 'EMERGENCY_RESPONSE' %}
+                        <i class="fa-solid fa-kit-medical"></i>
                     {% else %}
                         <i class="fa-solid fa-bell"></i>
                     {% endif %}

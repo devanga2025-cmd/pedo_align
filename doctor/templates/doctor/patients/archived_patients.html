@@ -1,0 +1,112 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Archived Patients - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_list' %}" class="hover:underline">Patients</a> / Archived Patients{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Header Banner -->
+    <div class="pa-card p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold mb-2 text-slate-300">
+                    <i class="fa-solid fa-box-archive text-sky-400"></i> Clinical Archive System
+                </div>
+                <h1 class="text-2xl font-black tracking-tight text-white">Archived & Deactivated Patients</h1>
+                <p class="text-xs text-slate-300 mt-1 max-w-xl">
+                    Historical records preserved under medical record retention policy. Deactivated patient accounts cannot log into the patient portal, but all pre-op photos, radiographs, prescriptions, and clinical history remain accessible.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'doctor:patient_list' %}" class="px-4 py-2.5 rounded-xl bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 transition shadow-sm inline-flex items-center gap-2">
+                    <i class="fa-solid fa-users text-blue-600"></i> Active Patient List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="pa-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <form method="GET" class="flex-1 max-w-md relative">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search archived patients by name, ID, phone..." class="form-input pl-9 text-xs w-full">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+        </form>
+        <div class="text-xs font-semibold text-slate-500">
+            Total Archived: <span class="font-bold text-slate-900 font-mono">{{ archived_count }}</span> record(s)
+        </div>
+    </div>
+
+    <!-- Archived Patient Records List -->
+    {% if archived_patients %}
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {% for pt in archived_patients %}
+        <div class="pa-card p-5 relative overflow-hidden group hover:border-blue-400 transition">
+            <div class="h-1 w-full bg-gradient-to-r from-slate-400 to-slate-600 absolute top-0 left-0"></div>
+
+            <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 font-black text-sm flex items-center justify-center flex-shrink-0 border border-slate-200">
+                        {{ pt.first_name|first }}{{ pt.last_name|first }}
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm leading-tight">{{ pt.full_name }}</h3>
+                        <span class="font-mono text-xs text-blue-700 font-semibold">{{ pt.patient_id }}</span>
+                        <span class="block text-[11px] text-slate-400">{{ pt.age }} yrs • {{ pt.gender }}</span>
+                    </div>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                    Archived
+                </span>
+            </div>
+
+            <!-- Archive Details -->
+            <div class="p-3 rounded-xl bg-slate-50/80 border border-slate-100 text-xs space-y-1 mb-4">
+                <div class="flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400 font-medium">Archived On:</span>
+                    <span class="font-bold text-slate-700">{{ pt.archived_at|date:"M d, Y"|default:"Historical" }}</span>
+                </div>
+                {% if pt.deactivation_reason %}
+                <div class="pt-1 border-t border-slate-200/60 text-[11px]">
+                    <span class="text-slate-400 font-medium block">Reason:</span>
+                    <p class="text-slate-700 italic line-clamp-2 mt-0.5">"{{ pt.deactivation_reason }}"</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Actions: View Record & Restore -->
+            <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 flex-1 justify-center">
+                    <i class="fa-solid fa-folder-open"></i> View Clinical Record
+                </a>
+                
+                <form method="POST" action="{% url 'doctor:restore_patient' pt.id %}" onsubmit="return confirm('Restore patient {{ pt.full_name }} to active clinical care?');">
+                    {% csrf_token %}
+                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition flex items-center gap-1" title="Restore to active patient list">
+                        <i class="fa-solid fa-rotate-left"></i> Restore
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="pa-card p-12 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">No Archived Patients Found</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">
+            {% if search_query %}
+            No archived records matching "{{ search_query }}". Try clearing the search query.
+            {% else %}
+            You currently have no deactivated or archived patients. When treatment completes or when an account is deactivated, it will appear here safely archived.
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+

@@ -18,11 +18,21 @@ class PatientProfile(models.Model):
         ('REJECTED', 'Connection Rejected'),
     ]
 
+    CATEGORY_CHOICES = [
+        ('CHILD', 'Child Patient'),
+        ('ADULT', 'Adult Patient'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile')
     patient_id = models.CharField(max_length=30, unique=True, default=generate_patient_id)
     full_name = models.CharField(max_length=200)
+    patient_category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='CHILD', blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=50)
+    parent_guardian_name = models.CharField(max_length=150, blank=True, null=True, help_text="Parent / Guardian Name")
+    parent_guardian_phone = models.CharField(max_length=50, blank=True, null=True)
+    parent_guardian_email = models.EmailField(blank=True, null=True)
+    parent_guardian_relationship = models.CharField(max_length=50, blank=True, null=True, default='Parent')
     avatar = models.ImageField(upload_to='patient_avatars/', blank=True, null=True)
 
     # Connection with Doctor and Clinical Patient Record
@@ -79,11 +89,15 @@ class PatientProfile(models.Model):
 class PatientNotification(models.Model):
     NOTIFICATION_TYPES = [
         ('ALIGNER_CHANGE', 'Aligner Change Reminder'),
+        ('TRAY_CHANGE', 'Tray Changing Reminder'),
         ('PHOTO_SUBMISSION', 'Weekly Photo Upload Reminder'),
         ('APPOINTMENT', 'Appointment Reminder'),
         ('DOCTOR_INSTRUCTION', 'Doctor Instructions'),
         ('TREATMENT_UPDATE', 'Treatment Updates'),
         ('DOCTOR_FEEDBACK', 'Doctor Feedback'),
+        ('EMERGENCY_RESPONSE', 'Emergency Response'),
+        ('PRESCRIPTION', 'Prescription Issued'),
+        ('FOLLOWUP', '20-Day Follow-Up Alert'),
     ]
 
     patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='notifications')

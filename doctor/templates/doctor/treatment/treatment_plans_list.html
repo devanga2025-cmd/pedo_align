@@ -7,7 +7,7 @@
 {% block content %}
 <div class="space-y-6">
 
-    <!-- Header -->
+    <!-- Header & Action Bar -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -18,103 +18,273 @@
             </p>
         </div>
 
-        <!-- Filter Status -->
-        <div class="flex flex-wrap items-center gap-1.5">
-            <a href="?status=ALL" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-                All Plans ({{ plans.count }})
+        <div class="flex items-center gap-2">
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs shadow-md">
+                <i class="fa-solid fa-user-plus"></i> Add Patient
             </a>
-            {% for code, label in status_choices %}
-            <a href="?status={{ code }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold {% if status_filter == code %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-                {{ label }}
+            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-key text-blue-600"></i> Joining Codes
             </a>
-            {% endfor %}
         </div>
     </div>
 
-    <!-- Treatment Plans Cards Grid -->
-    {% if plans %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {% for plan in plans %}
-        <div class="pa-card p-5 flex flex-col justify-between pa-card-hover">
-            <div>
-                <!-- Top patient info & status -->
-                <div class="flex items-start justify-between gap-2 mb-3">
-                    <div>
-                        <a href="{% url 'doctor:patient_detail' plan.patient.id %}?tab=treatment" class="font-bold text-sm text-slate-900 hover:text-blue-700 block">
-                            {{ plan.patient.full_name }}
-                        </a>
-                        <span class="text-[11px] text-slate-400 font-mono">{{ plan.patient.patient_id }}</span>
+    <!-- Filters & Search Toolbar -->
+    <div class="pa-card p-4">
+        <form method="GET" class="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
+            
+            <!-- Search Input with dedicated Search Button -->
+            <div class="relative w-full xl:w-96 flex items-center gap-2">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
                     </div>
-
-                    <span class="badge 
-                        {% if plan.status == 'Active / In Progress' %}badge-active
-                        {% elif plan.status == 'Completed' %}badge-completed
-                        {% else %}badge-pending{% endif %}">
-                        {{ plan.status }}
-                    </span>
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search by patient name, ID, phone..." class="form-input pl-9 text-xs w-full">
                 </div>
-
-                <!-- Aligner Stage Display -->
-                <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl my-3">
-                    <div class="flex items-center justify-between text-xs mb-1.5">
-                        <span class="font-bold text-blue-950">Aligner Stage</span>
-                        <span class="font-black text-blue-700">Tray #{{ plan.current_aligner }} of {{ plan.total_aligners }}</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                        <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
-                    </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2">
-                        <span>Pace: {{ plan.aligner_frequency_days }} days/tray</span>
-                        <span>{{ plan.progress_percentage }}% complete</span>
-                    </div>
-                </div>
-
-                <!-- Parameters list -->
-                <div class="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Duration:</span>
-                        <span class="font-semibold text-slate-800">{{ plan.estimated_duration_months }} Months</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Daily Wear:</span>
-                        <span class="font-semibold text-slate-800">{{ plan.daily_wear_hours }} hrs/day</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Compliance:</span>
-                        <span class="font-bold {% if plan.compliance_score >= 85 %}text-emerald-700{% else %}text-amber-700{% endif %}">{{ plan.compliance_score }}%</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Next Review:</span>
-                        <span class="font-medium text-slate-700">{{ plan.next_review_date|default:"Unscheduled" }}</span>
-                    </div>
-                </div>
+                <!-- Preserve other filters -->
+                <input type="hidden" name="status" value="{{ status_filter }}">
+                <input type="hidden" name="view" value="{{ view_mode }}">
+                
+                <button type="submit" class="btn-primary py-2 px-3.5 text-xs shadow-xs flex items-center gap-1.5 flex-shrink-0">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    <span>Search</span>
+                </button>
+                {% if query %}
+                <a href="?status={{ status_filter }}&view={{ view_mode }}" class="btn-secondary py-2 px-2.5 text-xs text-slate-500 hover:text-slate-800" title="Clear Search">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+                {% endif %}
             </div>
 
-            <!-- Action buttons -->
-            <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                {% if plan.current_aligner < plan.total_aligners %}
-                <form method="POST" action="{% url 'doctor:advance_aligner' plan.patient.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-primary py-1 px-2.5 text-xs">
-                        <i class="fa-solid fa-plus text-[10px]"></i> Stage +1
-                    </button>
-                </form>
-                {% else %}
-                <span class="text-xs font-bold text-emerald-700">Finished</span>
-                {% endif %}
+            <!-- Status Filter Pills -->
+            <div class="flex flex-wrap items-center gap-1.5 w-full lg:w-auto">
+                <a href="?status=ALL{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
+                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == 'ALL' %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                    All Plans ({{ total_plans_count }})
+                </a>
+                {% for code, label in status_choices %}
+                <a href="?status={{ code }}{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
+                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == code %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
 
-                <a href="{% url 'doctor:treatment_plan_edit' plan.patient.id %}" class="btn-secondary py-1 px-3 text-xs">
-                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Plan
+            <!-- View Mode Switch: Cards vs Table -->
+            <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0 self-end lg:self-center">
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=grid" 
+                   class="p-2 text-xs flex items-center gap-1.5 {% if view_mode == 'grid' %}bg-white text-blue-600 font-bold shadow-sm{% else %}text-slate-400 hover:text-slate-700{% endif %}" 
+                   title="Grid Cards View">
+                    <i class="fa-solid fa-grip text-xs"></i>
+                    <span>Cards</span>
+                </a>
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=table" 
+                   class="p-2 text-xs flex items-center gap-1.5 {% if view_mode == 'table' %}bg-white text-blue-600 font-bold shadow-sm{% else %}text-slate-400 hover:text-slate-700{% endif %}" 
+                   title="Table View">
+                    <i class="fa-solid fa-table-list text-xs"></i>
+                    <span>Table</span>
                 </a>
             </div>
 
-        </div>
-        {% endfor %}
+        </form>
     </div>
+
+    <!-- Output: Table or Cards Grid -->
+    {% if plans %}
+
+        {% if view_mode == 'table' %}
+        <!-- TABLE VIEW -->
+        <div class="pa-card overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
+                            <th class="py-3 px-4">Patient</th>
+                            <th class="py-3 px-4">Status</th>
+                            <th class="py-3 px-4">Aligner Stage</th>
+                            <th class="py-3 px-4">Duration & Wear</th>
+                            <th class="py-3 px-4">Compliance</th>
+                            <th class="py-3 px-4">Next Review</th>
+                            <th class="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for plan in plans %}
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="py-3.5 px-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-xs flex-shrink-0">
+                                        {{ plan.patient.first_name|first }}{{ plan.patient.last_name|first }}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'doctor:patient_detail' plan.patient.id %}?tab=treatment" class="font-bold text-slate-900 hover:text-blue-700">
+                                            {{ plan.patient.full_name }}
+                                        </a>
+                                        <span class="text-[10px] text-slate-400 font-mono block">{{ plan.patient.patient_id }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <span class="badge 
+                                    {% if plan.status == 'Active / In Progress' %}badge-active
+                                    {% elif plan.status == 'Completed' or plan.status == 'Treatment Completed' %}badge-completed
+                                    {% else %}badge-pending{% endif %} text-[11px]">
+                                    {{ plan.status }}
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="w-36">
+                                    <div class="flex justify-between text-[11px] font-bold text-slate-700 mb-1">
+                                        <span>Tray #{{ plan.current_aligner }} of {{ plan.total_aligners }}</span>
+                                        <span class="text-blue-700">{{ plan.progress_percentage }}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-1.5 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 mt-0.5 block">{{ plan.aligner_frequency_days }} days/tray</span>
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-4 text-slate-700">
+                                <div class="font-semibold">{{ plan.estimated_duration_months }} Months</div>
+                                <div class="text-[11px] text-slate-400">{{ plan.daily_wear_hours }} hrs/day wear</div>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <span class="font-bold text-xs {% if plan.compliance_score >= 85 %}text-emerald-700{% elif plan.compliance_score >= 70 %}text-amber-700{% else %}text-rose-700{% endif %}">
+                                    {{ plan.compliance_score }}%
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-4 text-slate-700 font-medium">
+                                {{ plan.next_review_date|default:"Unscheduled" }}
+                            </td>
+                            <td class="py-3.5 px-4 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <a href="{% url 'doctor:patient_clinical_journey' plan.patient.id %}" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-xs flex items-center gap-1" title="Open Clinical Journey">
+                                        <i class="fa-solid fa-folder-open text-[10px]"></i> Open
+                                    </a>
+                                    {% if plan.current_aligner < plan.total_aligners %}
+                                    <form method="POST" action="{% url 'doctor:advance_aligner' plan.patient.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-secondary py-1 px-2 text-xs font-semibold" title="Advance Stage +1">
+                                            <i class="fa-solid fa-plus text-[9px]"></i> +1
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    <a href="{% url 'doctor:treatment_plan_edit' plan.patient.id %}" class="p-1.5 text-slate-400 hover:text-slate-700 rounded hover:bg-slate-100" title="Edit Treatment Plan">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- GRID CARDS VIEW -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+            {% for plan in plans %}
+            <div class="pa-card p-5 flex flex-col justify-between pa-card-hover">
+                <div>
+                    <!-- Top patient info & status -->
+                    <div class="flex items-start justify-between gap-2 mb-3">
+                        <div>
+                            <a href="{% url 'doctor:patient_detail' plan.patient.id %}?tab=treatment" class="font-bold text-sm text-slate-900 hover:text-blue-700 block">
+                                {{ plan.patient.full_name }}
+                            </a>
+                            <span class="text-[11px] text-slate-400 font-mono">{{ plan.patient.patient_id }}</span>
+                        </div>
+
+                        <span class="badge 
+                            {% if plan.status == 'Active / In Progress' %}badge-active
+                            {% elif plan.status == 'Completed' or plan.status == 'Treatment Completed' %}badge-completed
+                            {% else %}badge-pending{% endif %}">
+                            {{ plan.status }}
+                        </span>
+                    </div>
+
+                    <!-- Aligner Stage Display -->
+                    <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl my-3">
+                        <div class="flex items-center justify-between text-xs mb-1.5">
+                            <span class="font-bold text-blue-950">Aligner Stage</span>
+                            <span class="font-black text-blue-700">Tray #{{ plan.current_aligner }} of {{ plan.total_aligners }}</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2">
+                            <span>Pace: {{ plan.aligner_frequency_days }} days/tray</span>
+                            <span>{{ plan.progress_percentage }}% complete</span>
+                        </div>
+                    </div>
+
+                    <!-- Parameters list -->
+                    <div class="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Duration:</span>
+                            <span class="font-semibold text-slate-800">{{ plan.estimated_duration_months }} Months</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Daily Wear:</span>
+                            <span class="font-semibold text-slate-800">{{ plan.daily_wear_hours }} hrs/day</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Compliance:</span>
+                            <span class="font-bold {% if plan.compliance_score >= 85 %}text-emerald-700{% else %}text-amber-700{% endif %}">{{ plan.compliance_score }}%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Next Review:</span>
+                            <span class="font-medium text-slate-700">{{ plan.next_review_date|default:"Unscheduled" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <a href="{% url 'doctor:patient_clinical_journey' plan.patient.id %}" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-folder-open text-xs"></i> Open
+                    </a>
+
+                    <div class="flex items-center gap-1.5">
+                        {% if plan.current_aligner < plan.total_aligners %}
+                        <form method="POST" action="{% url 'doctor:advance_aligner' plan.patient.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-secondary py-1 px-2.5 text-xs font-semibold" title="Advance Stage">
+                                <i class="fa-solid fa-plus text-[10px]"></i> Stage +1
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <a href="{% url 'doctor:treatment_plan_edit' plan.patient.id %}" class="btn-secondary py-1 px-2.5 text-xs font-semibold" title="Edit Full Treatment Plan">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
     {% else %}
-    <div class="pa-card p-12 text-center text-xs text-slate-400">
-        <i class="fa-solid fa-clipboard-list text-3xl mb-2 text-slate-300 block"></i>
-        No treatment plans found for this filter.
+    <div class="pa-card p-12 text-center text-xs text-slate-400 max-w-md mx-auto">
+        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+            <i class="fa-solid fa-clipboard-list"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">No Treatment Plans Found</h3>
+        <p class="text-xs text-slate-500 mt-1 mb-5">
+            {% if query %}
+                No treatment plans match your search term "{{ query }}". Try clearing the search.
+            {% else %}
+                No treatment plans match the selected filter criteria.
+            {% endif %}
+        </p>
+        {% if query or status_filter != 'ALL' %}
+        <a href="{% url 'doctor:treatment_plans' %}" class="btn-secondary text-xs">
+            Clear Filters
+        </a>
+        {% endif %}
     </div>
     {% endif %}
 

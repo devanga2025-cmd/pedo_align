@@ -45,7 +45,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">Dr. {{ doctor.full_name }}</h3>
-                        <p class="text-xs font-semibold text-blue-600">{{ doctor.dental_qualification|default:"Orthodontist" }}</p>
+                        <p class="text-xs font-semibold text-blue-600">{{ doctor.specialization|default:"Specialist" }}{% if doctor.dental_qualification %} &bull; {{ doctor.dental_qualification }}{% endif %}</p>
                         <p class="text-xs text-slate-500 mt-0.5">{{ doctor.clinic_name }}</p>
                     </div>
 
@@ -89,17 +89,28 @@
         <!-- 1. Personal & Dental Information -->
         <div>
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-user-doctor text-blue-600"></i> Doctor Personal Information
+                <i class="fa-solid fa-user-doctor text-blue-600"></i> Doctor Personal Information & Qualifications
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Doctor Name *</label>
                     {{ profile_form.full_name }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Contact Number *</label>
                     {{ profile_form.phone_number }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email Address *</label>
+                    {{ profile_form.email }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Clinical Specialization *</label>
+                    {{ profile_form.specialization }}
                 </div>
             </div>
 
@@ -109,8 +120,9 @@
                     {{ profile_form.dental_qualification }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Medical License / Registration No.</label>
-                    {{ profile_form.license_number }}
+                    <label class="block text-xs font-bold text-slate-700 mb-1">KSDC Registration Number</label>
+                    {{ profile_form.ksdc_registration_number }}
+                    <p class="text-[10px] text-slate-400 mt-1">Karnataka State Dental Council Registration ID</p>
                 </div>
             </div>
 

@@ -22,53 +22,294 @@
         </a>
     </div>
 
-    <form method="POST" class="pa-card p-6 sm:p-8 space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
 
-        <div>
-            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-sliders text-blue-600"></i> Aligner Parameters & Progression
-            </h3>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Total Number of Aligners *</label>
-                    {{ form.total_aligners }}
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Current Aligner Stage *</label>
-                    {{ form.current_aligner }}
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Aligner Changing Frequency (Days) *</label>
-                    {{ form.aligner_frequency_days }}
-                </div>
+        <!-- ======================================================== -->
+        <!-- SECTION 1: UPPER ARCH MONITORING                         -->
+        <!-- ======================================================== -->
+        <div class="pa-card p-6 sm:p-8 space-y-4 border-l-4 border-l-blue-600">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </span>
+                    <span>Upper Arch Clinical Monitoring</span>
+                </h3>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    Maxillary Arch
+                </span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Duration (Months)</label>
-                    {{ form.estimated_duration_months }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <!-- Upper Arch Inputs -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Current Upper Arch Status *</label>
+                        {{ form.upper_arch_status }}
+                        <p class="text-[10px] text-slate-400 mt-0.5">e.g. Aligning & Leveling, Expanding, Canine Retraction, Finishing</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Upper Arch Treatment Notes</label>
+                        {{ form.upper_arch_notes }}
+                        <p class="text-[10px] text-slate-400 mt-0.5">Clinical observations, expansion metrics, or attachment notes</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Upload New Upper Arch Photo</label>
+                        {{ form.upper_arch_photo }}
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Start Date</label>
-                    {{ form.start_date }}
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Expected Completion Date</label>
-                    {{ form.expected_completion_date }}
+
+                <!-- Upper Arch Photo Preview & History -->
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                    <div class="text-xs font-bold text-slate-700 flex items-center justify-between">
+                        <span>Current Upper Arch Photo:</span>
+                        {% if plan.upper_arch_photo %}
+                            <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-check-circle"></i> On File</span>
+                        {% else %}
+                            <span class="text-[10px] text-slate-400 font-normal">No photo uploaded</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="h-44 w-full rounded-xl overflow-hidden bg-white border border-slate-200 flex items-center justify-center">
+                        {% if plan.upper_arch_photo %}
+                            <img src="{{ plan.upper_arch_photo.url }}" alt="Upper Arch" class="w-full h-full object-contain">
+                        {% else %}
+                            <div class="text-center text-slate-400 p-4">
+                                <i class="fa-solid fa-tooth text-3xl mb-1 text-slate-300"></i>
+                                <p class="text-xs">No upper arch photo yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Upper Arch Progress History Timeline -->
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Upper Arch Progress History</span>
+                        <div class="max-h-28 overflow-y-auto space-y-1.5 text-xs pr-1">
+                            {% for hist in upper_history %}
+                                <div class="p-2 bg-white rounded-lg border border-slate-100 flex items-center justify-between">
+                                    <div>
+                                        <span class="font-bold text-slate-800">Stage #{{ hist.stage_number }}: {{ hist.status }}</span>
+                                        {% if hist.notes %}<p class="text-[10px] text-slate-500 line-clamp-1">{{ hist.notes }}</p>{% endif %}
+                                    </div>
+                                    <span class="text-[10px] text-slate-400">{{ hist.created_at|date:"M d, Y" }}</span>
+                                </div>
+                            {% empty %}
+                                <p class="text-[11px] text-slate-400 italic">No previous upper arch history recorded.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="pt-2">
+        <!-- ======================================================== -->
+        <!-- SECTION 2: LOWER ARCH MONITORING                         -->
+        <!-- ======================================================== -->
+        <div class="pa-card p-6 sm:p-8 space-y-4 border-l-4 border-l-cyan-500">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </span>
+                    <span>Lower Arch Clinical Monitoring</span>
+                </h3>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
+                    Mandibular Arch
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <!-- Lower Arch Inputs -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Current Lower Arch Status *</label>
+                        {{ form.lower_arch_status }}
+                        <p class="text-[10px] text-slate-400 mt-0.5">e.g. Aligning & Leveling, De-crowding, Space Closure, On Track</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Lower Arch Treatment Notes</label>
+                        {{ form.lower_arch_notes }}
+                        <p class="text-[10px] text-slate-400 mt-0.5">Clinical notes for lower crowding, IPR or lingual tracking</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Upload New Lower Arch Photo</label>
+                        {{ form.lower_arch_photo }}
+                    </div>
+                </div>
+
+                <!-- Lower Arch Photo Preview & History -->
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                    <div class="text-xs font-bold text-slate-700 flex items-center justify-between">
+                        <span>Current Lower Arch Photo:</span>
+                        {% if plan.lower_arch_photo %}
+                            <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-check-circle"></i> On File</span>
+                        {% else %}
+                            <span class="text-[10px] text-slate-400 font-normal">No photo uploaded</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="h-44 w-full rounded-xl overflow-hidden bg-white border border-slate-200 flex items-center justify-center">
+                        {% if plan.lower_arch_photo %}
+                            <img src="{{ plan.lower_arch_photo.url }}" alt="Lower Arch" class="w-full h-full object-contain">
+                        {% else %}
+                            <div class="text-center text-slate-400 p-4">
+                                <i class="fa-solid fa-tooth text-3xl mb-1 text-slate-300"></i>
+                                <p class="text-xs">No lower arch photo yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Lower Arch Progress History Timeline -->
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Lower Arch Progress History</span>
+                        <div class="max-h-28 overflow-y-auto space-y-1.5 text-xs pr-1">
+                            {% for hist in lower_history %}
+                                <div class="p-2 bg-white rounded-lg border border-slate-100 flex items-center justify-between">
+                                    <div>
+                                        <span class="font-bold text-slate-800">Stage #{{ hist.stage_number }}: {{ hist.status }}</span>
+                                        {% if hist.notes %}<p class="text-[10px] text-slate-500 line-clamp-1">{{ hist.notes }}</p>{% endif %}
+                                    </div>
+                                    <span class="text-[10px] text-slate-400">{{ hist.created_at|date:"M d, Y" }}</span>
+                                </div>
+                            {% empty %}
+                                <p class="text-[11px] text-slate-400 italic">No previous lower arch history recorded.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- SECTION 3: TRAY / ALIGNER MANAGEMENT                     -->
+        <!-- ======================================================== -->
+        <div class="pa-card p-6 sm:p-8 space-y-5 border-l-4 border-l-indigo-600">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-cubes-stacked text-indigo-600"></i> Dedicated Tray / Aligner Schedule Management
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Control aligner tray numbers, switch intervals, and pause controls</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        Current: Tray #{{ plan.current_aligner|stringformat:"02d" }} / {{ plan.total_aligners|stringformat:"02d" }}
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-black bg-sky-50 text-sky-700 border border-sky-200">
+                        Next: Tray #{{ plan.next_aligner|stringformat:"02d" }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Total Number of Trays *</label>
+                    {{ form.total_aligners }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Current Tray Number *</label>
+                    {{ form.current_aligner }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Next Tray Number (Computed)</label>
+                    <input type="text" value="Tray #{{ plan.next_aligner|stringformat:'02d' }}" disabled class="form-input bg-slate-100 text-slate-500 font-bold cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tray Start Date</label>
+                    {{ form.start_date }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Changing Frequency (Days) *</label>
+                    {{ form.aligner_frequency_days }}
+                    <span class="text-[10px] text-slate-400 block mt-0.5">e.g. Every 7, 10, or 14 days</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Next Tray Changing Date</label>
+                    {{ form.next_tray_change_date }}
+                    <span class="text-[10px] text-slate-400 block mt-0.5">Doctor prescribed change date</span>
+                </div>
+            </div>
+
+            <!-- Pause / Modify Schedule Section -->
+            <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+                <div class="flex items-center gap-3">
+                    {{ form.is_paused }}
+                    <div>
+                        <label for="{{ form.is_paused.id_for_label }}" class="text-xs font-bold text-amber-900 cursor-pointer">
+                            Pause Tray Schedule (Clinically Hold Current Aligner)
+                        </label>
+                        <p class="text-[10px] text-amber-800">Check this if the patient requires gingival rest, re-scan, or chewie recovery before advancing.</p>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-amber-900 mb-1">Clinical Pause Reason</label>
+                    {{ form.pause_reason }}
+                </div>
+            </div>
+
+            <!-- Treatment Instructions -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Doctor Treatment & Tray Instructions *</label>
+                {{ form.treatment_instructions }}
+                <p class="text-[10px] text-slate-400 mt-1">These instructions are prominently displayed on the patient's daily dashboard.</p>
+            </div>
+
+            <!-- Previous Tray History -->
+            {% if tray_history %}
+            <div class="pt-2">
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Previous Tray Progression History</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden">
+                        <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+                            <tr>
+                                <th class="p-2.5">Tray #</th>
+                                <th class="p-2.5">Started On</th>
+                                <th class="p-2.5">Completed On</th>
+                                <th class="p-2.5">Status</th>
+                                <th class="p-2.5">Clinical Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            {% for tray in tray_history %}
+                            <tr>
+                                <td class="p-2.5 font-bold text-indigo-700 font-mono">Tray #{{ tray.tray_number|stringformat:"02d" }}</td>
+                                <td class="p-2.5">{{ tray.started_on|date:"M d, Y" }}</td>
+                                <td class="p-2.5">{{ tray.completed_on|date:"M d, Y"|default:"Active / In Use" }}</td>
+                                <td class="p-2.5">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold {% if tray.status == 'Completed' %}bg-emerald-100 text-emerald-800{% elif tray.status == 'Paused' %}bg-amber-100 text-amber-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                                        {{ tray.status }}
+                                    </span>
+                                </td>
+                                <td class="p-2.5 text-slate-500 text-[11px]">{{ tray.doctor_notes|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- SECTION 4: OVERALL CLINICAL STATUS & COMPLIANCE          -->
+        <!-- ======================================================== -->
+        <div class="pa-card p-6 sm:p-8 space-y-4">
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-gauge-high text-blue-600"></i> Compliance & Status
+                <i class="fa-solid fa-gauge-high text-blue-600"></i> Clinical Status & Compliance Parameters
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Plan Status *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Overall Plan Status *</label>
                     {{ form.status }}
                 </div>
                 <div>
@@ -76,28 +317,34 @@
                     {{ form.compliance_score }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Daily Wear Hours</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Daily Wear Hours Target</label>
                     {{ form.daily_wear_hours }}
                 </div>
             </div>
 
-            <div class="mt-4">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Next Review Date</label>
-                {{ form.next_review_date }}
-            </div>
-
-            <div class="mt-4">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Instructions for Patient</label>
-                {{ form.treatment_instructions }}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Duration (Months)</label>
+                    {{ form.estimated_duration_months }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Next Clinical Review Date</label>
+                    {{ form.next_review_date }}
+                </div>
             </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-            <a href="{% url 'doctor:patient_detail' patient.id %}?tab=treatment" class="btn-secondary text-xs">Cancel</a>
+        <!-- Form Actions -->
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+            <a href="{% url 'doctor:patient_detail' patient.id %}?tab=treatment" class="btn-secondary text-xs">
+                Cancel
+            </a>
             <button type="submit" class="btn-primary text-xs shadow-md">
-                <i class="fa-solid fa-check mr-1"></i> Save Treatment Plan
+                <i class="fa-solid fa-floppy-disk mr-1"></i> Save Full Treatment Plan & Arch Progress
             </button>
         </div>
+
+    </form>
 
     </form>
 

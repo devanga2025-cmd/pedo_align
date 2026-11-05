@@ -1,8 +1,8 @@
 {% extends 'doctor/base.html' %}
 {% load static %}
 
-{% block title %}Photo Comparison - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
-{% block breadcrumb %}<a href="{% url 'doctor:patient_detail' patient.id %}?tab=photos" class="hover:underline">Photos</a> / Compare{% endblock %}
+{% block title %}Multi-Stage Photo Comparison - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}<a href="{% url 'doctor:patient_detail' patient.id %}?tab=photos" class="hover:underline">Photos</a> / Multi-Stage Comparison{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
@@ -11,7 +11,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
             <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-arrows-left-right text-blue-600"></i> Dental Progress Comparison Tool
+                <i class="fa-solid fa-arrows-left-right text-blue-600"></i> Dental Photo Comparison & Progression Analysis
             </h1>
             <p class="text-xs text-slate-500 mt-1">
                 Visual alignment comparison for <strong class="text-slate-800">{{ patient.full_name }}</strong> (ID: {{ patient.patient_id }})
@@ -22,83 +22,216 @@
         </a>
     </div>
 
-    {% if photos.count >= 2 %}
-    <!-- 1. Interactive Slider Comparison -->
-    <div class="pa-card p-6">
-        <h3 class="text-sm font-bold text-slate-900 mb-1">Interactive Before-and-After Slider</h3>
-        <p class="text-xs text-slate-500 mb-6">Drag the vertical bar to compare baseline dental alignment against current progress</p>
-
-        <div class="max-w-3xl mx-auto">
-            <div class="compare-container h-96 w-full shadow-xl relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-200">
-                <!-- Base image (Before) -->
-                {% with before=photos.last %}
-                <img src="{% if before.front_bite_photo %}{{ before.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}" alt="Baseline" class="w-full h-full object-cover">
-                <span class="absolute bottom-4 left-4 bg-slate-900/80 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur shadow">
-                    BASELINE / BEFORE (Week {{ before.week_number }})
-                </span>
-                {% endwith %}
-
-                <!-- Overlay image (After / Latest) -->
-                {% with after=photos.first %}
-                <div class="compare-image-after" style="width: 50%;">
-                    <img src="{% if after.front_bite_photo %}{{ after.front_bite_photo.url }}{% else %}{% static 'doctor/images/placeholder_dental.jpg' %}{% endif %}" alt="Latest" class="w-full h-full object-cover max-w-none" style="width: 100%;">
-                    <span class="absolute bottom-4 right-4 bg-blue-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur shadow">
-                        LATEST (Week {{ after.week_number }}, Tray #{{ after.aligner_stage }})
-                    </span>
-                </div>
-                {% endwith %}
-
-                <!-- Center Divider Handle -->
-                <div class="compare-slider-handle" style="left: 50%;">
-                    <div class="compare-handle-circle">
-                        <i class="fa-solid fa-left-right text-xs"></i>
-                    </div>
-                </div>
-            </div>
-            <p class="text-center text-xs text-slate-400 mt-3">
-                <i class="fa-solid fa-hand-pointer mr-1"></i> Click and drag the handle left or right across the smile
-            </p>
+    <!-- Clinical Disclaimer Alert (Requirement 5) -->
+    <div class="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200 text-xs text-blue-950 flex items-start gap-2.5">
+        <i class="fa-solid fa-shield-heart text-blue-600 text-base mt-0.5 flex-shrink-0"></i>
+        <div>
+            <strong>Clinical Safety Notice:</strong> This comparison module is designed for visual clinical monitoring. Do not automatically diagnose or calculate clinical outcomes from photographs. All alignment modifications must be clinically confirmed by the treating orthodontist.
         </div>
     </div>
 
-    <!-- 2. Side-by-Side Dual Image Comparison Grid -->
-    <div class="pa-card p-6">
-        <h3 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">
-            Side-by-Side Angle Comparison
-        </h3>
+    <!-- Treatment Stage Categories Overview (Requirement 5) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Category 1</span>
+                <span class="font-bold text-slate-800 text-sm">Pre-Treatment Photos</span>
+                <p class="text-[11px] text-slate-500 mt-0.5">{{ pre_treatment_photos.count }} Baseline set(s)</p>
+            </div>
+            <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </span>
+        </div>
+
+        <div class="p-4 bg-white rounded-2xl border border-blue-200 bg-blue-50/30 shadow-xs flex items-center justify-between">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-500 block mb-0.5">Category 2</span>
+                <span class="font-bold text-blue-900 text-sm">During-Treatment Photos</span>
+                <p class="text-[11px] text-blue-700/80 mt-0.5">{{ during_treatment_photos.count }} Active check-in set(s)</p>
+            </div>
+            <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-spinner"></i>
+            </span>
+        </div>
+
+        <div class="p-4 bg-white rounded-2xl border border-cyan-200 bg-cyan-50/30 shadow-xs flex items-center justify-between">
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-600 block mb-0.5">Category 3</span>
+                <span class="font-bold text-cyan-900 text-sm">Latest Treatment Photos</span>
+                <p class="text-[11px] text-cyan-700/80 mt-0.5">{{ latest_photos.count }} Recent stage set(s)</p>
+            </div>
+            <span class="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-star"></i>
+            </span>
+        </div>
+    </div>
+
+    {% if photos.count >= 2 %}
+    <!-- Filter Bar: Choose Left Date vs Right Date & Dental Angle -->
+    <div class="pa-card p-4 sm:p-5">
+        <form method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+            
+            <!-- Left Comparison Stage -->
+            <div class="sm:col-span-4">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Left Photo Stage (Baseline / Earlier)
+                </label>
+                <select name="left_id" onchange="this.form.submit()" class="form-input text-xs font-bold">
+                    {% for p in photos %}
+                        <option value="{{ p.id }}" {% if left_photo.id == p.id %}selected{% endif %}>
+                            Week {{ p.week_number }} (Tray #{{ p.aligner_stage }}) - {{ p.upload_date|date:"M d, Y" }} {% if p.is_before_sample %}[Pre-Treatment]{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Angle Switcher -->
+            <div class="sm:col-span-4">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Dental View Angle (5 Angles)
+                </label>
+                <select name="angle" onchange="this.form.submit()" class="form-input text-xs font-bold text-blue-700">
+                    <option value="front" {% if angle == 'front' %}selected{% endif %}>1. Frontal View (Front Teeth)</option>
+                    <option value="right" {% if angle == 'right' %}selected{% endif %}>2. Right Lateral View (Right Molars)</option>
+                    <option value="left" {% if angle == 'left' %}selected{% endif %}>3. Left Lateral View (Left Molars)</option>
+                    <option value="upper" {% if angle == 'upper' %}selected{% endif %}>4. Upper Arch (Maxillary Palate)</option>
+                    <option value="lower" {% if angle == 'lower' %}selected{% endif %}>5. Lower Arch (Mandibular Teeth)</option>
+                </select>
+            </div>
+
+            <!-- Right Comparison Stage -->
+            <div class="sm:col-span-4">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Right Photo Stage (Latest / Comparison)
+                </label>
+                <select name="right_id" onchange="this.form.submit()" class="form-input text-xs font-bold text-blue-800">
+                    {% for p in photos %}
+                        <option value="{{ p.id }}" {% if right_photo.id == p.id %}selected{% endif %}>
+                            Week {{ p.week_number }} (Tray #{{ p.aligner_stage }}) - {{ p.upload_date|date:"M d, Y" }} {% if p.is_after_sample %}[Latest]{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Side-by-Side Dual Image Comparison (Requirement 5) -->
+    <div class="pa-card p-6 space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-table-columns text-blue-600"></i> Side-by-Side Angle Comparison
+            </h3>
+            <span class="text-xs text-slate-400">Click any image to zoom in full resolution</span>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Left Side: Baseline -->
-            <div class="space-y-3">
+            
+            <!-- Left Side Card -->
+            <div class="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Baseline / Start of Care</span>
-                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">Week {{ photos.last.week_number }}</span>
+                    <div>
+                        <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Earlier Stage / Baseline</span>
+                        <p class="text-[11px] text-slate-500">Week {{ left_photo.week_number }} (Tray #{{ left_photo.aligner_stage }})</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700">
+                        {{ left_photo.upload_date|date:"M d, Y" }}
+                    </span>
                 </div>
-                <div class="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
-                    {% if photos.last.front_bite_photo %}
-                    <img src="{{ photos.last.front_bite_photo.url }}" class="w-full h-full object-cover" alt="Baseline">
+
+                <!-- Image Container with Zoom Trigger -->
+                <div class="relative group cursor-zoom-in aspect-video bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs" 
+                     onclick="zoomModalImage(this.querySelector('img').src, 'Week {{ left_photo.week_number }} - {{ angle|upper }}')">
+                    {% if angle == 'front' and left_photo.front_bite_photo %}
+                        <img src="{{ left_photo.front_bite_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'right' and left_photo.right_occlusion_photo %}
+                        <img src="{{ left_photo.right_occlusion_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'left' and left_photo.left_occlusion_photo %}
+                        <img src="{{ left_photo.left_occlusion_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'upper' and left_photo.upper_arch_photo %}
+                        <img src="{{ left_photo.upper_arch_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'lower' and left_photo.lower_arch_photo %}
+                        <img src="{{ left_photo.lower_arch_photo.url }}" class="w-full h-full object-contain">
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                            <i class="fa-solid fa-image text-3xl mb-1 text-slate-300"></i>
+                            <span>No photo uploaded for this angle</span>
+                        </div>
                     {% endif %}
+                    <div class="absolute bottom-2 right-2 px-2 py-1 rounded bg-slate-900/70 text-white text-[10px] font-bold backdrop-blur opacity-0 group-hover:opacity-100 transition">
+                        <i class="fa-solid fa-magnifying-glass-plus mr-1"></i> Zoom
+                    </div>
                 </div>
-                <p class="text-xs text-slate-600"><strong>Notes:</strong> {{ photos.last.patient_notes|default:"Initial diagnostic scan photos." }}</p>
+
+                <div class="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-100">
+                    <strong>Patient Notes:</strong> {{ left_photo.patient_notes|default:"No notes submitted." }}
+                </div>
             </div>
 
-            <!-- Right Side: Latest -->
-            <div class="space-y-3">
+            <!-- Right Side Card -->
+            <div class="p-4 bg-blue-50/40 rounded-2xl border border-blue-200 space-y-3">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Latest Progress</span>
-                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">Week {{ photos.first.week_number }} (Tray #{{ photos.first.aligner_stage }})</span>
+                    <div>
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider">Comparison Stage / Latest</span>
+                        <p class="text-[11px] text-blue-600">Week {{ right_photo.week_number }} (Tray #{{ right_photo.aligner_stage }})</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-blue-900">
+                        {{ right_photo.upload_date|date:"M d, Y" }}
+                    </span>
                 </div>
-                <div class="aspect-video bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
-                    {% if photos.first.front_bite_photo %}
-                    <img src="{{ photos.first.front_bite_photo.url }}" class="w-full h-full object-cover" alt="Latest">
+
+                <!-- Image Container with Zoom Trigger -->
+                <div class="relative group cursor-zoom-in aspect-video bg-white rounded-xl overflow-hidden border border-blue-100 shadow-xs"
+                     onclick="zoomModalImage(this.querySelector('img').src, 'Week {{ right_photo.week_number }} - {{ angle|upper }}')">
+                    {% if angle == 'front' and right_photo.front_bite_photo %}
+                        <img src="{{ right_photo.front_bite_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'right' and right_photo.right_occlusion_photo %}
+                        <img src="{{ right_photo.right_occlusion_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'left' and right_photo.left_occlusion_photo %}
+                        <img src="{{ right_photo.left_occlusion_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'upper' and right_photo.upper_arch_photo %}
+                        <img src="{{ right_photo.upper_arch_photo.url }}" class="w-full h-full object-contain">
+                    {% elif angle == 'lower' and right_photo.lower_arch_photo %}
+                        <img src="{{ right_photo.lower_arch_photo.url }}" class="w-full h-full object-contain">
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Photo</div>
+                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs">
+                            <i class="fa-solid fa-image text-3xl mb-1 text-slate-300"></i>
+                            <span>No photo uploaded for this angle</span>
+                        </div>
                     {% endif %}
+                    <div class="absolute bottom-2 right-2 px-2 py-1 rounded bg-blue-900/70 text-white text-[10px] font-bold backdrop-blur opacity-0 group-hover:opacity-100 transition">
+                        <i class="fa-solid fa-magnifying-glass-plus mr-1"></i> Zoom
+                    </div>
                 </div>
-                <p class="text-xs text-slate-600"><strong>Doctor Review:</strong> {{ photos.first.doctor_feedback|default:"Tracking well according to virtual prescription." }}</p>
+
+                <div class="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-100">
+                    <strong>Doctor Review:</strong> {{ right_photo.doctor_feedback|default:"Tracking well according to virtual prescription." }}
+                </div>
             </div>
+
+        </div>
+
+        <!-- Add Doctor Comments on this Comparison (Requirement 5) -->
+        <div class="pt-4 border-t border-slate-100">
+            <form method="POST" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                {% csrf_token %}
+                <input type="hidden" name="save_comment" value="1">
+                <input type="hidden" name="target_photo_id" value="{{ right_photo.id }}">
+
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        <i class="fa-solid fa-comment-medical text-blue-600 mr-1"></i> Add Doctor Clinical Comment on Week {{ right_photo.week_number }} Progress
+                    </label>
+                    <span class="text-[10px] text-slate-400">Shared with patient upon saving</span>
+                </div>
+
+                <textarea name="doctor_comment" rows="2" class="form-input text-xs" placeholder="e.g. Excellent maxillary arch widening. Canine rotation is tracking right on schedule. Continue chewie wear for 5 mins daily.">{{ right_photo.doctor_feedback|default:'' }}</textarea>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="btn-primary text-xs shadow-xs">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Doctor Comparison Comment
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -113,5 +246,41 @@
     {% endif %}
 
 </div>
+
+<!-- High-Resolution Image Zoom Modal (Requirement 5) -->
+<div id="imageZoomModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-4xl w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4 animate-in fade-in zoom-in-95">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 id="zoomModalTitle" class="text-sm font-bold text-slate-900">High-Resolution Photo Zoom</h3>
+            <button type="button" onclick="closeZoomModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="max-h-[75vh] overflow-auto rounded-2xl bg-slate-950 flex items-center justify-center p-2">
+            <img id="zoomModalImg" src="" alt="Enlarged Photo" class="max-h-[70vh] w-auto object-contain rounded-xl">
+        </div>
+        <div class="text-[11px] text-slate-400 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-circle-info text-blue-500"></i>
+            <span>Inspect tooth alignment, contact points, and attachment seating in high resolution.</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function zoomModalImage(src, title) {
+        if (!src) return;
+        document.getElementById('zoomModalImg').src = src;
+        document.getElementById('zoomModalTitle').innerText = title || 'High-Resolution Photo Zoom';
+        document.getElementById('imageZoomModal').classList.remove('hidden');
+    }
+
+    function closeZoomModal() {
+        document.getElementById('imageZoomModal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeZoomModal();
+    });
+</script>
 {% endblock %}
 

@@ -4,100 +4,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Sign In - PEDO ALIGN</title>
+    <title>Sign In - PEDO ALIGN</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
+
+    <!-- Web App Manifest for Mobile -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#2878F0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PEDO ALIGN">
+
+    <!-- Google Fonts & Tailwind CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'patient/css/patient.css' %}">
-</head>
-<body class="h-full flex items-center justify-center p-4 bg-[#F4F9FF] antialiased">
 
-    <div class="w-full max-w-md">
-        
-        <!-- Login Card -->
-        <div class="bg-white rounded-3xl shadow-xl border border-blue-100 overflow-hidden">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .input-focus-ring:focus {
+            outline: none;
+            border-color: #2878F0;
+            box-shadow: 0 0 0 3px rgba(40, 120, 240, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-b from-[#F4F9FF] via-[#EAF3FF] to-[#F4F9FF] antialiased">
+
+    <!-- Main Centered Container (No side panels) -->
+    <div class="w-full max-w-md my-auto space-y-4">
+
+        <!-- Logo Header -->
+        <div class="text-center space-y-2">
+            <a href="/" class="inline-block transition-transform hover:scale-[1.02] focus:outline-none">
+                <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" 
+                     alt="PEDO ALIGN" 
+                     onerror="this.src='/static/sidebar_glowing_logo.png'" 
+                     class="h-14 sm:h-16 mx-auto w-auto object-contain drop-shadow-md">
+            </a>
+            <p class="text-xs font-semibold text-slate-500">
+                Pediatric Orthodontic Alignment & Monitoring
+            </p>
+        </div>
+
+        <!-- Main Login Card -->
+        <div class="bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-blue-100 p-6 sm:p-8 space-y-5">
             
-            <!-- Friendly Header Banner with bg.png & Logo -->
-            <div class="relative bg-cover bg-center p-6 text-center border-b border-blue-100/80" style="background-image: url('{% static 'bg.png' %}?v=2305');">
-                <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" alt="PEDO ALIGN" onerror="this.src='/static/sidebar_glowing_logo.png'" class="max-w-[210px] mx-auto h-auto object-contain drop-shadow-sm">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm text-blue-700 text-xs font-bold mt-2 shadow-xs">
-                    <i class="fa-solid fa-face-smile text-sky-500"></i>
-                    <span>Patient Companion Portal</span>
-                </div>
+            <div class="text-center">
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Sign In</h1>
+                <p class="text-xs text-slate-500 mt-1">Access your aligner tracker or doctor workstation</p>
             </div>
 
-            <div class="p-8 sm:p-10 space-y-5">
-                <div class="text-center">
-                    <h2 class="text-xl font-black text-slate-900 tracking-tight">Welcome Back!</h2>
-                    <p class="text-xs text-slate-500 mt-1">Sign in to check your aligner schedule and progress</p>
+            <!-- Messages -->
+            {% if messages %}
+            <div class="space-y-2">
+                {% for message in messages %}
+                <div class="p-3.5 rounded-2xl text-xs font-semibold {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                    {{ message }}
                 </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-                <!-- Messages -->
-                {% if messages %}
-                <div class="space-y-2">
-                    {% for message in messages %}
-                    <div class="p-3.5 rounded-xl text-xs font-semibold {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
-                        {{ message }}
+            <!-- Portal Switcher: Patient Portal vs Doctor Workstation -->
+            <div class="flex p-1 bg-slate-100 rounded-2xl border border-slate-200 text-xs font-bold">
+                <button type="button" 
+                        id="portalBtnPatient"
+                        onclick="switchPortal('patient')"
+                        class="flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 {% if active_tab != 'doctor' %}bg-white text-blue-700 shadow-sm font-extrabold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+                    <i class="fa-solid fa-face-smile text-sky-500"></i>
+                    <span>Patient Portal</span>
+                </button>
+
+                <button type="button" 
+                        id="portalBtnDoctor"
+                        onclick="switchPortal('doctor')"
+                        class="flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 {% if active_tab == 'doctor' %}bg-white text-blue-700 shadow-sm font-extrabold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+                    <i class="fa-solid fa-stethoscope text-indigo-500"></i>
+                    <span>Doctor Portal</span>
+                </button>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- SECTION 1: PATIENT PORTAL                      -->
+            <!-- ============================================== -->
+            <div id="patientPortalSection" class="space-y-4 {% if active_tab == 'doctor' %}hidden{% endif %}">
+                
+                <!-- Sub-tabs: Joining Code vs Password -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Patient Sign In:</span>
+                    <div class="inline-flex rounded-xl bg-slate-100 p-0.5 text-[11px] font-bold">
+                        <button type="button" 
+                                id="subBtnCode"
+                                onclick="switchPatientSubTab('code')"
+                                class="py-1 px-2.5 rounded-lg transition-all {% if active_tab != 'password' %}bg-white text-blue-700 shadow-xs font-extrabold{% else %}text-slate-500{% endif %}">
+                            🔑 Joining Code
+                        </button>
+                        <button type="button" 
+                                id="subBtnPwd"
+                                onclick="switchPatientSubTab('password')"
+                                class="py-1 px-2.5 rounded-lg transition-all {% if active_tab == 'password' %}bg-white text-blue-700 shadow-xs font-extrabold{% else %}text-slate-500{% endif %}">
+                            🔒 Password
+                        </button>
                     </div>
-                    {% endfor %}
                 </div>
-                {% endif %}
 
-                <!-- Form -->
-                <form method="POST" class="space-y-4">
+                <!-- 1A. Joining Code Form (Easy & Passwordless) -->
+                <div id="patientCodeFormContainer" class="space-y-4 {% if active_tab == 'password' %}hidden{% endif %}">
+                    
+                    <div class="bg-blue-50/70 border border-blue-100 p-3 rounded-2xl text-[11px] text-blue-950 flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-blue-600 text-sm mt-0.5 flex-shrink-0"></i>
+                        <span><strong>No password needed:</strong> Enter the unique Joining Code from your dental clinic to open your dashboard.</span>
+                    </div>
+
+                    <form method="POST" action="{% url 'patient:login' %}" class="space-y-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="login_type" value="code">
+
+                        {% if code_form.non_field_errors %}
+                        <div class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
+                            {{ code_form.non_field_errors.0 }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Joining Code -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-1.5 text-center">
+                                Clinic Joining Code <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-500">
+                                    <i class="fa-solid fa-key text-base"></i>
+                                </div>
+                                <input type="text" 
+                                       name="joining_code" 
+                                       value="{{ code_form.joining_code.value|default:'' }}" 
+                                       required 
+                                       placeholder="PA-XXXXXX (e.g. PA-9Y6UPG)" 
+                                       class="w-full py-3.5 pl-10 pr-3 text-center uppercase font-black text-blue-700 text-lg tracking-widest bg-slate-50 rounded-2xl border-2 border-blue-200 input-focus-ring transition-all"
+                                       autofocus>
+                            </div>
+                            {% if code_form.joining_code.errors %}
+                                <p class="text-xs text-rose-600 mt-1 font-semibold text-center">{{ code_form.joining_code.errors.0 }}</p>
+                            {% else %}
+                                <p class="text-[11px] text-slate-400 mt-1 text-center font-medium">Provided on your clinic alignment prescription voucher</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Optional Email -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Your Gmail or Email <span class="text-slate-400 font-normal lowercase">(optional)</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-envelope text-sm"></i>
+                                </div>
+                                <input type="email" 
+                                       name="email" 
+                                       value="{{ code_form.email.value|default:'' }}" 
+                                       placeholder="e.g. sahana@gmail.com" 
+                                       class="w-full py-2.5 pl-10 pr-3.5 text-xs text-slate-800 bg-slate-50 rounded-xl border border-slate-200 input-focus-ring transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Keep me signed in -->
+                        <div class="flex items-center gap-2 pt-0.5">
+                            <input type="checkbox" name="remember_me" id="code_remember_me" checked class="rounded text-blue-600 focus:ring-blue-400 h-4 w-4">
+                            <label for="code_remember_me" class="text-xs text-slate-600 cursor-pointer font-medium">Keep me signed in on this device</label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-1">
+                            <button type="submit" class="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-lg shadow-blue-500/25 transition-all transform active:scale-[0.99]">
+                                <i class="fa-solid fa-arrow-right-to-bracket text-base"></i>
+                                <span>Open My Treatment Dashboard</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 1B. Patient Password Form -->
+                <div id="patientPwdFormContainer" class="space-y-4 {% if active_tab != 'password' %}hidden{% endif %}">
+                    <form method="POST" action="{% url 'patient:login' %}" class="space-y-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="login_type" value="password">
+
+                        {% if pwd_form.non_field_errors %}
+                        <div class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
+                            {{ pwd_form.non_field_errors.0 }}
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email or Patient ID</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-user text-sm"></i>
+                                </div>
+                                <input type="text" 
+                                       name="login_identifier" 
+                                       value="{{ pwd_form.login_identifier.value|default:'' }}" 
+                                       required 
+                                       placeholder="patient@example.com or PA-PXXXX" 
+                                       class="w-full py-2.5 pl-10 pr-3.5 text-xs text-slate-800 bg-slate-50 rounded-xl border border-slate-200 input-focus-ring transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
+                                <a href="{% url 'patient:forgot_password' %}" class="text-xs font-semibold text-blue-600 hover:underline">Forgot?</a>
+                            </div>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-lock text-sm"></i>
+                                </div>
+                                <input type="password" 
+                                       name="password" 
+                                       required 
+                                       placeholder="••••••••" 
+                                       class="w-full py-2.5 pl-10 pr-3.5 text-xs text-slate-800 bg-slate-50 rounded-xl border border-slate-200 input-focus-ring transition-all">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-0.5">
+                            <input type="checkbox" name="remember_me" id="pwd_remember_me" checked class="rounded text-blue-600 focus:ring-blue-400 h-4 w-4">
+                            <label for="pwd_remember_me" class="text-xs text-slate-600 cursor-pointer">Keep me signed in on this device</label>
+                        </div>
+
+                        <div class="pt-1">
+                            <button type="submit" class="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-md shadow-blue-500/25 transition-all transform active:scale-[0.99]">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                                <span>Sign In with Password</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="pt-2 text-center border-t border-slate-100">
+                    <p class="text-xs text-slate-600">
+                        New patient without a code? 
+                        <a href="{% url 'patient:register' %}" class="font-bold text-blue-600 hover:underline ml-1">Create Account</a>
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- ============================================== -->
+            <!-- SECTION 2: DOCTOR PORTAL                       -->
+            <!-- ============================================== -->
+            <div id="doctorPortalSection" class="space-y-4 {% if active_tab != 'doctor' %}hidden{% endif %}">
+                
+                <div class="bg-indigo-50/70 border border-indigo-100 p-3 rounded-2xl text-xs text-indigo-950 flex items-start gap-2">
+                    <i class="fa-solid fa-stethoscope text-indigo-600 text-sm mt-0.5 flex-shrink-0"></i>
+                    <span><strong>Doctor Workstation:</strong> Sign in with clinic credentials to monitor photos & manage aligners.</span>
+                </div>
+
+                <form method="POST" action="{% url 'doctor:login' %}" class="space-y-4">
                     {% csrf_token %}
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email or Patient ID</label>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Doctor Email</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                <i class="fa-solid fa-user text-sm"></i>
+                                <i class="fa-solid fa-envelope text-sm"></i>
                             </div>
-                            <input type="text" name="login_identifier" required placeholder="patient@example.com or PA-PT-XXXX" class="form-input-patient pl-10" autofocus>
+                            <input type="email" 
+                                   name="email" 
+                                   required 
+                                   placeholder="dr.smith@pedoalign.com" 
+                                   class="w-full py-2.5 pl-10 pr-3.5 text-xs text-slate-800 bg-slate-50 rounded-xl border border-slate-200 input-focus-ring transition-all">
                         </div>
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
-                            <a href="{% url 'patient:forgot_password' %}" class="text-xs font-semibold text-blue-600 hover:underline">Forgot?</a>
+                            <a href="{% url 'doctor:forgot_password' %}" class="text-xs font-semibold text-blue-600 hover:underline">Forgot?</a>
                         </div>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-lock text-sm"></i>
                             </div>
-                            <input type="password" name="password" required placeholder="••••••••" class="form-input-patient pl-10">
+                            <input type="password" 
+                                   name="password" 
+                                   required 
+                                   placeholder="••••••••" 
+                                   class="w-full py-2.5 pl-10 pr-3.5 text-xs text-slate-800 bg-slate-50 rounded-xl border border-slate-200 input-focus-ring transition-all">
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 pt-1">
-                        <input type="checkbox" name="remember_me" id="remember_me" class="rounded text-blue-600 focus:ring-blue-400 h-4 w-4">
-                        <label for="remember_me" class="text-xs text-slate-600 cursor-pointer">Remember me on this device</label>
-                    </div>
-
-                    <div class="pt-2">
-                        <button type="submit" class="w-full btn-patient-primary py-3 text-sm font-bold shadow-md">
-                            <i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Sign In to My Treatment
+                    <div class="pt-1">
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-slate-900 hover:bg-black shadow-lg shadow-slate-900/20 transition-all transform active:scale-[0.99]">
+                            <i class="fa-solid fa-stethoscope mr-1"></i>
+                            <span>Sign In to Doctor Workstation</span>
                         </button>
                     </div>
+
+                    <div class="text-center pt-2 border-t border-slate-100">
+                        <a href="{% url 'doctor:register' %}" class="text-xs text-blue-600 hover:underline font-bold">
+                            New Orthodontist? Register Clinic Account &rarr;
+                        </a>
+                    </div>
                 </form>
-
-                <div class="pt-4 border-t border-slate-100 text-center space-y-2">
-                    <p class="text-xs text-slate-600">
-                        New patient? 
-                        <a href="{% url 'patient:register' %}" class="font-bold text-blue-600 hover:underline ml-1">Create Patient Account</a>
-                    </p>
-                    <p class="text-[11px] text-slate-400">
-                        Doctor or Clinic Staff? 
-                        <a href="{% url 'doctor:login' %}" class="text-slate-600 hover:text-blue-600 font-semibold underline">Doctor Portal Login</a>
-                    </p>
-                </div>
-
             </div>
 
         </div>
 
+        <!-- ============================================== -->
+        <!-- MOBILE INSTALL BUTTONS (Clean & Compact)       -->
+        <!-- ============================================== -->
+        <div class="bg-white/90 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-blue-100 shadow-md shadow-blue-900/5 text-center space-y-2.5">
+            <div class="flex items-center justify-center gap-2">
+                <i class="fa-solid fa-mobile-screen-button text-blue-600 text-sm"></i>
+                <span class="text-xs font-bold text-slate-800">Install PEDO ALIGN on Phone / Tablet</span>
+            </div>
+
+            <!-- Install Buttons -->
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" 
+                        onclick="triggerPWAInstall()" 
+                        class="py-2.5 px-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-black text-xs shadow-sm flex items-center justify-center gap-1.5 transition transform active:scale-95">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Install App</span>
+                </button>
+
+                <button type="button" 
+                        onclick="showPWAInstallModal('android')" 
+                        class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 transition transform active:scale-95">
+                    <i class="fa-brands fa-google-play text-emerald-400"></i>
+                    <span>Google Play</span>
+                </button>
+
+                <button type="button" 
+                        onclick="showPWAInstallModal('ios')" 
+                        class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 transition transform active:scale-95">
+                    <i class="fa-brands fa-apple text-white"></i>
+                    <span>App Store</span>
+                </button>
+            </div>
+
+            <p class="text-[10px] text-slate-400 font-medium">
+                Add to home screen for weekly 5-angle teeth photos & tray switch alerts
+            </p>
+        </div>
+
     </div>
 
+    {% include 'doctor/includes/pwa_install_modal.html' %}
+
+    <!-- JavaScript Handlers -->
+    <script>
+        // Switch between Patient Portal & Doctor Portal
+        function switchPortal(portal) {
+            const patientSec = document.getElementById('patientPortalSection');
+            const doctorSec = document.getElementById('doctorPortalSection');
+            const btnPatient = document.getElementById('portalBtnPatient');
+            const btnDoctor = document.getElementById('portalBtnDoctor');
+
+            if (portal === 'patient') {
+                patientSec.classList.remove('hidden');
+                doctorSec.classList.add('hidden');
+                btnPatient.className = 'flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white text-blue-700 shadow-sm font-extrabold';
+                btnDoctor.className = 'flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 font-bold';
+            } else {
+                patientSec.classList.add('hidden');
+                doctorSec.classList.remove('hidden');
+                btnDoctor.className = 'flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white text-blue-700 shadow-sm font-extrabold';
+                btnPatient.className = 'flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 font-bold';
+            }
+        }
+
+        // Switch between Patient Joining Code vs Password
+        function switchPatientSubTab(tab) {
+            const codeForm = document.getElementById('patientCodeFormContainer');
+            const pwdForm = document.getElementById('patientPwdFormContainer');
+            const btnCode = document.getElementById('subBtnCode');
+            const btnPwd = document.getElementById('subBtnPwd');
+
+            if (tab === 'code') {
+                codeForm.classList.remove('hidden');
+                pwdForm.classList.add('hidden');
+                btnCode.className = 'py-1 px-2.5 rounded-lg transition-all bg-white text-blue-700 shadow-xs font-extrabold';
+                btnPwd.className = 'py-1 px-2.5 rounded-lg transition-all text-slate-500';
+            } else {
+                codeForm.classList.add('hidden');
+                pwdForm.classList.remove('hidden');
+                btnPwd.className = 'py-1 px-2.5 rounded-lg transition-all bg-white text-blue-700 shadow-xs font-extrabold';
+                btnCode.className = 'py-1 px-2.5 rounded-lg transition-all text-slate-500';
+            }
+        }
+
+        function showMobileInstallGuide(platform) {
+            showPWAInstallModal(platform);
+        }
+    </script>
 </body>
 </html>
-

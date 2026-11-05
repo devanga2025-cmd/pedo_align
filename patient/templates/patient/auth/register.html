@@ -50,7 +50,12 @@
                     {% csrf_token %}
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name *</label>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Patient Category *</label>
+                        {{ form.patient_category }}
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Patient Full Name *</label>
                         {{ form.full_name }}
                     </div>
 
@@ -65,8 +70,36 @@
                         </div>
                     </div>
 
+                    <!-- Parent / Guardian Information for Child Patient -->
+                    <div id="parentGuardianFields" class="p-4 bg-sky-50/70 border border-sky-100 rounded-2xl space-y-3">
+                        <div class="flex items-center gap-2 text-xs font-bold text-sky-800">
+                            <i class="fa-solid fa-people-roof text-sky-600"></i>
+                            <span>Parent / Guardian Information (for Child Patient)</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Parent / Guardian Name</label>
+                                {{ form.parent_guardian_name }}
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Relationship</label>
+                                {{ form.parent_guardian_relationship }}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Parent Phone / WhatsApp</label>
+                                {{ form.parent_guardian_phone }}
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Parent Email</label>
+                                {{ form.parent_guardian_email }}
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Account Email Address *</label>
                         {{ form.email }}
                         <p class="text-[11px] text-slate-400 mt-0.5">Used for login and weekly photo reminders</p>
                     </div>
@@ -88,6 +121,21 @@
                         </button>
                     </div>
                 </form>
+
+                <script>
+                    function toggleParentFields() {
+                        const cat = document.getElementById('id_patient_category');
+                        const parentBox = document.getElementById('parentGuardianFields');
+                        if (cat && parentBox) {
+                            if (cat.value === 'CHILD') {
+                                parentBox.style.display = 'block';
+                            } else {
+                                parentBox.style.display = 'none';
+                            }
+                        }
+                    }
+                    document.addEventListener('DOMContentLoaded', toggleParentFields);
+                </script>
 
                 <div class="pt-4 border-t border-slate-100 text-center">
                     <p class="text-xs text-slate-600">

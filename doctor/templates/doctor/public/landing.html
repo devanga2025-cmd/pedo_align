@@ -1,0 +1,501 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEDO ALIGN - Pediatric Orthodontic Alignment & Monitoring Platform</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#2878F0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PEDO ALIGN">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paBlue: '#1E40AF',
+                        paSky: '#0284C7',
+                        paCyan: '#06B6D4',
+                        paNavy: '#0F172A',
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        .hero-gradient {
+            background: radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.15), transparent 45%),
+                        radial-gradient(circle at 10% 80%, rgba(37, 99, 235, 0.12), transparent 40%),
+                        #F8FAFC;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-full font-sans text-slate-800 bg-[#F8FAFC] antialiased selection:bg-blue-100 selection:text-blue-900 flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Logo & Brand -->
+            <a href="{% url 'doctor:landing' %}" class="flex items-center gap-3 focus:outline-none">
+                <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" 
+                     alt="PEDO ALIGN" 
+                     onerror="this.src='/static/sidebar_glowing_logo.png'"
+                     class="h-10 sm:h-12 w-auto object-contain drop-shadow-xs">
+            </a>
+
+            <!-- Navigation Links (Tablet / Desktop) -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-bold text-slate-600">
+                <a href="#features" class="hover:text-blue-600 transition">Features</a>
+                <a href="#mobile-app" class="hover:text-blue-600 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-mobile-screen text-blue-500"></i>
+                    <span>Mobile App</span>
+                </a>
+                <a href="#how-it-works" class="hover:text-blue-600 transition">How It Works</a>
+            </nav>
+
+            <!-- Dual Portal Login Actions & Install App -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <!-- Install App Button -->
+                <button type="button" 
+                        onclick="triggerPWAInstall()" 
+                        class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition transform hover:-translate-y-0.5"
+                        title="Install PEDO ALIGN on Phone or Desktop">
+                    <i class="fa-solid fa-download text-sky-600"></i>
+                    <span>Install App</span>
+                </button>
+
+                <!-- Patient Login Button -->
+                <a href="{% url 'patient:login' %}" 
+                   class="inline-flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200/80 transition shadow-xs">
+                    <i class="fa-solid fa-face-smile text-sky-500"></i>
+                    <span class="hidden sm:inline">Patient</span><span>Portal</span>
+                </a>
+
+                <!-- Doctor Login Button -->
+                <a href="{% url 'doctor:login' %}" 
+                   class="inline-flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-md shadow-blue-500/20 transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span class="hidden sm:inline">Doctor</span><span>Portal</span>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 hero-gradient">
+
+        <!-- 1. Hero Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 md:pt-20 pb-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+                
+                <!-- Left Column: Copy & Actions -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/80 text-blue-800 text-xs font-extrabold uppercase tracking-wider border border-blue-200">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Smart Orthodontic Monitoring Platform
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
+                        Transforming Pediatric Smiles with <span class="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent">Precision Care</span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        A modern dental ecosystem connecting orthodontists and young patients. Track aligner trays, upload weekly teeth photos from any phone, and achieve ideal clinical alignment together.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
+                        <!-- Patient Button -->
+                        <a href="{% url 'patient:login' %}" 
+                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl text-sm font-extrabold text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-xl shadow-blue-500/25 transition transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-key"></i>
+                            <span>Patient Login (Gmail + Code)</span>
+                        </a>
+
+                        <!-- Doctor Button -->
+                        <a href="{% url 'doctor:login' %}" 
+                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl text-sm font-extrabold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 shadow-md transition transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-stethoscope text-blue-600"></i>
+                            <span>Doctor Workstation</span>
+                        </a>
+
+                        <!-- Download App Anchor -->
+                        <a href="#mobile-app" 
+                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-xs font-bold text-slate-600 hover:text-blue-700 hover:bg-blue-50 transition">
+                            <i class="fa-solid fa-download text-sky-500"></i>
+                            <span>Get Mobile App</span>
+                        </a>
+                    </div>
+
+                    <!-- Highlight Badges -->
+                    <div class="grid grid-cols-3 gap-3 pt-6 border-t border-slate-200/80 text-center sm:text-left">
+                        <div class="space-y-0.5">
+                            <p class="text-xl sm:text-2xl font-black text-blue-600">100%</p>
+                            <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Cloud Synchronized</p>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="text-xl sm:text-2xl font-black text-sky-500">5 Angles</p>
+                            <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Teeth Photo Monitoring</p>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="text-xl sm:text-2xl font-black text-emerald-600">24/7</p>
+                            <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Urgent Aligner SOS</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Hero Graphic Showcase -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-md sm:max-w-lg lg:max-w-none">
+                        
+                        <!-- Glowing aura behind hero banner -->
+                        <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 via-sky-400 to-cyan-400 rounded-3xl blur-xl opacity-30"></div>
+
+                        <!-- Card with hero image -->
+                        <div class="relative bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 p-2 sm:p-3">
+                            <img src="{% static 'hero_section.png' %}" 
+                                 alt="PEDO ALIGN Dental Alignment" 
+                                 onerror="this.src='/static/doctor/images/hero_section.png'"
+                                 class="w-full h-auto object-cover rounded-2xl">
+                            
+                            <!-- Overlay Pill: Active Case -->
+                            <div class="p-3 bg-white/95 backdrop-blur-md rounded-2xl mt-2 border border-slate-100 flex items-center justify-between gap-3 text-xs">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                        <i class="fa-solid fa-teeth-open"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-extrabold text-slate-900">Pediatric Aligner Monitoring</p>
+                                        <p class="text-[10px] text-slate-500">Doctor Prescribed • Weekly Photo Verification</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] uppercase">
+                                    Live
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. Mobile App Download Section (Optimized for Mobile & Tablets) -->
+        <section id="mobile-app" class="py-16 sm:py-20 bg-gradient-to-b from-white via-blue-50/50 to-white border-y border-slate-200/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800">
+                        <i class="fa-solid fa-mobile-screen"></i> On-The-Go Companion
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                        Download the PEDO ALIGN Mobile App
+                    </h2>
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                        Snap weekly tooth photos directly from your phone camera, receive aligner switch countdowns, and stay in touch with your orthodontist everywhere.
+                    </p>
+                </div>
+
+                <!-- Download Card with Store Badges -->
+                <div class="bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-600 rounded-3xl p-6 sm:p-10 md:p-12 text-white shadow-2xl shadow-blue-600/20 relative overflow-hidden">
+                    
+                    <!-- Background ambient dental icon -->
+                    <i class="fa-solid fa-tooth absolute -right-10 -bottom-10 text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+
+                    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        
+                        <div class="lg:col-span-7 space-y-4 text-center lg:text-left">
+                            <h3 class="text-2xl sm:text-3xl font-black tracking-tight">
+                                Install on iOS, Android or Any Tablet
+                            </h3>
+                            <p class="text-sm sm:text-base text-blue-100 max-w-xl mx-auto lg:mx-0">
+                                PEDO ALIGN is optimized for all smartphones and tablets. Instant photo uploads, notifications, and offline access in one tap.
+                            </p>
+
+                            <!-- Download Badges Group -->
+                            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-4">
+                                
+                                <!-- Apple App Store Badge -->
+                                <button type="button" 
+                                   onclick="showPWAInstallModal('ios')" 
+                                   class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-black/80 hover:bg-black text-white border border-white/20 transition shadow-lg transform hover:-translate-y-0.5">
+                                    <i class="fa-brands fa-apple text-3xl"></i>
+                                    <div class="text-left leading-tight">
+                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Install on iOS</p>
+                                        <p class="text-sm font-bold">App Store / Safari</p>
+                                    </div>
+                                </button>
+
+                                <!-- Google Play Store Badge -->
+                                <button type="button" 
+                                   onclick="showPWAInstallModal('android')" 
+                                   class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-black/80 hover:bg-black text-white border border-white/20 transition shadow-lg transform hover:-translate-y-0.5">
+                                    <i class="fa-brands fa-google-play text-2xl text-emerald-400"></i>
+                                    <div class="text-left leading-tight">
+                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Install on Android</p>
+                                        <p class="text-sm font-bold">Google Play / Chrome</p>
+                                    </div>
+                                </button>
+
+                                <!-- Web PWA Install Badge -->
+                                <button type="button" 
+                                   onclick="triggerPWAInstall()" 
+                                   class="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-white text-blue-900 hover:bg-blue-50 font-bold text-xs sm:text-sm transition shadow-lg transform hover:-translate-y-0.5">
+                                    <i class="fa-solid fa-download text-lg text-blue-600"></i>
+                                    <div class="text-left leading-tight">
+                                        <p class="text-[10px] text-blue-600 uppercase font-bold">1-Click Install</p>
+                                        <p class="text-xs font-extrabold">Install App Now</p>
+                                    </div>
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <!-- App Highlights on the Right -->
+                        <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                                <i class="fa-solid fa-camera text-sky-300 text-lg mb-1.5"></i>
+                                <h4 class="font-bold text-white text-sm">5-Angle Camera</h4>
+                                <p class="text-blue-100 text-[11px] mt-0.5">Guided on-screen overlays for easy teeth alignment photos.</p>
+                            </div>
+
+                            <div class="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                                <i class="fa-solid fa-bell text-amber-300 text-lg mb-1.5"></i>
+                                <h4 class="font-bold text-white text-sm">Tray Timers</h4>
+                                <p class="text-blue-100 text-[11px] mt-0.5">Push countdowns reminding kids to wear trays 22 hrs daily.</p>
+                            </div>
+
+                            <div class="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                                <i class="fa-solid fa-trophy text-pink-300 text-lg mb-1.5"></i>
+                                <h4 class="font-bold text-white text-sm">Smile Badges</h4>
+                                <p class="text-blue-100 text-[11px] mt-0.5">Gamified achievements keeping young patients excited.</p>
+                            </div>
+
+                            <div class="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                                <i class="fa-solid fa-kit-medical text-rose-300 text-lg mb-1.5"></i>
+                                <h4 class="font-bold text-white text-sm">SOS Doctor Alert</h4>
+                                <p class="text-blue-100 text-[11px] mt-0.5">Instant alert if an aligner cracks or button comes loose.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. Dual Portals Section (Doctor vs Patient) -->
+        <section id="features" class="py-16 sm:py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800">
+                        <i class="fa-solid fa-shapes"></i> Two Portals, One Connected Journey
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                        Designed for Both Clinical Precision & Patient Delight
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                    
+                    <!-- Doctor Portal Card -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-lg flex flex-col justify-between hover:border-blue-300 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800 uppercase">
+                                    For Orthodontists
+                                </span>
+                            </div>
+
+                            <h3 class="text-xl font-black text-slate-900 mb-2">Doctor Workstation</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6">
+                                Complete clinical control over every aligner case. Monitor progress from your desktop or tablet, approve weekly teeth photos, and manage appointments.
+                            </p>
+
+                            <ul class="space-y-3 text-xs sm:text-sm text-slate-700">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                                    <span><strong>Unique Joining Codes:</strong> Issue secure 6-character codes for instant patient linking.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                                    <span><strong>Photo Review Station:</strong> Compare baseline smile vs current week with clinical notes.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                                    <span><strong>Emergency Alert Feed:</strong> Immediate triage for broken aligners or gum discomfort.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-8">
+                            <a href="{% url 'doctor:login' %}" 
+                               class="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 transition">
+                                <span>Sign In to Doctor Portal</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Patient Portal Card -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-lg flex flex-col justify-between hover:border-sky-300 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold">
+                                    <i class="fa-solid fa-face-smile"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800 uppercase">
+                                    For Patients & Kids
+                                </span>
+                            </div>
+
+                            <h3 class="text-xl font-black text-slate-900 mb-2">Patient Companion</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6">
+                                Friendly, simple and encouraging for kids and teenagers. Sign in instantly with Gmail + Joining Code without remembering complex passwords.
+                            </p>
+
+                            <ul class="space-y-3 text-xs sm:text-sm text-slate-700">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-sky-500 mt-0.5"></i>
+                                    <span><strong>Passwordless Access:</strong> Just enter your Gmail and joining code to enter.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-sky-500 mt-0.5"></i>
+                                    <span><strong>Stage Timeline:</strong> Track completed trays, active tray number and countdowns.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fa-solid fa-circle-check text-sky-500 mt-0.5"></i>
+                                    <span><strong>Milestone Achievements:</strong> Unlock badges for consistent wear and clean checkups.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-8">
+                            <a href="{% url 'patient:login' %}" 
+                               class="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 shadow-md shadow-sky-500/20 transition">
+                                <span>Sign In to Patient Portal</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. How It Works Section -->
+        <section id="how-it-works" class="py-16 bg-white border-t border-slate-200/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-3 mb-12">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800">
+                        <i class="fa-solid fa-route"></i> 3 Simple Steps
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                        How PEDO ALIGN Works
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white font-black flex items-center justify-center mx-auto text-lg shadow-md">
+                            1
+                        </div>
+                        <h4 class="font-bold text-base text-slate-900">Doctor Prescribes & Issues Code</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            The orthodontist creates the patient's aligner plan and gives them an individual 6-character code.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-500 text-white font-black flex items-center justify-center mx-auto text-lg shadow-md">
+                            2
+                        </div>
+                        <h4 class="font-bold text-base text-slate-900">Patient Logs In with Gmail + Code</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            No password setup needed! Patient enters their email and code to instantly unlock their dashboard.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white font-black flex items-center justify-center mx-auto text-lg shadow-md">
+                            3
+                        </div>
+                        <h4 class="font-bold text-base text-slate-900">Track Progress & Celebrate Smiles</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Wear aligners 22 hrs daily, submit weekly photos, and watch the transformation unfold!
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div>
+                <p class="text-white font-bold text-sm">PEDO ALIGN</p>
+                <p class="text-slate-400 text-xs mt-0.5">Pediatric Orthodontic Alignment & Remote Patient Care</p>
+            </div>
+            
+            <div class="flex items-center gap-6 font-medium">
+                <a href="{% url 'doctor:login' %}" class="hover:text-white transition">Doctor Login</a>
+                <a href="{% url 'patient:login' %}" class="hover:text-white transition">Patient Login</a>
+                <a href="#mobile-app" class="hover:text-white transition">Mobile App</a>
+            </div>
+
+            <p class="text-slate-500 text-[11px]">
+                &copy; 2026 PEDO ALIGN. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    {% include 'doctor/includes/pwa_install_modal.html' %}
+
+</body>
+</html>
+

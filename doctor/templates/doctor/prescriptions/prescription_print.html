@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription #{{ prescription.id }} - {{ patient.full_name }} - PEDO ALIGN</title>
+    <!-- Tailwind CSS CDN for pristine print rendering -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .page-break { page-break-after: always; }
+        }
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased p-4 sm:p-8">
+
+    <!-- Top Floating Toolbar -->
+    <div class="max-w-3xl mx-auto mb-6 flex items-center justify-between no-print">
+        <a href="javascript:window.close()" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Close Window
+        </a>
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-print"></i> Print / Save as PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Printable Paper Sheet -->
+    <div class="max-w-3xl mx-auto bg-white p-10 sm:p-14 shadow-lg rounded-2xl border border-slate-200">
+        
+        <!-- Letterhead Header -->
+        <div class="border-b-2 border-blue-600 pb-6 mb-6 flex items-start justify-between gap-6">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{{ doctor.clinic_name|default:"PEDO ALIGN DENTAL CLINIC" }}</h1>
+                <h2 class="text-base font-bold text-blue-700">Dr. {{ doctor.full_name }}</h2>
+                <p class="text-xs text-slate-600 font-semibold">{{ doctor.dental_qualification }} • {{ doctor.specialization }}</p>
+                {% if doctor.ksdc_registration_number %}
+                <p class="text-[11px] font-mono text-slate-500">KSDC Reg: <strong>{{ doctor.ksdc_registration_number }}</strong></p>
+                {% elif doctor.license_number %}
+                <p class="text-[11px] font-mono text-slate-500">License: <strong>{{ doctor.license_number }}</strong></p>
+                {% endif %}
+            </div>
+            <div class="text-right text-xs text-slate-500 space-y-1">
+                <p class="font-bold text-slate-700">{{ doctor.clinic_address|linebreaksbr }}</p>
+                <p>Phone: {{ doctor.phone_number }}</p>
+                <p>Email: {{ doctor.email }}</p>
+            </div>
+        </div>
+
+        <!-- Patient Demographics Info -->
+        <div class="bg-blue-50/60 border border-blue-100 rounded-xl p-4 mb-6 text-xs grid grid-cols-4 gap-4">
+            <div>
+                <span class="text-slate-400 font-bold uppercase text-[9px] block">Patient Name</span>
+                <span class="font-extrabold text-slate-900 text-sm">{{ patient.full_name }}</span>
+                <span class="text-[10px] text-slate-500 block">({{ patient.get_patient_category_display }})</span>
+            </div>
+            <div>
+                <span class="text-slate-400 font-bold uppercase text-[9px] block">Patient ID</span>
+                <span class="font-mono font-bold text-blue-800">{{ patient.patient_id }}</span>
+                <span class="text-[10px] text-slate-500 block">{{ patient.age }} yrs • {{ patient.gender }}</span>
+            </div>
+            <div>
+                <span class="text-slate-400 font-bold uppercase text-[9px] block">Prescription Date</span>
+                <span class="font-bold text-slate-800">{{ prescription.prescription_date|date:"F d, Y" }}</span>
+                <span class="text-[10px] text-slate-400 block font-mono">RX-{{ prescription.id|stringformat:"05d" }}</span>
+            </div>
+            <div>
+                <span class="text-slate-400 font-bold uppercase text-[9px] block">Next Follow-Up</span>
+                {% if prescription.next_followup_date %}
+                <span class="font-bold text-emerald-700">{{ prescription.next_followup_date|date:"F d, Y" }}</span>
+                {% else %}
+                <span class="text-slate-500">As advised</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Clinical Diagnosis -->
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Diagnosis / Clinical Findings</h3>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 leading-relaxed">
+                {{ prescription.diagnosis|linebreaksbr }}
+            </div>
+        </div>
+
+        <!-- Prescribed Medicines -->
+        <div class="mb-6">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="font-serif italic font-black text-2xl text-blue-700">℞</span>
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Prescribed Medicines & Therapy</h3>
+            </div>
+            <div class="rounded-xl border border-slate-200 overflow-hidden">
+                <div class="p-4 font-mono text-xs text-slate-900 leading-relaxed whitespace-pre-line bg-white">
+                    {{ prescription.medicines_data }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Directions -->
+        {% if prescription.special_instructions %}
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Special Instructions</h3>
+            <div class="p-3.5 rounded-xl bg-amber-50/40 border border-amber-200 text-xs text-amber-950 leading-relaxed">
+                {{ prescription.special_instructions|linebreaksbr }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Signature -->
+        <div class="mt-14 pt-6 border-t border-slate-200 flex items-center justify-between">
+            <div class="text-[10px] text-slate-400 max-w-sm">
+                Generated via PEDO ALIGN Clinical Management Portal.
+            </div>
+            <div class="text-right">
+                <div class="inline-block border-b border-slate-400 pb-1 px-8 text-center">
+                    <p class="font-serif italic text-blue-900 font-bold text-sm">Dr. {{ doctor.full_name }}</p>
+                </div>
+                <p class="text-[10px] font-bold text-slate-600 mt-1">Authorized Dental Surgeon Signature</p>
+            </div>
+        </div>
+
+    </div>
+
+    {% if request.GET.autoprint == '1' %}
+    <script>
+        window.addEventListener('load', () => {
+            window.print();
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
+

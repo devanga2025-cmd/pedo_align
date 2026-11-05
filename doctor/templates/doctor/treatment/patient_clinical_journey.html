@@ -1,0 +1,1034 @@
+{% extends 'doctor/base.html' %}
+{% load static %}
+
+{% block title %}Clinical Intake & Visit Journey - {{ patient.full_name }} - PEDO ALIGN{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'doctor:treatment_plans' %}" class="hover:underline">Treatment Plans</a> / 
+<a href="{% url 'doctor:patient_detail' patient.id %}?tab=treatment" class="hover:underline">{{ patient.full_name }}</a> / 
+Clinical Visit Journey
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-6xl mx-auto">
+
+    <!-- Top Patient Identity Card -->
+    <div class="pa-card p-6 border-blue-200/80 bg-gradient-to-r from-white via-blue-50/30 to-sky-50/40 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div class="flex items-start sm:items-center gap-4 min-w-0">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-2xl flex items-center justify-center shadow-md flex-shrink-0">
+                    {{ patient.first_name|first }}{{ patient.last_name|first }}
+                </div>
+                <div class="min-w-0 space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">{{ patient.full_name }}</h1>
+                        <span class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">
+                            {{ patient.patient_id }}
+                        </span>
+                        {% if patient.patient_category == 'CHILD' %}
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-100 text-sky-800 border border-sky-200">
+                            <i class="fa-solid fa-child mr-0.5"></i> Child Patient
+                        </span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                            <i class="fa-solid fa-user mr-0.5"></i> Adult Patient
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-xs text-slate-600">
+                        Age: <strong class="text-slate-900">{{ patient.age }} yrs</strong> (DOB: {{ patient.date_of_birth|date:"M d, Y"|default:"Not specified" }}) • Gender: <strong>{{ patient.gender }}</strong> • Phone: <strong>{{ patient.phone }}</strong>
+                    </p>
+                    {% if patient.parent_guardian_name %}
+                    <p class="text-[11px] text-blue-700">
+                        <i class="fa-solid fa-people-roof mr-1"></i> Parent/Guardian: <strong>{{ patient.parent_guardian_name }}</strong> ({{ patient.parent_guardian_relationship|default:"Parent" }}) - {{ patient.parent_guardian_phone|default:"No phone" }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-id-card"></i> Patient Record
+                </a>
+                <a href="{% url 'doctor:treatment_plans' %}" class="btn-secondary text-xs flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-arrow-left"></i> All Treatment Plans
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3-STEP CLINICAL STEPPER RAIL -->
+    <div class="pa-card p-4 sm:p-5 bg-white border-blue-200 shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <div>
+                <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-timeline text-blue-600"></i> Guided Clinical Intake & Follow-Up Steps
+                </h2>
+                <p class="text-xs text-slate-500">Step 1: 3 Compulsory Pre-op Photos &rarr; Step 2: Radiographs (OPG & Lateral Cephalograph) &rarr; Step 3: Next Hospital Visit</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            
+            <!-- Step 1 Tab Button -->
+            <button type="button" onclick="switchStep('1')" id="stepBtn1" 
+                    class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '1' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '1' %}bg-white text-blue-700{% elif has_3_preop %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        {% if has_3_preop %}<i class="fa-solid fa-check"></i>{% else %}1{% endif %}
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold">Step 1: Pre-op Photos</div>
+                        <div class="text-[10px] {% if active_step == '1' %}text-blue-100{% else %}text-slate-500{% endif %}">
+                            3 Photos Compulsory
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_3_preop %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-amber-100 text-amber-800{% endif %}">
+                    {% if preop_count >= 3 %}{{ preop_count }} Saved{% else %}{{ preop_count }}/3 Saved{% endif %}
+                </span>
+            </button>
+
+            <!-- Step 2 Tab Button -->
+            <button type="button" onclick="switchStep('2')" id="stepBtn2"
+                    class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '2' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '2' %}bg-white text-blue-700{% elif has_radiograph %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        {% if has_radiograph %}<i class="fa-solid fa-check"></i>{% else %}2{% endif %}
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold">Step 2: Radiographs</div>
+                        <div class="text-[10px] {% if active_step == '2' %}text-blue-100{% else %}text-slate-500{% endif %}">
+                            OPG & Lateral Cephalograph
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_radiograph %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-slate-200 text-slate-700{% endif %}">
+                    {{ radiographs.count }} Files
+                </span>
+            </button>
+
+            <!-- Step 3 Tab Button -->
+            <button type="button" onclick="switchStep('3')" id="stepBtn3"
+                    class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '3' %}bg-white text-blue-700{% elif has_next_appt %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        {% if has_next_appt %}<i class="fa-solid fa-check"></i>{% else %}3{% endif %}
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold">Step 3: Next Visit</div>
+                        <div class="text-[10px] {% if active_step == '3' %}text-blue-100{% else %}text-slate-500{% endif %}">
+                            Hospital Appointment
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_next_appt %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-purple-100 text-purple-800{% endif %}">
+                    {% if has_next_appt %}Scheduled{% else %}Pending{% endif %}
+                </span>
+            </button>
+
+            <!-- Step 4 Link / Status Tab Button -->
+            <a href="{% url 'doctor:step4_operation' patient.id %}" id="stepBtn4"
+               class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if has_3_preop and has_radiograph and has_next_appt %}bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-indigo-300 text-indigo-950 font-bold{% else %}bg-slate-50 border-slate-200 text-slate-400 pointer-events-none opacity-60{% endif %}">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-600 text-white shadow-xs{% else %}bg-slate-200 text-slate-500{% endif %}">
+                        {% if patient.treatment_media.exists %}<i class="fa-solid fa-check"></i>{% else %}4{% endif %}
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold">Step 4: Operation</div>
+                        <div class="text-[10px] {% if has_3_preop and has_radiograph and has_next_appt %}text-indigo-700{% else %}text-slate-400{% endif %}">
+                            Turn Quest / Protocol
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
+                    {% if patient.treatment_media.exists %}Active{% elif has_3_preop and has_radiograph and has_next_appt %}Ready &rarr;{% else %}Locked{% endif %}
+                </span>
+            </a>
+
+        </div>
+    </div>
+
+
+    <!-- ===================================================================== -->
+    <!-- STEP 1: PREOPERATIVE PHOTOGRAPHS (3 COMPULSORY)                       -->
+    <!-- ===================================================================== -->
+    <div id="stepSection1" class="{% if active_step != '1' %}hidden{% endif %} space-y-6">
+        
+        <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200">
+            <!-- Header Banner -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-black text-slate-900">Step 1: Preoperative Photographs</h2>
+                        <p class="text-xs text-slate-500">First-visit clinical documentation. Exactly 3 photographs are compulsory. Click <strong>+</strong> to add more angles.</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-50 text-amber-800 border border-amber-200 shadow-xs">
+                        <i class="fa-solid fa-circle-exclamation text-amber-600"></i> 3 Photos Compulsory
+                    </div>
+                    <button type="button" onclick="addExtraPhotoSlot()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-600 hover:text-white transition cursor-pointer shadow-xs">
+                        <i class="fa-solid fa-plus font-black"></i> Add More Photos (+)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Form -->
+            <form method="POST" enctype="multipart/form-data" class="space-y-6" id="preopForm">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_preop">
+
+                <!-- Photo Cards Grid (3 Compulsory + Dynamically Added Extras via +) -->
+                <div id="preopSlotsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <!-- Slot 1: Frontal View -->
+                    <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">1</span>
+                                Photo 1: Frontal View *
+                            </span>
+                            <span class="text-[10px] font-bold text-rose-600 uppercase">Required</span>
+                        </div>
+
+                        <!-- Live Preview Box -->
+                        <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('preop_file_1').click()">
+                            <img id="preview_1" class="hidden w-full h-full object-contain p-1">
+                            <div id="placeholder_1" class="text-center p-3 text-slate-400">
+                                <i class="fa-solid fa-tooth text-3xl mb-1 text-blue-300"></i>
+                                <p class="text-xs font-bold text-slate-700">Front Teeth in Occlusion</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                            </div>
+                        </div>
+
+                        <!-- File Input -->
+                        <input type="file" name="photo_1" id="preop_file_1" accept="image/*" required class="hidden" onchange="previewImage(this, 'preview_1', 'placeholder_1')">
+                        
+                        <!-- Description Input -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description *</label>
+                            <input type="text" name="description_1" value="Frontal View - Teeth in Centric Occlusion" required class="form-input text-xs" placeholder="e.g. Frontal smile view">
+                        </div>
+                    </div>
+
+                    <!-- Slot 2: Upper Arch View -->
+                    <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">2</span>
+                                Photo 2: Upper Arch View *
+                            </span>
+                            <span class="text-[10px] font-bold text-rose-600 uppercase">Required</span>
+                        </div>
+
+                        <!-- Live Preview Box -->
+                        <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('preop_file_2').click()">
+                            <img id="preview_2" class="hidden w-full h-full object-contain p-1">
+                            <div id="placeholder_2" class="text-center p-3 text-slate-400">
+                                <i class="fa-solid fa-arrow-up text-3xl mb-1 text-sky-300"></i>
+                                <p class="text-xs font-bold text-slate-700">Upper (Maxillary) Arch</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                            </div>
+                        </div>
+
+                        <!-- File Input -->
+                        <input type="file" name="photo_2" id="preop_file_2" accept="image/*" required class="hidden" onchange="previewImage(this, 'preview_2', 'placeholder_2')">
+                        
+                        <!-- Description Input -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description *</label>
+                            <input type="text" name="description_2" value="Upper Arch (Maxillary) Occlusal View" required class="form-input text-xs" placeholder="e.g. Upper occlusal mirror view">
+                        </div>
+                    </div>
+
+                    <!-- Slot 3: Lower Arch / Lateral View -->
+                    <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">3</span>
+                                Photo 3: Lower Arch / Lateral *
+                            </span>
+                            <span class="text-[10px] font-bold text-rose-600 uppercase">Required</span>
+                        </div>
+
+                        <!-- Live Preview Box -->
+                        <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('preop_file_3').click()">
+                            <img id="preview_3" class="hidden w-full h-full object-contain p-1">
+                            <div id="placeholder_3" class="text-center p-3 text-slate-400">
+                                <i class="fa-solid fa-arrow-down text-3xl mb-1 text-cyan-300"></i>
+                                <p class="text-xs font-bold text-slate-700">Lower Arch or Lateral View</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                            </div>
+                        </div>
+
+                        <!-- File Input -->
+                        <input type="file" name="photo_3" id="preop_file_3" accept="image/*" required class="hidden" onchange="previewImage(this, 'preview_3', 'placeholder_3')">
+                        
+                        <!-- Description Input -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description *</label>
+                            <input type="text" name="description_3" value="Lower Arch (Mandibular) / Lateral View" required class="form-input text-xs" placeholder="e.g. Mandibular occlusal or side view">
+                        </div>
+                    </div>
+
+                    <!-- Slot 4+: Dynamic Slots will be inserted right here before addSlotCard -->
+
+                    <!-- Dedicated "+" Symbol Card to Add More Photo Slots -->
+                    <div id="addSlotCard" class="p-5 rounded-2xl border-2 border-dashed border-sky-300 hover:border-blue-500 bg-sky-50/40 hover:bg-sky-50/80 transition flex flex-col items-center justify-center text-center cursor-pointer group min-h-[290px]" onclick="addExtraPhotoSlot()" title="Click to add another preoperative photo angle">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center text-2xl font-black shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        <div class="mt-3 text-sm font-black text-slate-800 group-hover:text-blue-700 transition">
+                            Add More Photos (+)
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1 max-w-[210px] leading-snug">
+                            Need more angles? Click here to add Photo 4, 5, etc. (Right/Left lateral, smile, occlusal).
+                        </p>
+                        <span class="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Add Slot
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- Submit Bar -->
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <p class="text-xs text-slate-500">
+                        <i class="fa-solid fa-paste text-blue-500 mr-1"></i> Tip: You can click inside any slot and press <strong>Ctrl+V</strong> to paste copied screenshots directly!
+                    </p>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> <span id="saveBtnText">Save Preoperative Photos & Proceed to Step 2 &rarr;</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Previously Uploaded Preoperative Photos Gallery -->
+        {% if preop_photos %}
+        <div class="pa-card p-6 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-images text-blue-600"></i>
+                    <h3 class="text-sm font-bold text-slate-900">Saved Preoperative Photographs ({{ preop_photos.count }})</h3>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="openAddSinglePreopModal()" class="text-xs font-bold text-blue-700 hover:bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Add Extra Photo
+                    </button>
+                    <button type="button" onclick="switchStep('2')" class="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
+                        Proceed to Step 2: Radiographs &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {% for p in preop_photos %}
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                    <div class="h-44 w-full rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center relative group">
+                        <img src="{{ p.photo.url }}" alt="{{ p.title }}" class="w-full h-full object-contain">
+                        <a href="{{ p.photo.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/70 hover:bg-black text-white text-[10px] font-bold transition">
+                            <i class="fa-solid fa-expand mr-1"></i> Zoom
+                        </a>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-900">{{ p.title }}</span>
+                            <span class="text-[10px] text-slate-400">{{ p.uploaded_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600 mt-0.5 line-clamp-2">{{ p.description|default:"No description" }}</p>
+                    </div>
+                    <form method="POST" onsubmit="return confirm('Remove this preoperative photo?');" class="pt-1 border-t border-slate-200">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_preop_inline">
+                        <input type="hidden" name="photo_id" value="{{ p.id }}">
+                        <button type="submit" class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold flex items-center gap-1">
+                            <i class="fa-regular fa-trash-can"></i> Remove Photo
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+
+                <!-- Add Extra Photo in Gallery Card -->
+                <div class="p-4 bg-sky-50/40 hover:bg-sky-50 rounded-2xl border-2 border-dashed border-sky-300 hover:border-blue-500 flex flex-col items-center justify-center text-center transition group cursor-pointer min-h-[220px]" onclick="openAddSinglePreopModal()">
+                    <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <span class="mt-2 text-xs font-extrabold text-blue-900 group-hover:text-blue-700">Add Another Photo (+)</span>
+                    <span class="text-[10px] text-slate-500 mt-0.5">Upload or paste additional view</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Modal for Adding an Extra Preoperative Photo into Gallery -->
+        <div id="addSinglePreopModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100 animate-in fade-in zoom-in duration-200">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-900">Add Additional Preoperative Photo</h3>
+                    </div>
+                    <button type="button" onclick="closeAddSinglePreopModal()" class="text-slate-400 hover:text-slate-600 text-sm p-1">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_extra_preop">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Photo Title</label>
+                        <input type="text" name="title" class="form-input text-xs" placeholder="e.g. Right Lateral View, Maxillary Occlusal Mirror...">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Photograph File *</label>
+                        <div class="h-36 w-full rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 hover:border-blue-400 flex flex-col items-center justify-center relative cursor-pointer" onclick="document.getElementById('modal_preop_file').click()">
+                            <img id="modal_preop_preview" class="hidden w-full h-full object-contain p-1">
+                            <div id="modal_preop_placeholder" class="text-center p-3 text-slate-400">
+                                <i class="fa-solid fa-image text-3xl mb-1 text-blue-300"></i>
+                                <p class="text-xs font-bold text-slate-700">Click to choose image or paste (Ctrl+V)</p>
+                            </div>
+                        </div>
+                        <input type="file" name="photo" id="modal_preop_file" accept="image/*" required class="hidden" onchange="previewImage(this, 'modal_preop_preview', 'modal_preop_placeholder')">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Clinical Description</label>
+                        <textarea name="description" rows="2" class="form-input text-xs" placeholder="Clinical observations for this angle..."></textarea>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                        <button type="button" onclick="closeAddSinglePreopModal()" class="btn-secondary text-xs py-2 px-4">Cancel</button>
+                        <button type="submit" class="btn-primary text-xs py-2 px-5 bg-blue-600 hover:bg-blue-700 shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-upload"></i> Upload Photo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================================== -->
+    <!-- STEP 2: RADIOGRAPH RECORDS (OPG & LATERAL CEPHALOGRAPH)              -->
+    <!-- ===================================================================== -->
+    <div id="stepSection2" class="{% if active_step != '2' %}hidden{% endif %} space-y-6">
+        
+        <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200">
+            <!-- Header Banner -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-x-ray"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-black text-slate-900">Step 2: Radiograph Records (X-Rays)</h2>
+                        <p class="text-xs text-slate-500">Diagnostic X-ray evaluation. Upload or paste radiographs with the 2 options: OPG and LATERAL CEPHALOGRAPH.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-blue-50 text-blue-800 border border-blue-200">
+                        OPG: {{ opg_radiographs.count }} on file
+                    </span>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-cyan-50 text-cyan-800 border border-cyan-200">
+                        Lateral Ceph: {{ ceph_radiographs.count }} on file
+                    </span>
+                </div>
+            </div>
+
+            <!-- Upload Form -->
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_radiograph">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    
+                    <!-- Left: Type Selection & File -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+                                Select Radiograph Type *
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="p-4 rounded-2xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:text-blue-950 border-slate-200">
+                                    <input type="radio" name="radiograph_type" value="OPG" checked class="text-blue-600 focus:ring-blue-500">
+                                    <div>
+                                        <div class="text-xs font-black">OPG</div>
+                                        <div class="text-[10px] text-slate-500">Orthopantomogram / Panoramic</div>
+                                    </div>
+                                </label>
+
+                                <label class="p-4 rounded-2xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-cyan-50/50 has-[:checked]:border-cyan-600 has-[:checked]:bg-cyan-50/70 has-[:checked]:text-cyan-950 border-slate-200">
+                                    <input type="radio" name="radiograph_type" value="LATERAL_CEPHALOGRAPH" class="text-cyan-600 focus:ring-cyan-500">
+                                    <div>
+                                        <div class="text-xs font-black">LATERAL CEPHALOGRAPH</div>
+                                        <div class="text-[10px] text-slate-500">Lateral Cephalometric View</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Image File & Paste Zone -->
+                        <div class="p-4 rounded-2xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2 cursor-pointer" onclick="document.getElementById('radio_file_input').click()">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-600"></i>
+                            <p class="text-xs font-bold text-slate-800">Upload or Paste X-Ray Image *</p>
+                            <p class="text-[11px] text-slate-500">Click to browse or press <strong>Ctrl+V</strong> to paste from clipboard</p>
+                            <input type="file" name="image" id="radio_file_input" accept="image/*" required class="hidden" onchange="previewImage(this, 'radio_preview', 'radio_placeholder')">
+                        </div>
+
+                        <!-- Examination Date -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Examination / Exposure Date *</label>
+                            <input type="date" name="examination_date" value="{% now 'Y-m-d' %}" required class="form-input text-xs">
+                        </div>
+                    </div>
+
+                    <!-- Right: Preview & Clinical Description -->
+                    <div class="space-y-4">
+                        <!-- Preview Box -->
+                        <div class="h-56 w-full rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden relative shadow-inner">
+                            <img id="radio_preview" class="hidden w-full h-full object-contain p-2">
+                            <div id="radio_placeholder" class="text-center p-4 text-slate-500">
+                                <i class="fa-solid fa-x-ray text-4xl mb-2 text-slate-700"></i>
+                                <p class="text-xs">Radiograph preview will appear here</p>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Radiograph Findings & Clinical Description</label>
+                            <textarea name="description" rows="3" class="form-input text-xs" placeholder="e.g. OPG reveals developing third molars, no apical radiolucency. Lateral Ceph indicates Class II skeletal base..."></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Submit Bar -->
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <button type="button" onclick="switchStep('1')" class="btn-secondary text-xs">
+                        &larr; Back to Step 1: Pre-op Photos
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-upload"></i> Save Radiograph
+                        </button>
+                        <button type="button" onclick="switchStep('3')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition flex items-center gap-2">
+                            Proceed to Step 3: Next Appointment &rarr;
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Radiographs Inspection Gallery (OPG & Lateral Cephalograph) -->
+        {% if radiographs %}
+        <div class="pa-card p-6 space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-film text-cyan-600"></i>
+                    <h3 class="text-sm font-bold text-slate-900">Saved Diagnostic Radiographs ({{ radiographs.count }})</h3>
+                </div>
+                <button type="button" onclick="switchStep('3')" class="text-xs font-bold text-blue-600 hover:underline">
+                    Proceed to Step 3: Next Appointment &rarr;
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                
+                <!-- OPG Column -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-tooth text-blue-600"></i> OPG (Panoramic) Records ({{ opg_radiographs.count }})
+                        </span>
+                    </div>
+
+                    {% if opg_radiographs %}
+                    <div class="space-y-3">
+                        {% for r in opg_radiographs %}
+                        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <div class="h-44 w-full rounded-xl overflow-hidden bg-black flex items-center justify-center relative group">
+                                <img src="{{ r.image.url }}" alt="OPG" class="w-full h-full object-contain">
+                                <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
+                                    <i class="fa-solid fa-expand mr-1"></i> Full View
+                                </a>
+                                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-600 text-white">
+                                    v{{ r.version }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-slate-800">OPG Panoramic</span>
+                                <span class="text-[11px] text-slate-500">{{ r.examination_date|date:"M d, Y" }}</span>
+                            </div>
+                            {% if r.description %}
+                            <p class="text-[11px] text-slate-600 line-clamp-2">{{ r.description }}</p>
+                            {% endif %}
+                            <form method="POST" onsubmit="return confirm('Delete this OPG record?');" class="pt-1 border-t border-slate-200">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_radiograph_inline">
+                                <input type="hidden" name="radio_id" value="{{ r.id }}">
+                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold flex items-center gap-1">
+                                    <i class="fa-regular fa-trash-can"></i> Remove Radiograph
+                                </button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                        No OPG panoramic radiograph uploaded yet.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Lateral Cephalograph Column -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-cyan-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-skull text-cyan-600"></i> Lateral Cephalograph Records ({{ ceph_radiographs.count }})
+                        </span>
+                    </div>
+
+                    {% if ceph_radiographs %}
+                    <div class="space-y-3">
+                        {% for r in ceph_radiographs %}
+                        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <div class="h-44 w-full rounded-xl overflow-hidden bg-black flex items-center justify-center relative group">
+                                <img src="{{ r.image.url }}" alt="Lateral Cephalograph" class="w-full h-full object-contain">
+                                <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
+                                    <i class="fa-solid fa-expand mr-1"></i> Full View
+                                </a>
+                                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-cyan-600 text-white">
+                                    v{{ r.version }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-slate-800">Lateral Cephalograph</span>
+                                <span class="text-[11px] text-slate-500">{{ r.examination_date|date:"M d, Y" }}</span>
+                            </div>
+                            {% if r.description %}
+                            <p class="text-[11px] text-slate-600 line-clamp-2">{{ r.description }}</p>
+                            {% endif %}
+                            <form method="POST" onsubmit="return confirm('Delete this Lateral Cephalograph record?');" class="pt-1 border-t border-slate-200">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_radiograph_inline">
+                                <input type="hidden" name="radio_id" value="{{ r.id }}">
+                                <button type="submit" class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold flex items-center gap-1">
+                                    <i class="fa-regular fa-trash-can"></i> Remove Radiograph
+                                </button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                        No Lateral Cephalograph radiograph uploaded yet.
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- ===================================================================== -->
+    <!-- STEP 3: NEXT HOSPITAL APPOINTMENT SCHEDULING                         -->
+    <!-- ===================================================================== -->
+    <div id="stepSection3" class="{% if active_step != '3' %}hidden{% endif %} space-y-6">
+        
+        <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200">
+            <!-- Header Banner -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-black text-slate-900">Step 3: Schedule Next Hospital Visit</h2>
+                        <p class="text-xs text-slate-500">Select when the patient should return to the clinic/hospital. Configurable with 20-day follow-up interval preset.</p>
+                    </div>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-800 border border-purple-200">
+                    <i class="fa-solid fa-bell text-purple-600"></i> Auto-notifies Patient Portal
+                </span>
+            </div>
+
+            <!-- Appointment Form -->
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_appointment">
+
+                <!-- Fast Presets for Date -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Quick Follow-Up Presets:
+                    </label>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="setApptDate(20)" class="px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-extrabold text-xs transition border border-purple-300 shadow-xs">
+                            <i class="fa-solid fa-clock-rotate-left mr-1"></i> In 20 Days (Recommended Clinical Follow-Up)
+                        </button>
+                        <button type="button" onclick="setApptDate(15)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-200">
+                            In 15 Days
+                        </button>
+                        <button type="button" onclick="setApptDate(30)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-200">
+                            In 1 Month (30 Days)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Date *</label>
+                        <input type="date" name="scheduled_date" id="apptDateInput" value="{{ default_20day_date }}" required class="form-input text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Time *</label>
+                        <input type="time" name="scheduled_time" value="10:00" required class="form-input text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Type *</label>
+                        <select name="appointment_type" class="form-input text-xs">
+                            <option value="ROUTINE_CHECKUP" selected>Routine Checkup & Progress Evaluation</option>
+                            <option value="ALIGNER_COLLECTION">Aligner Delivery / Next Set Collection</option>
+                            <option value="TREATMENT_PLAN_REVIEW">Treatment Plan Review & Monitoring</option>
+                            <option value="ATTACHMENT_PLACEMENT">Attachment Placement & Bonding</option>
+                            <option value="REFINEMENT_SCAN">Digital Refinement Scan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Duration</label>
+                        <select name="duration_minutes" class="form-input text-xs">
+                            <option value="15">15 Minutes</option>
+                            <option value="30" selected>30 Minutes</option>
+                            <option value="45">45 Minutes</option>
+                            <option value="60">60 Minutes</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Instructions for Patient Hospital Visit</label>
+                        <textarea name="instructions" rows="2" class="form-input text-xs" placeholder="e.g. Please bring your current and next aligner sets, chewie, and previous X-ray reports when visiting the hospital.">Please bring your current and next aligner sets, aligner case, and previous X-ray films when visiting the hospital.</textarea>
+                    </div>
+                </div>
+
+                <!-- Submit Bar -->
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <button type="button" onclick="switchStep('2')" class="btn-secondary text-xs">
+                        &larr; Back to Step 2: Radiographs
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calendar-check"></i> Confirm Hospital Appointment & Notify Patient
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Scheduled Appointments for this Patient -->
+        {% if upcoming_appointments %}
+        <div class="pa-card p-6 space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-purple-600"></i> Scheduled Upcoming Visits for {{ patient.full_name }}
+            </h3>
+
+            <div class="space-y-3">
+                {% for appt in upcoming_appointments %}
+                <div class="p-4 rounded-2xl bg-purple-50/50 border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-extrabold text-purple-950">{{ appt.get_appointment_type_display }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-purple-200 text-purple-900">
+                                {{ appt.status }}
+                            </span>
+                        </div>
+                        <p class="text-sm font-bold text-slate-900 mt-1">
+                            <i class="fa-regular fa-calendar mr-1 text-purple-600"></i> {{ appt.scheduled_date|date:"l, F j, Y" }} at {{ appt.scheduled_time|time:"g:i A" }}
+                        </p>
+                        {% if appt.instructions %}
+                        <p class="text-xs text-slate-600 mt-1">
+                            <strong>Instructions:</strong> {{ appt.instructions }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        Duration: {{ appt.duration_minutes }} mins
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- STEP 4 UNLOCKED BANNER (All 3 Intake Steps Completed) -->
+        {% if has_3_preop and has_radiograph and has_next_appt %}
+        <div class="p-6 rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white uppercase tracking-wider backdrop-blur-xs">
+                        All 3 Intake Steps Completed!
+                    </span>
+                    <span class="text-xs font-bold text-cyan-200">
+                        <i class="fa-solid fa-check-double mr-1"></i> Patient is Eligible for Step 4
+                    </span>
+                </div>
+                <h3 class="text-lg font-black tracking-tight">Proceed to Step 4 in Photo Monitoring</h3>
+                <p class="text-xs text-blue-100 max-w-2xl leading-relaxed">
+                    Patient has completed Step 1 (3 Pre-op Photos), Step 2 (Radiographs), and Step 3 (Hospital Appointment). In Photo Monitoring, diagnose the patient's clinical problem, prescribe <strong>Turn Quest</strong> (or custom operation), select monitoring frequency (Daily/Weekly/Monthly), and upload guidance photo and video.
+                </p>
+            </div>
+            <a href="{% url 'doctor:step4_operation' patient.id %}"
+               class="px-6 py-3 rounded-2xl bg-white text-blue-700 hover:bg-blue-50 font-black text-xs shadow-lg transition flex items-center justify-center gap-2 whitespace-nowrap self-start md:self-auto">
+                <i class="fa-solid fa-bullseye text-blue-600"></i> Open Step 4 Operation & Diagnosis &rarr;
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Tab switching between Step 1, 2, and 3
+    function switchStep(step) {
+        document.getElementById('stepSection1').classList.add('hidden');
+        document.getElementById('stepSection2').classList.add('hidden');
+        document.getElementById('stepSection3').classList.add('hidden');
+
+        document.getElementById('stepSection' + step).classList.remove('hidden');
+
+        // Update button styles
+        for (let i = 1; i <= 3; i++) {
+            const btn = document.getElementById('stepBtn' + i);
+            if (i.toString() === step.toString()) {
+                btn.className = "p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold";
+            } else {
+                btn.className = "p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700";
+            }
+        }
+
+        // Update URL query without refresh
+        const url = new URL(window.location);
+        url.searchParams.set('step', step);
+        window.history.replaceState({}, '', url);
+    }
+
+    // Image preview helper
+    function previewImage(input, previewId, placeholderId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById(previewId);
+                const placeholder = document.getElementById(placeholderId);
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+                if (placeholder) placeholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Quick appointment date preset (+20 days, +15 days, +30 days)
+    function setApptDate(daysToAdd) {
+        const d = new Date();
+        d.setDate(d.getDate() + daysToAdd);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const formatted = `${yyyy}-${mm}-${dd}`;
+        const input = document.getElementById('apptDateInput');
+        if (input) {
+            input.value = formatted;
+            input.classList.add('ring-2', 'ring-purple-400');
+            setTimeout(() => input.classList.remove('ring-2', 'ring-purple-400'), 1200);
+        }
+    }
+
+    // Extra preoperative photo slot management
+    let extraSlotCounter = 3;
+
+    function addExtraPhotoSlot() {
+        extraSlotCounter++;
+        const currentSlotNum = extraSlotCounter;
+        const grid = document.getElementById('preopSlotsGrid');
+        const addCard = document.getElementById('addSlotCard');
+        if (!grid || !addCard) return;
+
+        const slotDiv = document.createElement('div');
+        slotDiv.id = `slot_extra_${currentSlotNum}`;
+        slotDiv.className = 'p-4 rounded-2xl border-2 border-dashed border-sky-300 hover:border-sky-400 bg-sky-50/20 transition space-y-3 relative group animate-in fade-in zoom-in-95 duration-150';
+        slotDiv.innerHTML = `
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-cyan-600 text-white text-[10px] flex items-center justify-center font-bold">${currentSlotNum}</span>
+                    Photo ${currentSlotNum}: Additional View
+                </span>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] font-bold text-sky-700 uppercase bg-sky-100 px-1.5 py-0.5 rounded">Additional</span>
+                    <button type="button" onclick="removeExtraSlot(${currentSlotNum})" class="text-rose-500 hover:text-rose-700 text-xs p-1 rounded hover:bg-rose-50" title="Remove this photo slot">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Preview Box -->
+            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('extra_file_${currentSlotNum}').click()">
+                <img id="preview_extra_${currentSlotNum}" class="hidden w-full h-full object-contain p-1">
+                <div id="placeholder_extra_${currentSlotNum}" class="text-center p-3 text-slate-400">
+                    <i class="fa-solid fa-camera text-3xl mb-1 text-cyan-400"></i>
+                    <p class="text-xs font-bold text-slate-700">Photo #${currentSlotNum}</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                </div>
+            </div>
+
+            <!-- File Input -->
+            <input type="file" name="extra_photos" id="extra_file_${currentSlotNum}" accept="image/*" class="hidden" onchange="previewImage(this, 'preview_extra_${currentSlotNum}', 'placeholder_extra_${currentSlotNum}')">
+            
+            <!-- Description Input -->
+            <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description</label>
+                <input type="text" name="extra_descriptions" value="Additional Preoperative Angle #${currentSlotNum}" class="form-input text-xs" placeholder="e.g. Right lateral, smile profile, 45 degree view...">
+            </div>
+        `;
+
+        grid.insertBefore(slotDiv, addCard);
+        updateSaveBtnText();
+        showToast(`Added Photo #${currentSlotNum} slot! Upload or press Ctrl+V to paste.`);
+    }
+
+    function removeExtraSlot(slotNum) {
+        const slot = document.getElementById(`slot_extra_${slotNum}`);
+        if (slot) {
+            slot.remove();
+            updateSaveBtnText();
+        }
+    }
+
+    function updateSaveBtnText() {
+        const extraSlots = document.querySelectorAll('input[name="extra_photos"]');
+        const saveBtnText = document.getElementById('saveBtnText');
+        if (saveBtnText) {
+            if (extraSlots.length > 0) {
+                saveBtnText.innerText = `Save Preoperative Photos (3 Compulsory + ${extraSlots.length} Extra) & Proceed to Step 2 →`;
+            } else {
+                saveBtnText.innerText = `Save 3 Preoperative Photos & Proceed to Step 2 →`;
+            }
+        }
+    }
+
+    function openAddSinglePreopModal() {
+        const modal = document.getElementById('addSinglePreopModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAddSinglePreopModal() {
+        const modal = document.getElementById('addSinglePreopModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function showToast(message, isCyan = false) {
+        const toast = document.createElement('div');
+        toast.className = `fixed bottom-6 right-6 z-50 ${isCyan ? 'bg-cyan-600' : 'bg-blue-600'} text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold animate-in fade-in`;
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+
+    // Global Paste (Ctrl+V) handler for Preoperative and Radiograph dropzones
+    window.addEventListener('paste', function(e) {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        let blob = null;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') === 0) {
+                blob = items[i].getAsFile();
+                break;
+            }
+        }
+        if (!blob) return;
+
+        // Check which step is active
+        const step1 = !document.getElementById('stepSection1').classList.contains('hidden');
+        const step2 = !document.getElementById('stepSection2').classList.contains('hidden');
+
+        if (step1) {
+            // If the single extra preop modal is currently open
+            const modal = document.getElementById('addSinglePreopModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                const modalInput = document.getElementById('modal_preop_file');
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(blob);
+                modalInput.files = dataTransfer.files;
+                previewImage(modalInput, 'modal_preop_preview', 'modal_preop_placeholder');
+                showToast('Pasted image into additional photo modal!');
+                return;
+            }
+
+            // Find first empty photo slot in step 1
+            const p1 = document.getElementById('preop_file_1');
+            const p2 = document.getElementById('preop_file_2');
+            const p3 = document.getElementById('preop_file_3');
+
+            let targetInput = null;
+            let previewId = null;
+            let placeholderId = null;
+            let slotLabel = '';
+
+            if (p1 && !p1.files.length) {
+                targetInput = p1; previewId = 'preview_1'; placeholderId = 'placeholder_1'; slotLabel = 'Photo #1 (Frontal View)';
+            } else if (p2 && !p2.files.length) {
+                targetInput = p2; previewId = 'preview_2'; placeholderId = 'placeholder_2'; slotLabel = 'Photo #2 (Upper Arch)';
+            } else if (p3 && !p3.files.length) {
+                targetInput = p3; previewId = 'preview_3'; placeholderId = 'placeholder_3'; slotLabel = 'Photo #3 (Lower Arch)';
+            } else {
+                // Check if any existing extra slot is empty
+                const extraInputs = document.querySelectorAll('input[name="extra_photos"]');
+                for (let input of extraInputs) {
+                    if (!input.files.length) {
+                        targetInput = input;
+                        const sNum = input.id.replace('extra_file_', '');
+                        previewId = `preview_extra_${sNum}`;
+                        placeholderId = `placeholder_extra_${sNum}`;
+                        slotLabel = `Photo #${sNum} (Additional View)`;
+                        break;
+                    }
+                }
+                // If all existing slots are filled, create a new extra slot and paste into it!
+                if (!targetInput) {
+                    addExtraPhotoSlot();
+                    const sNum = extraSlotCounter;
+                    targetInput = document.getElementById(`extra_file_${sNum}`);
+                    previewId = `preview_extra_${sNum}`;
+                    placeholderId = `placeholder_extra_${sNum}`;
+                    slotLabel = `Photo #${sNum} (Additional View)`;
+                }
+            }
+
+            if (targetInput) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(blob);
+                targetInput.files = dataTransfer.files;
+                previewImage(targetInput, previewId, placeholderId);
+                showToast('Pasted image into ' + slotLabel);
+            }
+        } else if (step2) {
+            const radInput = document.getElementById('radio_file_input');
+            if (radInput) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(blob);
+                radInput.files = dataTransfer.files;
+                previewImage(radInput, 'radio_preview', 'radio_placeholder');
+                showToast('Pasted radiograph image into Step 2!', true);
+            }
+        }
+    });
+</script>
+{% endblock %}
+
