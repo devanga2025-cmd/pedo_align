@@ -1,8 +1,8 @@
 // PEDO ALIGN Progressive Web App Service Worker
-const CACHE_NAME = 'pedo-align-v2';
+const CACHE_NAME = 'pedo-align-v3';
 const STATIC_ASSETS = [
     '/',
-    '/static/manifest.json',
+    '/manifest.json',
     '/static/android-chrome-192x192.png',
     '/static/android-chrome-512x512.png',
     '/static/apple-touch-icon.png',
@@ -59,4 +59,3 @@ self.addEventListener('fetch', (event) => {
             })
     );
 });
-

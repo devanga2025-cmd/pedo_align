@@ -3046,3 +3046,44 @@ def patient_clinical_journey_view(request, patient_id):
     }
     return render(request, 'doctor/treatment/patient_clinical_journey.html', context)
 
+
+# ----------------- PWA ENDPOINTS (ROOT SCOPE) -----------------
+
+def service_worker_view(request):
+    """
+    Serves the PWA Service Worker directly from root /sw.js with Service-Worker-Allowed: /
+    header so Chrome/Android can immediately control the full app and trigger native install.
+    """
+    import os
+    from django.conf import settings
+    sw_file = os.path.join(settings.BASE_DIR, 'doctor', 'static', 'sw.js')
+    if not os.path.exists(sw_file):
+        sw_file = os.path.join(settings.BASE_DIR, 'assent', 'sw.js')
+    
+    with open(sw_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    response = HttpResponse(content, content_type='application/javascript')
+    response['Service-Worker-Allowed'] = '/'
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
+
+
+def manifest_view(request):
+    """
+    Serves the Web App Manifest from root /manifest.json with proper application/manifest+json MIME type.
+    """
+    import os
+    from django.conf import settings
+    manifest_file = os.path.join(settings.BASE_DIR, 'doctor', 'static', 'manifest.json')
+    if not os.path.exists(manifest_file):
+        manifest_file = os.path.join(settings.BASE_DIR, 'assent', 'manifest.json')
+    
+    with open(manifest_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    response = HttpResponse(content, content_type='application/manifest+json')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
+
+

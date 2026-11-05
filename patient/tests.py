@@ -556,3 +556,24 @@ class PatientPortalTests(TestCase):
         pt_login_res = self.client.get(reverse('patient:login'))
         self.assertRedirects(pt_login_res, reverse('doctor:dashboard'))
 
+    def test_pwa_endpoints_and_modal_cleanup(self):
+        """Verify Service Worker & Manifest return 200 with proper scope headers and modal has no device url or desktop button."""
+        # 1. /sw.js endpoint
+        sw_res = self.client.get('/sw.js')
+        self.assertEqual(sw_res.status_code, 200)
+        self.assertEqual(sw_res['Content-Type'], 'application/javascript')
+        self.assertEqual(sw_res['Service-Worker-Allowed'], '/')
+
+        # 2. /manifest.json endpoint
+        manifest_res = self.client.get('/manifest.json')
+        self.assertEqual(manifest_res.status_code, 200)
+        self.assertEqual(manifest_res['Content-Type'], 'application/manifest+json')
+        self.assertIn('"start_url": "/"', manifest_res.content.decode())
+
+        # 3. Modal does not contain "DEVICE ACCESS URL" or "Desktop" tab
+        login_res = self.client.get(reverse('patient:login'))
+        self.assertNotContains(login_res, 'DEVICE ACCESS URL')
+        self.assertNotContains(login_res, 'pwaTabDesktop')
+        self.assertContains(login_res, 'Install Directly on Phone')
+
+
