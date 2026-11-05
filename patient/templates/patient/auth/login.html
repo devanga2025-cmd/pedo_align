@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
 
     <!-- Web App Manifest for Mobile -->
-    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2878F0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -329,27 +329,21 @@
                 <span class="text-xs font-bold text-slate-800">Install PEDO ALIGN on Phone / Tablet</span>
             </div>
 
-            <!-- Install Buttons -->
-            <div class="grid grid-cols-3 gap-2">
+            <!-- Install Button -->
+            <div class="flex items-center gap-2">
                 <button type="button" 
                         onclick="triggerPWAInstall()" 
-                        class="py-2.5 px-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-black text-xs shadow-sm flex items-center justify-center gap-1.5 transition transform active:scale-95">
+                        class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95">
                     <i class="fa-solid fa-download"></i>
-                    <span>Install App</span>
+                    <span>Install App on Phone</span>
                 </button>
 
                 <button type="button" 
                         onclick="showPWAInstallModal('android')" 
-                        class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 transition transform active:scale-95">
-                    <i class="fa-brands fa-google-play text-emerald-400"></i>
-                    <span>Google Play</span>
-                </button>
-
-                <button type="button" 
-                        onclick="showPWAInstallModal('ios')" 
-                        class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-1.5 transition transform active:scale-95">
-                    <i class="fa-brands fa-apple text-white"></i>
-                    <span>App Store</span>
+                        class="py-3 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                        title="View installation steps">
+                    <i class="fa-solid fa-circle-question text-blue-600"></i>
+                    <span>Guide</span>
                 </button>
             </div>
 

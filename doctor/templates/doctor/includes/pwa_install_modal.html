@@ -1,7 +1,52 @@
 {% load static %}
 <!-- ============================================== -->
-<!-- UNIVERSAL PWA PHONE INSTALLATION MODAL & SCRIPT-->
+<!-- UNIVERSAL PWA PHONE INSTALLATION & POINTER     -->
 <!-- ============================================== -->
+
+<!-- Fullscreen Visual Pointer pointing to Chrome / Safari Menu -->
+<div id="pwaTopMenuPointer" class="hidden fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-xs flex flex-col justify-start items-end p-3 sm:p-5 text-white" onclick="closePwaPointer()">
+    <!-- Animated pulsing arrow pointing directly to the browser's 3-dot menu (top-right) -->
+    <div class="flex items-center gap-2 animate-bounce mr-1 sm:mr-3 mt-1">
+        <span class="bg-blue-600 text-white font-black text-xs px-3 py-1.5 rounded-full shadow-xl border border-blue-400">
+            Tap here! 👆
+        </span>
+        <i class="fa-solid fa-arrow-up text-3xl text-amber-300 drop-shadow-md"></i>
+    </div>
+
+    <div class="mt-3 bg-white text-slate-900 rounded-3xl p-5 max-w-xs w-full shadow-2xl space-y-3 text-left mr-1 sm:mr-3 border border-blue-100" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-download"></i>
+                </div>
+                <h4 class="text-xs font-black text-slate-900">Install PEDO ALIGN</h4>
+            </div>
+            <button type="button" onclick="closePwaPointer()" class="text-slate-400 hover:text-slate-600 p-1">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <div class="space-y-2.5 text-xs text-slate-700">
+            <div class="flex items-start gap-2.5">
+                <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 font-black text-[11px] flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                <p>Tap the <strong>3 dots menu (<i class="fa-solid fa-ellipsis-vertical text-blue-600"></i>)</strong> in the top-right corner of Chrome.</p>
+            </div>
+            <div class="flex items-start gap-2.5">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-black text-[11px] flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                <p>Tap <strong class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
+            </div>
+            <div class="flex items-start gap-2.5">
+                <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-black text-[11px] flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                <p>Tap <strong>Install</strong>. The app icon will appear on your phone home screen immediately!</p>
+            </div>
+        </div>
+
+        <button type="button" onclick="closePwaPointer()" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-black text-xs shadow-sm transition active:scale-95 text-center block">
+            Got it, Show Menu
+        </button>
+    </div>
+</div>
+
 
 <!-- Mobile Phone Install Guide Modal -->
 <div id="pwaInstallModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -23,26 +68,26 @@
             </button>
         </div>
 
-        <!-- 1-Click Native Install Prompt (if browser supports it) -->
-        <div id="pwaNativeInstallBanner" class="p-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 text-white text-left space-y-2 shadow-md shadow-blue-500/20">
+        <!-- 1-Click Native Install Prompt (Only shown when browser prompt is primed & ready) -->
+        <div id="pwaNativeInstallBanner" class="hidden p-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 text-white text-left space-y-2 shadow-md shadow-blue-500/20">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-bolt text-amber-300 text-sm"></i>
-                <span class="text-xs font-black uppercase tracking-wider">Fast 1-Click Install</span>
+                <span class="text-xs font-black uppercase tracking-wider">Fast 1-Click Install Ready</span>
             </div>
             <p class="text-[11px] text-blue-50 leading-relaxed">
-                Add PEDO ALIGN directly to your phone's home screen for quick daily and weekly check-ins.
+                Your browser is ready to install PEDO ALIGN directly to your phone.
             </p>
             <button type="button" onclick="executeNativePWAPrompt()" class="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-blue-50 text-blue-700 font-black text-xs shadow-sm transition flex items-center justify-center gap-1.5 active:scale-95">
-                <i class="fa-solid fa-download"></i> Install Directly on Phone
+                <i class="fa-solid fa-download"></i> Install Now
             </button>
         </div>
 
         <!-- Platform Switch Tabs (Android & iPhone only) -->
         <div class="flex items-center p-1 bg-slate-100 rounded-2xl text-xs font-bold text-slate-600">
-            <button type="button" id="pwaTabAndroid" onclick="switchPWATab('android')" class="flex-1 py-1.5 px-2 rounded-xl transition flex items-center justify-center gap-1 bg-white text-blue-700 shadow-xs">
-                <i class="fa-brands fa-android text-emerald-500"></i> Android
+            <button type="button" id="pwaTabAndroid" onclick="switchPWATab('android')" class="flex-1 py-1.5 px-2 rounded-xl transition flex items-center justify-center gap-1 bg-white text-blue-700 shadow-xs font-bold">
+                <i class="fa-brands fa-android text-emerald-500"></i> Android Phone
             </button>
-            <button type="button" id="pwaTabIOS" onclick="switchPWATab('ios')" class="flex-1 py-1.5 px-2 rounded-xl transition flex items-center justify-center gap-1 text-slate-600 hover:text-slate-900">
+            <button type="button" id="pwaTabIOS" onclick="switchPWATab('ios')" class="flex-1 py-1.5 px-2 rounded-xl transition flex items-center justify-center gap-1 text-slate-600 hover:text-slate-900 font-semibold">
                 <i class="fa-brands fa-apple"></i> iPhone / iPad
             </button>
         </div>
@@ -52,9 +97,14 @@
             <!-- Dynamic instructions populated by JS -->
         </div>
 
-        <!-- Close Action -->
-        <div>
-            <button type="button" onclick="closePWAInstallModal()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+        <!-- Action Buttons -->
+        <div class="space-y-2 pt-1">
+            <button type="button" id="pwaDirectActionBtn" onclick="handleDirectInstallClick()" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center justify-center gap-2 active:scale-95">
+                <i class="fa-solid fa-download"></i>
+                <span id="pwaDirectActionBtnText">Install on Phone (2-Step Guide)</span>
+            </button>
+
+            <button type="button" onclick="closePWAInstallModal()" class="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
                 Close
             </button>
         </div>
@@ -64,59 +114,97 @@
 <script>
     let pwaDeferredPrompt = null;
 
-    // Listen for browser install prompt
+    // Capture browser beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         pwaDeferredPrompt = e;
+        window.pwaDeferredPrompt = e;
+        
         const banner = document.getElementById('pwaNativeInstallBanner');
-        if (banner) {
-            banner.classList.remove('hidden');
-        }
+        if (banner) banner.classList.remove('hidden');
+
+        const actionBtnText = document.getElementById('pwaDirectActionBtnText');
+        if (actionBtnText) actionBtnText.innerText = 'Install Directly on Phone';
     });
 
     window.addEventListener('appinstalled', () => {
         pwaDeferredPrompt = null;
         closePWAInstallModal();
+        closePwaPointer();
     });
 
     // Register Service Worker with root scope '/'
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((err) => {
-                console.warn('PWA: SW registration skipped', err);
-            });
-        });
+    function registerPWAServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(reg => {
+                    console.log('PEDO ALIGN: Service Worker active with scope', reg.scope);
+                })
+                .catch(err => {
+                    console.warn('PEDO ALIGN: SW registration skipped', err);
+                });
+        }
     }
 
-    // Trigger Direct Install on Phone
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        registerPWAServiceWorker();
+    } else {
+        window.addEventListener('DOMContentLoaded', registerPWAServiceWorker);
+    }
+
+    // Trigger Phone Install
     function triggerPWAInstall() {
         if (pwaDeferredPrompt) {
-            // Direct native installation prompt on the phone!
+            // Direct native installation dialog immediately!
             pwaDeferredPrompt.prompt();
-            pwaDeferredPrompt.userChoice.then((choiceResult) => {
+            pwaDeferredPrompt.userChoice.then(() => {
                 pwaDeferredPrompt = null;
                 closePWAInstallModal();
+                closePwaPointer();
             });
             return;
         }
 
-        // Fallback for iOS or browsers where prompt event is waiting
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        showPWAInstallModal(isIOS ? 'ios' : 'android');
+        if (!isIOS) {
+            // On Android Chrome when native prompt is pending/HTTP, show the top menu pointer
+            showPwaPointer();
+        } else {
+            showPWAInstallModal('ios');
+        }
     }
 
-    function executeNativePWAPrompt() {
+    function handleDirectInstallClick() {
         if (pwaDeferredPrompt) {
             pwaDeferredPrompt.prompt();
             pwaDeferredPrompt.userChoice.then(() => {
                 pwaDeferredPrompt = null;
                 closePWAInstallModal();
             });
-        } else {
-            // If native prompt is not available, guide user to Chrome's native install option
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            switchPWATab(isIOS ? 'ios' : 'android');
+            return;
         }
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        closePWAInstallModal();
+        if (!isIOS) {
+            showPwaPointer();
+        } else {
+            alert('To install on iPhone/iPad:\n1. Tap the Share button (bottom of Safari)\n2. Tap "Add to Home Screen"');
+        }
+    }
+
+    function executeNativePWAPrompt() {
+        handleDirectInstallClick();
+    }
+
+    function showPwaPointer() {
+        const pointer = document.getElementById('pwaTopMenuPointer');
+        if (pointer) pointer.classList.remove('hidden');
+    }
+
+    function closePwaPointer() {
+        const pointer = document.getElementById('pwaTopMenuPointer');
+        if (pointer) pointer.classList.add('hidden');
     }
 
     function showPWAInstallModal(platform) {
@@ -153,10 +241,10 @@
                     <p class="font-extrabold text-slate-900 flex items-center gap-1.5">
                         <i class="fa-brands fa-apple text-slate-800 text-sm"></i> iPhone & iPad Safari:
                     </p>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed">
-                        <li>Tap the <strong>Share</strong> button <i class="fa-solid fa-arrow-up-from-bracket text-blue-600"></i> at the bottom of Safari</li>
-                        <li>Scroll and tap <strong>"Add to Home Screen"</strong> <i class="fa-solid fa-square-plus text-emerald-600"></i></li>
-                        <li>Tap <strong>Add</strong> in the top-right corner to finish</li>
+                    <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed font-medium">
+                        <li>Tap the <strong>Share</strong> icon <i class="fa-solid fa-arrow-up-from-bracket text-blue-600"></i> in Safari</li>
+                        <li>Scroll down and tap <strong>"Add to Home Screen"</strong> <i class="fa-solid fa-square-plus text-emerald-600"></i></li>
+                        <li>Tap <strong>Add</strong> at the top-right corner to finish</li>
                     </ol>
                 </div>
             `;
@@ -164,10 +252,10 @@
             container.innerHTML = `
                 <div class="space-y-2">
                     <p class="font-extrabold text-slate-900 flex items-center gap-1.5">
-                        <i class="fa-brands fa-android text-emerald-500 text-sm"></i> Android Phone:
+                        <i class="fa-brands fa-android text-emerald-500 text-sm"></i> Android Phone (Chrome):
                     </p>
-                    <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed">
-                        <li>Tap the <strong>Menu</strong> icon <i class="fa-solid fa-ellipsis-vertical text-blue-600"></i> (3 dots at top-right of Chrome)</li>
+                    <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed font-medium">
+                        <li>Tap the <strong>3 dots (⋮)</strong> at the top-right of your browser</li>
                         <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></li>
                         <li>Tap <strong>Install</strong> to add directly to your phone screen</li>
                     </ol>
