@@ -1,8 +1,8 @@
 {
-  "name": "PEDO ALIGN - Pediatric Orthodontic Monitor",
+  "name": "PEDO ALIGN",
   "short_name": "PEDO ALIGN",
   "id": "/",
-  "description": "Smart pediatric orthodontic alignment and weekly tooth monitoring companion.",
+  "description": "Pediatric Orthodontic Treatment & Aligner Monitoring System",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

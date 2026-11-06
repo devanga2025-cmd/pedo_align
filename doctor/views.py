@@ -3087,6 +3087,40 @@ def manifest_view(request):
     return response
 
 
+def assetlinks_view(request):
+    """
+    Serves the Android Digital Asset Links (assetlinks.json) at /.well-known/assetlinks.json
+    for Android Trusted Web Activity (TWA) verification.
+    """
+    import json
+    data = [
+        {
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+                "namespace": "android_app",
+                "package_name": "com.pedoalign.app",
+                "sha256_cert_fingerprints": [
+                    "70:24:50:3A:9D:BE:27:68:98:D6:24:9C:67:72:2A:91:AF:C5:48:85:FB:69:B2:F5:E2:42:B3:30:88:E1:8B:9E"
+                ]
+            }
+        },
+        {
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+                "namespace": "android_app",
+                "package_name": "com.webview.myapplication",
+                "sha256_cert_fingerprints": [
+                    "70:24:50:3A:9D:BE:27:68:98:D6:24:9C:67:72:2A:91:AF:C5:48:85:FB:69:B2:F5:E2:42:B3:30:88:E1:8B:9E"
+                ]
+            }
+        }
+    ]
+    response = HttpResponse(json.dumps(data, indent=2), content_type='application/json')
+    response['Cache-Control'] = 'public, max-age=86400'
+    return response
+
+
+
 def download_apk_view(request):
     """
     Directly streams and downloads the official Android APK file (PedoAlign.apk)

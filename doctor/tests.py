@@ -1138,6 +1138,32 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
         self.assertEqual(resp2['Content-Type'], 'application/vnd.android.package-archive')
         self.assertIn('attachment; filename="PedoAlign.apk"', resp2['Content-Disposition'])
 
+    def test_pwa_manifest_and_sw_endpoints(self):
+        """Test that /manifest.json and /sw.js serve with proper MIME types and headers."""
+        resp_m = self.client.get('/manifest.json')
+        self.assertEqual(resp_m.status_code, 200)
+        self.assertEqual(resp_m['Content-Type'], 'application/manifest+json')
+        data = resp_m.json()
+        self.assertEqual(data.get('name'), 'PEDO ALIGN')
+        self.assertEqual(data.get('short_name'), 'PEDO ALIGN')
+        self.assertEqual(data.get('display'), 'standalone')
+
+        resp_sw = self.client.get('/sw.js')
+        self.assertEqual(resp_sw.status_code, 200)
+        self.assertEqual(resp_sw['Content-Type'], 'application/javascript')
+        self.assertEqual(resp_sw['Service-Worker-Allowed'], '/')
+
+    def test_digital_asset_links_endpoint(self):
+        """Test that /.well-known/assetlinks.json serves valid TWA Digital Asset Links."""
+        resp = self.client.get('/.well-known/assetlinks.json')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp['Content-Type'], 'application/json')
+        data = resp.json()
+        self.assertTrue(isinstance(data, list))
+        self.assertTrue(any(entry.get('target', {}).get('package_name') == 'com.pedoalign.app' for entry in data))
+        self.assertTrue(any('70:24:50:3A:9D:BE:27:68:98:D6:24:9C:67:72:2A:91:AF:C5:48:85:FB:69:B2:F5:E2:42:B3:30:88:E1:8B:9E' in entry.get('target', {}).get('sha256_cert_fingerprints', []) for entry in data))
+
+
 
 
 

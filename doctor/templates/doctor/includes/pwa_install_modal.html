@@ -1,7 +1,20 @@
 {% load static %}
 <!-- ============================================== -->
-<!-- UNIVERSAL PWA PHONE INSTALLATION & POINTER     -->
+<!-- UNIVERSAL PWA PHONE INSTALLATION & MANAGER      -->
 <!-- ============================================== -->
+
+<!-- Installation Status Toast Notification -->
+<div id="pwaToastBox" class="fixed top-4 inset-x-0 z-[100] flex justify-center pointer-events-none px-4 transition-all duration-300 opacity-0 -translate-y-4">
+    <div id="pwaToastContent" class="pointer-events-auto bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700/60 max-w-sm w-full text-xs font-semibold backdrop-blur-md">
+        <div id="pwaToastIconWrap" class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 text-sm">
+            <i id="pwaToastIcon" class="fa-solid fa-circle-check"></i>
+        </div>
+        <span id="pwaToastMessage" class="flex-1 text-slate-100 leading-snug">Notice message</span>
+        <button type="button" onclick="hidePwaToast()" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+    </div>
+</div>
 
 <!-- Fullscreen Visual Pointer pointing to Chrome / Safari Menu -->
 <div id="pwaTopMenuPointer" class="hidden fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-xs flex flex-col justify-start items-end p-3 sm:p-5 text-white" onclick="closePwaPointer()">
@@ -47,7 +60,6 @@
     </div>
 </div>
 
-
 <!-- Mobile Phone Install Guide Modal -->
 <div id="pwaInstallModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-blue-100 text-center space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
@@ -77,7 +89,7 @@
             <p class="text-[11px] text-blue-50 leading-relaxed">
                 Your browser is ready to install PEDO ALIGN directly to your phone.
             </p>
-            <button type="button" onclick="executeNativePWAPrompt()" class="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-blue-50 text-blue-700 font-black text-xs shadow-sm transition flex items-center justify-center gap-1.5 active:scale-95">
+            <button type="button" onclick="triggerPWAInstall()" class="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-blue-50 text-blue-700 font-black text-xs shadow-sm transition flex items-center justify-center gap-1.5 active:scale-95">
                 <i class="fa-solid fa-download"></i> Install Now
             </button>
         </div>
@@ -119,22 +131,95 @@
 <script>
     let pwaDeferredPrompt = null;
     let pointerTimer = null;
+    let toastTimer = null;
+
+    // 1. Detect if App is already running in Standalone Mode or installed
+    function checkIsAppInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches ||
+               window.navigator.standalone === true ||
+               document.referrer.includes('android-app://') ||
+               localStorage.getItem('pedo_align_pwa_installed') === 'true';
+    }
+
+    // 2. Toast Notification Feedback (Success, Warning, Error, Info)
+    function showPwaToast(type, message) {
+        const box = document.getElementById('pwaToastBox');
+        const msgEl = document.getElementById('pwaToastMessage');
+        const iconEl = document.getElementById('pwaToastIcon');
+        const iconWrap = document.getElementById('pwaToastIconWrap');
+
+        if (!box || !msgEl) return;
+
+        msgEl.innerText = message;
+        if (type === 'success') {
+            iconWrap.className = 'w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 text-sm';
+            iconEl.className = 'fa-solid fa-circle-check';
+        } else if (type === 'warning') {
+            iconWrap.className = 'w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0 text-sm';
+            iconEl.className = 'fa-solid fa-circle-exclamation';
+        } else if (type === 'error') {
+            iconWrap.className = 'w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0 text-sm';
+            iconEl.className = 'fa-solid fa-circle-xmark';
+        } else {
+            iconWrap.className = 'w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0 text-sm';
+            iconEl.className = 'fa-solid fa-circle-info';
+        }
+
+        box.classList.remove('opacity-0', '-translate-y-4');
+        box.classList.add('opacity-100', 'translate-y-0');
+
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            hidePwaToast();
+        }, 5000);
+    }
+
+    function hidePwaToast() {
+        const box = document.getElementById('pwaToastBox');
+        if (box) {
+            box.classList.remove('opacity-100', 'translate-y-0');
+            box.classList.add('opacity-0', '-translate-y-4');
+        }
+    }
+
+    // 3. Update Install UI elements across page
+    function updateInstallUIState(isInstalled) {
+        const buttons = document.querySelectorAll('.pwa-install-btn');
+        const textElements = document.querySelectorAll('.pwa-install-btn-text');
+
+        if (isInstalled) {
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'via-sky-500', 'to-cyan-500', 'hover:from-blue-700', 'hover:to-cyan-600');
+                btn.classList.add('bg-emerald-50', 'text-emerald-700', 'border', 'border-emerald-200');
+            });
+            textElements.forEach(el => {
+                el.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> PEDO ALIGN Installed';
+            });
+            const banner = document.getElementById('pwaNativeInstallBanner');
+            if (banner) banner.classList.add('hidden');
+        } else if (pwaDeferredPrompt) {
+            textElements.forEach(el => {
+                el.innerText = 'Install PEDO ALIGN App';
+            });
+            const banner = document.getElementById('pwaNativeInstallBanner');
+            if (banner) banner.classList.remove('hidden');
+        }
+    }
 
     // Capture browser beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         pwaDeferredPrompt = e;
         window.pwaDeferredPrompt = e;
-        
-        const banner = document.getElementById('pwaNativeInstallBanner');
-        if (banner) banner.classList.remove('hidden');
-
-        const actionBtnText = document.getElementById('pwaDirectActionBtnText');
-        if (actionBtnText) actionBtnText.innerText = 'Install Directly on Phone';
+        updateInstallUIState(false);
     });
 
+    // Capture appinstalled event
     window.addEventListener('appinstalled', () => {
         pwaDeferredPrompt = null;
+        localStorage.setItem('pedo_align_pwa_installed', 'true');
+        updateInstallUIState(true);
+        showPwaToast('success', 'PEDO ALIGN installed successfully on your device!');
         closePWAInstallModal();
         closePwaPointer();
     });
@@ -150,6 +235,9 @@
                     console.warn('PEDO ALIGN: SW registration skipped', err);
                 });
         }
+        if (checkIsAppInstalled()) {
+            updateInstallUIState(true);
+        }
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -158,19 +246,46 @@
         window.addEventListener('DOMContentLoaded', registerPWAServiceWorker);
     }
 
-    // Trigger Phone Install & Direct APK Download
-    function triggerPWAInstall() {
-        // Direct download APK file in mobile!
-        window.location.href = '/download/app/';
+    // Trigger Phone Install
+    async function triggerPWAInstall() {
+        if (checkIsAppInstalled()) {
+            showPwaToast('info', 'PEDO ALIGN is already installed on your device!');
+            return;
+        }
+
+        if (pwaDeferredPrompt) {
+            try {
+                await pwaDeferredPrompt.prompt();
+                const choiceResult = await pwaDeferredPrompt.userChoice;
+                if (choiceResult && choiceResult.outcome === 'accepted') {
+                    showPwaToast('success', 'Installing PEDO ALIGN to your home screen...');
+                    localStorage.setItem('pedo_align_pwa_installed', 'true');
+                    updateInstallUIState(true);
+                } else {
+                    showPwaToast('warning', 'Installation was cancelled. You can install anytime!');
+                }
+                pwaDeferredPrompt = null;
+                closePWAInstallModal();
+                closePwaPointer();
+            } catch (err) {
+                console.error('PWA prompt execution error:', err);
+                showPwaToast('error', 'Installation prompt was interrupted. Showing options.');
+                showPWAInstallModal('android');
+            }
+            return;
+        }
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            showPWAInstallModal('ios');
+        } else {
+            showPWAInstallModal('android');
+        }
     }
 
     function handleDirectInstallClick() {
         if (pwaDeferredPrompt) {
-            pwaDeferredPrompt.prompt();
-            pwaDeferredPrompt.userChoice.then(() => {
-                pwaDeferredPrompt = null;
-                closePWAInstallModal();
-            });
+            triggerPWAInstall();
             return;
         }
 
@@ -179,12 +294,12 @@
         if (!isIOS) {
             showPwaPointer();
         } else {
-            alert('To install on iPhone/iPad:\n1. Tap the Share button (bottom of Safari)\n2. Tap "Add to Home Screen"');
+            showPWAInstallModal('ios');
         }
     }
 
     function executeNativePWAPrompt() {
-        handleDirectInstallClick();
+        triggerPWAInstall();
     }
 
     function showPwaPointer() {
@@ -261,7 +376,7 @@
                 </div>
             `;
         } else {
-            if (actionBtnText && !pwaDeferredPrompt) actionBtnText.innerText = 'Show Me Where to Tap (Top-Right)';
+            if (actionBtnText && !pwaDeferredPrompt) actionBtnText.innerText = 'Or Tap Chrome 3 Dots (Top-Right)';
             container.innerHTML = `
                 <div class="space-y-2.5">
                     <!-- Illustrated Chrome Bar -->
@@ -299,7 +414,7 @@
 
                     <div class="p-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2 text-[10px] text-emerald-800">
                         <i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>
-                        <span>Installs instantly with 0 MB storage, full-screen view & tray notifications!</span>
+                        <span>PWA installs instantly &bull; No app store required &bull; Auto-syncs!</span>
                     </div>
                 </div>
             `;
