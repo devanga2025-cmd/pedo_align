@@ -62,22 +62,46 @@ document.addEventListener('DOMContentLoaded', function() {
     initComparisonSliders();
 });
 
-// Copy to clipboard helper
+// Copy to clipboard helper (with HTTP / insecure context fallback)
 function copyToClipboard(text, elemId) {
-    navigator.clipboard.writeText(text).then(function() {
-        const elem = document.getElementById(elemId);
+    function showFeedback() {
+        const elem = elemId ? document.getElementById(elemId) : null;
         if (elem) {
             const originalHTML = elem.innerHTML;
-            elem.innerHTML = '<i class="fa-solid fa-check text-green-500"></i> Copied!';
+            elem.innerHTML = '<i class="fa-solid fa-check text-emerald-500"></i> Copied!';
             setTimeout(function() {
                 elem.innerHTML = originalHTML;
             }, 2000);
         } else {
             alert("Code copied to clipboard: " + text);
         }
-    }).catch(function(err) {
-        alert("Copied: " + text);
-    });
+    }
+
+    function fallbackCopy(str) {
+        try {
+            const textArea = document.createElement("textarea");
+            textArea.value = str;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showFeedback();
+        } catch (err) {
+            alert("Copied: " + str);
+        }
+    }
+
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(showFeedback).catch(function(err) {
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
+    }
 }
 
 // Image Zoom Modal helper

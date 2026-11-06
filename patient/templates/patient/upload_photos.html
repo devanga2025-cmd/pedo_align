@@ -603,7 +603,9 @@
 
         // Global Paste Listener (Ctrl+V)
         window.addEventListener('paste', function(e) {
-            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            const clipboardData = e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData);
+            if (!clipboardData || !clipboardData.items) return;
+            const items = clipboardData.items;
             let imageFile = null;
             for (let item of items) {
                 if (item.kind === 'file' && item.type.startsWith('image/')) {

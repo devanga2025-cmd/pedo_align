@@ -542,7 +542,9 @@
 
     // Direct Clipboard Paste (Ctrl+V) handler
     window.addEventListener('paste', function(e) {
-        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const clipboardData = e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData);
+        if (!clipboardData || !clipboardData.items) return;
+        const items = clipboardData.items;
         let blob = null;
         for (let i = 0; i < items.length; i++) {
             if (items[i].type.indexOf('image') === 0) {

@@ -96,7 +96,7 @@
                     <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs">
                         <span class="text-blue-900 font-semibold"><i class="fa-solid fa-key text-blue-600 mr-1"></i> Joining Code:</span>
                         <span class="font-mono font-black text-blue-800 tracking-wider text-sm">{{ joining_code.code }}</span>
-                        <button type="button" onclick="navigator.clipboard.writeText('{{ joining_code.code }}'); alert('Joining code copied: {{ joining_code.code }}');" class="text-blue-600 hover:text-blue-900 ml-1 font-bold">
+                        <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'joiningCodeCopyBtn')" id="joiningCodeCopyBtn" class="text-blue-600 hover:text-blue-900 ml-1 font-bold" title="Copy code">
                             <i class="fa-regular fa-copy"></i>
                         </button>
                         <span class="text-[10px] text-slate-400">({{ joining_code.get_status_display }})</span>

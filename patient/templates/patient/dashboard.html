@@ -633,14 +633,19 @@
     }
 
     function closeImageModal() {
-        document.getElementById('imageModal').classList.add('hidden');
-        document.getElementById('modalImageSrc').src = '';
+        const modal = document.getElementById('imageModal');
+        const img = document.getElementById('modalImageSrc');
+        if (modal) modal.classList.add('hidden');
+        if (img) img.src = '';
     }
 
-    document.getElementById('imageModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeImageModal();
-        }
-    });
+    const imgModal = document.getElementById('imageModal');
+    if (imgModal) {
+        imgModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+    }
 </script>
 {% endblock %}

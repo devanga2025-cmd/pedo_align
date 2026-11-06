@@ -196,6 +196,7 @@
 <script>
     function filterIntakeTable() {
         const input = document.getElementById("intakeTableSearch");
+        if (!input) return;
         const filter = input.value.toLowerCase();
         const rows = document.querySelectorAll("#eligiblePatientsTable tbody .patient-row");
 

@@ -10,7 +10,9 @@ const STATIC_ASSETS = [
     '/static/apple-touch-icon.png',
     '/static/favicon.ico',
     '/static/sidebar_glowing_logo.png',
-    '/static/doctor/css/custom.css'
+    '/static/doctor/css/custom.css',
+    '/static/patient/css/patient.css',
+    '/static/doctor/js/main.js'
 ];
 
 // Paths that must NEVER be cached to protect patient privacy and clinical records

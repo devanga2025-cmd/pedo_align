@@ -365,6 +365,8 @@
             const btnPatient = document.getElementById('portalBtnPatient');
             const btnDoctor = document.getElementById('portalBtnDoctor');
 
+            if (!patientSec || !doctorSec || !btnPatient || !btnDoctor) return;
+
             if (portal === 'patient') {
                 patientSec.classList.remove('hidden');
                 doctorSec.classList.add('hidden');
@@ -384,6 +386,8 @@
             const pwdForm = document.getElementById('patientPwdFormContainer');
             const btnCode = document.getElementById('subBtnCode');
             const btnPwd = document.getElementById('subBtnPwd');
+
+            if (!codeForm || !pwdForm || !btnCode || !btnPwd) return;
 
             if (tab === 'code') {
                 codeForm.classList.remove('hidden');

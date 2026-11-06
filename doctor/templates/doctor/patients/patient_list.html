@@ -385,16 +385,5 @@
         const modal = document.getElementById('deleteAccountModal');
         if (modal) modal.classList.add('hidden');
     }
-
-    function copyToClipboard(text, btnId) {
-        navigator.clipboard.writeText(text).then(function() {
-            const btn = document.getElementById(btnId);
-            if (btn) {
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> Copied';
-                setTimeout(() => { btn.innerHTML = originalHtml; }, 1800);
-            }
-        });
-    }
 </script>
 {% endblock %}

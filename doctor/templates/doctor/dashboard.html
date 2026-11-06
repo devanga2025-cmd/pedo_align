@@ -390,69 +390,75 @@
 <script>
     // 1. Status Chart with refined medical gradients
     const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
-    const statusCtx = document.getElementById('statusChart').getContext('2d');
-    new Chart(statusCtx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(statusData),
-            datasets: [{
-                label: 'Patients',
-                data: Object.values(statusData),
-                backgroundColor: [
-                    '#10b981', // Active
-                    '#f59e0b', // Pending
-                    '#64748b', // On Hold
-                    '#2563eb', // Completed
-                ],
-                borderRadius: 10,
-                barThickness: 38,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+    const statusEl = document.getElementById('statusChart');
+    if (statusEl && typeof Chart !== 'undefined') {
+        const statusCtx = statusEl.getContext('2d');
+        new Chart(statusCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(statusData),
+                datasets: [{
+                    label: 'Patients',
+                    data: Object.values(statusData),
+                    backgroundColor: [
+                        '#10b981', // Active
+                        '#f59e0b', // Pending
+                        '#64748b', // On Hold
+                        '#2563eb', // Completed
+                    ],
+                    borderRadius: 10,
+                    barThickness: 38,
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(226, 232, 240, 0.6)' },
-                    ticks: { precision: 0 }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
                 },
-                x: {
-                    grid: { display: false }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(226, 232, 240, 0.6)' },
+                        ticks: { precision: 0 }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
     // 2. Compliance Doughnut Chart
     const complianceData = JSON.parse('{{ compliance_data_json|escapejs }}');
-    const compCtx = document.getElementById('complianceChart').getContext('2d');
-    new Chart(compCtx, {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(complianceData),
-            datasets: [{
-                data: Object.values(complianceData),
-                backgroundColor: ['#10b981', '#0ea5e9', '#f43f5e'],
-                borderWidth: 3,
-                borderColor: '#ffffff',
-                hoverOffset: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { boxWidth: 12, font: { size: 11, family: 'Plus Jakarta Sans' }, padding: 16 }
-                }
+    const compEl = document.getElementById('complianceChart');
+    if (compEl && typeof Chart !== 'undefined') {
+        const compCtx = compEl.getContext('2d');
+        new Chart(compCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(complianceData),
+                datasets: [{
+                    data: Object.values(complianceData),
+                    backgroundColor: ['#10b981', '#0ea5e9', '#f43f5e'],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6
+                }]
             },
-            cutout: '72%'
-        }
-    });
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, font: { size: 11, family: 'Plus Jakarta Sans' }, padding: 16 }
+                    }
+                },
+                cutout: '72%'
+            }
+        });
+    }
 </script>
 {% endblock %}
