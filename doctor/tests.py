@@ -1163,6 +1163,58 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
         self.assertTrue(any(entry.get('target', {}).get('package_name') == 'com.pedoalign.app' for entry in data))
         self.assertTrue(any('70:24:50:3A:9D:BE:27:68:98:D6:24:9C:67:72:2A:91:AF:C5:48:85:FB:69:B2:F5:E2:42:B3:30:88:E1:8B:9E' in entry.get('target', {}).get('sha256_cert_fingerprints', []) for entry in data))
 
+    def test_doctor_registration_get_renders_specialization_field(self):
+        """Test GET /doctor/register/ renders the specialization input field and no errors."""
+        resp = self.client.get(reverse('doctor:register'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'name="specialization"')
+        self.assertContains(resp, 'Specialization')
+        self.assertContains(resp, 'name="ksdc_registration_number"')
+
+    def test_doctor_registration_with_custom_specialization(self):
+        """Test registering a doctor with custom specialization successfully creates the account and logs in."""
+        resp = self.client.post(reverse('doctor:register'), {
+            'full_name': 'Dr. Uday Kumar',
+            'email': 'uday.test@example.com',
+            'phone_number': '7676044372',
+            'dental_qualification': 'BDS, MDS Pedodontics',
+            'specialization': 'Pedodontist',
+            'ksdc_registration_number': 'KSDC-9988-B',
+            'clinic_name': 'Uday Pediatric Smiles',
+            'clinic_address': '77 Dental Park, MG Road',
+            'password': 'StrongPassword123',
+            'confirm_password': 'StrongPassword123',
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertRedirects(resp, reverse('doctor:dashboard'))
+
+        # Verify doctor profile created with correct specialization
+        doc = DoctorProfile.objects.filter(user__email='uday.test@example.com').first()
+        self.assertIsNotNone(doc)
+        self.assertEqual(doc.specialization, 'Pedodontist')
+        self.assertEqual(doc.ksdc_registration_number, 'KSDC-9988-B')
+
+    def test_doctor_registration_omitted_specialization_defaults_gracefully(self):
+        """Test registering without specifying specialization defaults to 'Orthodontist' without failing validation."""
+        resp = self.client.post(reverse('doctor:register'), {
+            'full_name': 'Dr. Default Spec',
+            'email': 'default.spec@example.com',
+            'phone_number': '9876543219',
+            'dental_qualification': 'BDS, MDS',
+            'specialization': '',  # Left empty
+            'clinic_name': 'Default Smile Clinic',
+            'clinic_address': '101 Healthcare Blvd',
+            'password': 'StrongPassword123',
+            'confirm_password': 'StrongPassword123',
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertRedirects(resp, reverse('doctor:dashboard'))
+
+        doc = DoctorProfile.objects.filter(user__email='default.spec@example.com').first()
+        self.assertIsNotNone(doc)
+        self.assertEqual(doc.specialization, 'Orthodontist')
+
+
 
 
 

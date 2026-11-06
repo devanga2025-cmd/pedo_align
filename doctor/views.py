@@ -139,6 +139,8 @@ def doctor_register_view(request):
         full_name = form.cleaned_data['full_name']
         phone_number = form.cleaned_data['phone_number']
         dental_qualification = form.cleaned_data['dental_qualification']
+        specialization = form.cleaned_data.get('specialization', '').strip() or 'Orthodontist'
+        ksdc_reg = form.cleaned_data.get('ksdc_registration_number', '').strip()
         clinic_name = form.cleaned_data['clinic_name']
         clinic_address = form.cleaned_data['clinic_address']
         profile_picture = form.cleaned_data.get('profile_picture')
@@ -158,6 +160,8 @@ def doctor_register_view(request):
             full_name=full_name,
             phone_number=phone_number,
             dental_qualification=dental_qualification,
+            specialization=specialization,
+            ksdc_registration_number=ksdc_reg or None,
             clinic_name=clinic_name,
             clinic_address=clinic_address,
             profile_picture=profile_picture

@@ -29,6 +29,8 @@ class DoctorRegistrationForm(forms.Form):
     )
     specialization = forms.CharField(
         max_length=150,
+        required=False,
+        initial='Orthodontist',
         widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Orthodontist, Pedodontist'})
     )
     ksdc_registration_number = forms.CharField(
@@ -59,6 +61,10 @@ class DoctorRegistrationForm(forms.Form):
         if User.objects.filter(username__iexact=email).exists() or User.objects.filter(email__iexact=email).exists():
             raise ValidationError("An account with this email address already exists.")
         return email
+
+    def clean_specialization(self):
+        val = (self.cleaned_data.get('specialization') or '').strip()
+        return val if val else 'Orthodontist'
 
     def clean(self):
         cleaned_data = super().clean()
