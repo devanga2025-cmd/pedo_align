@@ -181,8 +181,8 @@
                         <span>Notifications</span>
                     </div>
                     {% if unread_notifications_count > 0 %}
-                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-blue-700 bg-blue-100 rounded-full">
-                        {{ unread_notifications_count }}
+                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-black leading-none text-white bg-rose-600 rounded-full shadow-xs">
+                        {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
                     </span>
                     {% endif %}
                 </a>
@@ -200,7 +200,7 @@
                 <!-- Install Mobile App Button -->
                 <button type="button" onclick="triggerPWAInstall()" class="pwa-install-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 transition text-left font-bold text-sm cursor-pointer">
                     <i class="fa-solid fa-download w-5 text-center text-base"></i>
-                    <span class="pwa-install-btn-text">Install Mobile App</span>
+                    <span class="pwa-install-btn-text">INSTALL THE APP</span>
                 </button>
 
                 <!-- 13. Logout -->
@@ -255,17 +255,26 @@
 
                     <!-- Notification Bell Dropdown -->
                     <div class="relative">
-                        <button id="notifDropdownBtn" class="relative p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:outline-none">
+                        <button id="notifDropdownBtn" class="relative p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:outline-none" title="Notifications">
                             <i class="fa-solid fa-bell text-lg"></i>
                             {% if unread_notifications_count > 0 %}
-                            <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                            <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                                {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
+                            </span>
                             {% endif %}
                         </button>
 
                         <div id="notifDropdownMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in">
                             <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Notifications</h3>
-                                <a href="{% url 'doctor:notifications' %}" class="text-xs text-blue-600 hover:underline font-semibold">View All</a>
+                                <div class="flex items-center gap-2">
+                                    {% if unread_notifications_count > 0 %}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700">
+                                        {{ unread_notifications_count }} new
+                                    </span>
+                                    {% endif %}
+                                    <a href="{% url 'doctor:notifications' %}" class="text-xs text-blue-600 hover:underline font-semibold">View All</a>
+                                </div>
                             </div>
                             <div class="divide-y divide-slate-100 max-h-72 overflow-y-auto">
                                 {% if recent_notifications %}
@@ -298,9 +307,9 @@
                     <button type="button" 
                             onclick="triggerPWAInstall()" 
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-bold transition shadow-2xs border border-blue-200/80" 
-                            title="Install App">
+                            title="INSTALL THE APP">
                         <i class="fa-solid fa-download text-xs text-sky-600"></i>
-                        <span class="hidden sm:inline">Install App</span>
+                        <span class="hidden sm:inline">INSTALL THE APP</span>
                     </button>
 
                     <!-- Profile Pill Dropdown -->

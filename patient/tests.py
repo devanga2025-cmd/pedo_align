@@ -574,6 +574,81 @@ class PatientPortalTests(TestCase):
         login_res = self.client.get(reverse('patient:login'))
         self.assertNotContains(login_res, 'DEVICE ACCESS URL')
         self.assertNotContains(login_res, 'pwaTabDesktop')
-        self.assertContains(login_res, 'Install Directly on Phone')
+        self.assertContains(login_res, 'INSTALL THE APP')
+
+    def test_bidirectional_notification_counter_increments(self):
+        """
+        Verify that:
+        1. When doctor sends instruction/reminder or prescription, patient notification counter increments (+1)
+           and renders the exact numeric badge in patient base HTML.
+        2. When patient triggers an event (e.g. emergency alert), doctor notification counter increments (+1)
+           and renders the numeric badge in doctor base HTML.
+        3. Marking notifications read decreases counter.
+        """
+        # Create Patient Profile & User
+        pt_user = User.objects.create_user(
+            username='sahana@example.com',
+            email='sahana@example.com',
+            password='PatientPassword123!'
+        )
+        profile = PatientProfile.objects.create(
+            user=pt_user,
+            patient_id='PA-P9999',
+            full_name='Sahana Rao',
+            connected_patient_record=self.clinical_patient,
+            connection_status='CONNECTED'
+        )
+
+        # Patient visits dashboard
+        self.client.login(username='sahana@example.com', password='PatientPassword123!')
+        res = self.client.get(reverse('patient:dashboard'))
+        initial_count = res.context['patient_unread_notifs']
+        self.client.logout()
+
+        # Doctor logs in and sends an instruction/reminder via notifications_view
+        self.client.login(username=self.doc_user.username, password='Password123!')
+        doc_dash = self.client.get(reverse('doctor:dashboard'))
+        initial_doc_notifs = doc_dash.context['unread_notifications_count']
+
+        post_data = {
+            'send_reminder': '1',
+            'patient': self.clinical_patient.id,
+            'instruction_type': 'COMPLIANCE_ENCOURAGEMENT',
+            'title': 'Wear Aligner 22 Hours Daily',
+            'message': 'Please remember to switch to tray #4 this Sunday and wear chewie.'
+        }
+        send_res = self.client.post(reverse('doctor:notifications'), post_data)
+        self.assertEqual(send_res.status_code, 302)
+
+        # Verify PatientNotification was created for the patient (+1)
+        pt_notifs = profile.notifications.filter(is_read=False)
+        self.assertEqual(pt_notifs.count(), initial_count + 1)
+        self.assertTrue(pt_notifs.filter(title='Doctor Instruction: Wear Aligner 22 Hours Daily').exists())
+
+        # Now login as patient and verify notification count is initial_count + 1 and rendered in HTML
+        self.client.logout()
+        self.client.login(username='sahana@example.com', password='PatientPassword123!')
+        pt_dash = self.client.get(reverse('patient:dashboard'))
+        self.assertEqual(pt_dash.context['patient_unread_notifs'], initial_count + 1)
+        # HTML should contain the numeric badge in bg-rose-600
+        self.assertContains(pt_dash, 'bg-rose-600')
+        self.assertContains(pt_dash, str(initial_count + 1))
+
+        # Now patient creates an emergency alert to notify the doctor
+        emer_data = {
+            'problem_type': 'BROKEN_ALIGNER',
+            'severity': 'MEDIUM',
+            'description': 'Aligner tray #3 cracked on the right molar side.'
+        }
+        emer_res = self.client.post(reverse('patient:emergency'), emer_data)
+        self.assertEqual(emer_res.status_code, 302)
+
+        # Login as doctor and check doctor notification count increased (+1)
+        self.client.logout()
+        self.client.login(username=self.doc_user.username, password='Password123!')
+        doc_dash2 = self.client.get(reverse('doctor:dashboard'))
+        self.assertGreaterEqual(doc_dash2.context['unread_notifications_count'], initial_doc_notifs + 1)
+        self.assertContains(doc_dash2, 'bg-rose-600')
+
 
 

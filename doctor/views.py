@@ -53,15 +53,24 @@ def notify_patient_profile(patient, notification_type, title, message, link_url=
     if not patient:
         return None
 
-    profile = getattr(patient, 'portal_profile', None)
+    profile = None
+    try:
+        profile = getattr(patient, 'portal_profile', None)
+    except Exception:
+        profile = None
+
     if not profile:
         profile = PatientProfile.objects.filter(connected_patient_record=patient).first()
-    if not profile and patient.email:
+
+    patient_email = getattr(patient, 'email', None)
+    if not profile and patient_email:
         profile = PatientProfile.objects.filter(
-            Q(user__email__iexact=patient.email) | Q(parent_guardian_email__iexact=patient.email)
+            Q(user__email__iexact=patient_email) | Q(parent_guardian_email__iexact=patient_email)
         ).first()
-    if not profile and patient.phone:
-        profile = PatientProfile.objects.filter(phone_number=patient.phone).first()
+
+    patient_phone = getattr(patient, 'phone', None)
+    if not profile and patient_phone:
+        profile = PatientProfile.objects.filter(phone_number=patient_phone).first()
 
     if profile:
         return PatientNotification.objects.create(
@@ -692,6 +701,13 @@ def operation_record_create_view(request, patient_id):
                 activity_type='Operation / Treatment Recorded',
                 description=f"Treatment procedure recorded: {op.operation_performed}"
             )
+            notify_patient_profile(
+                patient=patient,
+                notification_type='TREATMENT_UPDATE',
+                title="New Clinical Procedure Recorded",
+                message=f"Dr. {doctor.full_name} recorded a clinical procedure: {op.operation_performed}.",
+                link_url='/patient/my-treatment/'
+            )
             messages.success(request, f"Treatment & Operation record for '{op.operation_performed}' saved successfully.")
         else:
             messages.error(request, "Please correct errors in the treatment operation form.")
@@ -715,14 +731,13 @@ def prescription_create_view(request, patient_id):
             presc.save()
 
             # Automatic notification to patient
-            if hasattr(patient, 'portal_profile') and patient.portal_profile:
-                PatientNotification.objects.create(
-                    patient=patient.portal_profile,
-                    notification_type='PRESCRIPTION',
-                    title='New Digital Prescription Issued',
-                    message=f"Dr. {doctor.full_name} ({doctor.clinic_name}) has generated a digital prescription dated {presc.prescription_date}. You can view and download it now.",
-                    link_url=reverse('patient:my_treatment')
-                )
+            notify_patient_profile(
+                patient=patient,
+                notification_type='PRESCRIPTION',
+                title='New Digital Prescription Issued',
+                message=f"Dr. {doctor.full_name} ({doctor.clinic_name}) has generated a digital prescription dated {presc.prescription_date}. You can view and download it now.",
+                link_url=reverse('patient:my_treatment')
+            )
 
             PatientActivityLog.objects.create(
                 patient=patient,
@@ -859,14 +874,13 @@ def turn_quest_create_view(request, patient_id):
             turn.save()
 
             # Automatic notification to patient
-            if hasattr(patient, 'portal_profile') and patient.portal_profile:
-                PatientNotification.objects.create(
-                    patient=patient.portal_profile,
-                    notification_type='TREATMENT_UPDATE',
-                    title=f"Turn #{turn.turn_number} Prescribed",
-                    message=f"Dr. {doctor.full_name} has updated your treatment turn #{turn.turn_number} ({turn.get_status_display()}). Instructions: {turn.instructions or 'Follow prescribed aligner sequence'}.",
-                    link_url=reverse('patient:my_treatment')
-                )
+            notify_patient_profile(
+                patient=patient,
+                notification_type='TREATMENT_UPDATE',
+                title=f"Turn #{turn.turn_number} Prescribed",
+                message=f"Dr. {doctor.full_name} has updated your treatment turn #{turn.turn_number} ({turn.get_status_display()}). Instructions: {turn.instructions or 'Follow prescribed aligner sequence'}.",
+                link_url=reverse('patient:my_treatment')
+            )
 
             PatientActivityLog.objects.create(
                 patient=patient,
@@ -998,14 +1012,13 @@ def schedule_20day_followup_view(request, patient_id):
             message=f"Appointment on {followup_date} at {appt_time.strftime('%I:%M %p')} for {patient.full_name}."
         )
 
-        if hasattr(patient, 'portal_profile') and patient.portal_profile:
-            PatientNotification.objects.create(
-                patient=patient.portal_profile,
-                notification_type='APPOINTMENT',
-                title="Upcoming Appointment: 20-Day Clinical Follow-Up",
-                message=f"Doctor Name: Dr. {doctor.full_name}\nClinic: {doctor.clinic_name}\nDate: {followup_date.strftime('%b %d, %Y')}\nTime: {appt_time.strftime('%I:%M %p')}\nInstructions: {instructions}",
-                link_url=reverse('patient:appointments')
-            )
+        notify_patient_profile(
+            patient=patient,
+            notification_type='APPOINTMENT',
+            title="Upcoming Appointment: 20-Day Clinical Follow-Up",
+            message=f"Doctor Name: Dr. {doctor.full_name}\nClinic: {doctor.clinic_name}\nDate: {followup_date.strftime('%b %d, %Y')}\nTime: {appt_time.strftime('%I:%M %p')}\nInstructions: {instructions}",
+            link_url=reverse('patient:appointments')
+        )
 
         PatientActivityLog.objects.create(
             patient=patient,
@@ -1679,14 +1692,13 @@ def treatment_plan_edit_view(request, patient_id):
             updated_plan.save()
 
         # Notify Patient
-        if hasattr(patient, 'portal_profile') and patient.portal_profile:
-            from patient.models import PatientNotification
-            PatientNotification.objects.create(
-                patient=patient.portal_profile,
-                notification_type='TREATMENT_UPDATE',
-                title='Treatment Plan & Arch Update',
-                message=f'Dr. {doctor.full_name} updated your upper/lower arch prescription and Tray #{updated_plan.current_aligner} schedule.'
-            )
+        notify_patient_profile(
+            patient=patient,
+            notification_type='TREATMENT_UPDATE',
+            title='Treatment Plan & Arch Update',
+            message=f'Dr. {doctor.full_name} updated your upper/lower arch prescription and Tray #{updated_plan.current_aligner} schedule.',
+            link_url='/patient/my-treatment/'
+        )
 
         PatientActivityLog.objects.create(
             patient=patient,
@@ -1745,14 +1757,13 @@ def advance_aligner_stage_view(request, patient_id):
             )
 
             # Notify Patient
-            if hasattr(patient, 'portal_profile') and patient.portal_profile:
-                from patient.models import PatientNotification
-                PatientNotification.objects.create(
-                    patient=patient.portal_profile,
-                    notification_type='TRAY_CHANGE',
-                    title=f'Tray Advanced to #{plan.current_aligner}',
-                    message=f'Dr. {doctor.full_name} has advanced your aligner to Tray #{plan.current_aligner}. Next scheduled switch date: {plan.next_tray_change_date.strftime("%b %d, %Y")}.'
-                )
+            notify_patient_profile(
+                patient=patient,
+                notification_type='TRAY_CHANGE',
+                title=f'Tray Advanced to #{plan.current_aligner}',
+                message=f'Dr. {doctor.full_name} has advanced your aligner to Tray #{plan.current_aligner}. Next scheduled switch date: {plan.next_tray_change_date.strftime("%b %d, %Y")}.',
+                link_url='/patient/my-treatment/'
+            )
 
             PatientActivityLog.objects.create(
                 patient=patient,
@@ -2406,15 +2417,13 @@ def emergency_respond_view(request, alert_id):
             description=f"Doctor updated emergency status to {updated_alert.get_status_display()} with guidance."
         )
 
-        if hasattr(alert.patient, 'portal_profile') and alert.patient.portal_profile:
-            from patient.models import PatientNotification
-            PatientNotification.objects.create(
-                patient=alert.patient.portal_profile,
-                notification_type='EMERGENCY_RESPONSE',
-                title=f"Doctor Responded: {alert.get_issue_type_display()}",
-                message=f"Dr. {doctor.full_name} provided instructions: {updated_alert.doctor_response or 'Status updated to ' + updated_alert.get_status_display()}",
-                link_url='/emergency/'
-            )
+        notify_patient_profile(
+            patient=alert.patient,
+            notification_type='EMERGENCY_RESPONSE',
+            title=f"Doctor Responded: {alert.get_issue_type_display()}",
+            message=f"Dr. {doctor.full_name} provided instructions: {updated_alert.doctor_response or 'Status updated to ' + updated_alert.get_status_display()}",
+            link_url='/patient/emergency/'
+        )
 
         messages.success(request, f"Emergency response saved for {alert.patient.full_name}.")
         return redirect('doctor:emergency_alerts')
@@ -2441,15 +2450,13 @@ def emergency_resolve_quick_view(request, alert_id):
             alert.doctor_response = "Resolved in clinic / via consultation."
         alert.save()
 
-        if hasattr(alert.patient, 'portal_profile') and alert.patient.portal_profile:
-            from patient.models import PatientNotification
-            PatientNotification.objects.create(
-                patient=alert.patient.portal_profile,
-                notification_type='EMERGENCY_RESPONSE',
-                title=f"Emergency Resolved: {alert.get_issue_type_display()}",
-                message=f"Dr. {doctor.full_name} marked your emergency issue as Resolved.",
-                link_url='/emergency/'
-            )
+        notify_patient_profile(
+            patient=alert.patient,
+            notification_type='EMERGENCY_RESPONSE',
+            title=f"Emergency Resolved: {alert.get_issue_type_display()}",
+            message=f"Dr. {doctor.full_name} marked your emergency issue as Resolved.",
+            link_url='/patient/emergency/'
+        )
 
         messages.success(request, f"Emergency issue for {alert.patient.full_name} marked as Resolved.")
 
@@ -2524,15 +2531,13 @@ def appointment_create_view(request):
             message=f"{appointment.get_appointment_type_display()} on {appointment.scheduled_date} at {appointment.scheduled_time}."
         )
 
-        if hasattr(appointment.patient, 'portal_profile') and appointment.patient.portal_profile:
-            from patient.models import PatientNotification
-            PatientNotification.objects.create(
-                patient=appointment.patient.portal_profile,
-                notification_type='APPOINTMENT',
-                title=f"New Appointment: {appointment.get_appointment_type_display()}",
-                message=f"Dr. {doctor.full_name} scheduled a visit on {appointment.scheduled_date} at {appointment.scheduled_time}. {appointment.instructions or ''}",
-                link_url='/appointments/'
-            )
+        notify_patient_profile(
+            patient=appointment.patient,
+            notification_type='APPOINTMENT',
+            title=f"New Appointment: {appointment.get_appointment_type_display()}",
+            message=f"Dr. {doctor.full_name} scheduled a visit on {appointment.scheduled_date} at {appointment.scheduled_time}. {appointment.instructions or ''}",
+            link_url='/patient/appointments/'
+        )
 
         messages.success(request, f"Appointment for {appointment.patient.full_name} scheduled successfully!")
         return redirect('doctor:appointments')
@@ -2563,16 +2568,14 @@ def appointment_status_update_view(request, appt_id):
                 description=f"Appointment on {appointment.scheduled_date} marked as {appointment.get_status_display()}."
             )
 
-            if hasattr(appointment.patient, 'portal_profile') and appointment.patient.portal_profile:
-                from patient.models import PatientNotification
-                status_title = "Appointment Confirmed by Doctor" if new_status == 'UPCOMING' else f"Appointment {appointment.get_status_display()}"
-                PatientNotification.objects.create(
-                    patient=appointment.patient.portal_profile,
-                    notification_type='APPOINTMENT',
-                    title=status_title,
-                    message=f"Dr. {doctor.full_name} updated your appointment on {appointment.scheduled_date} at {appointment.scheduled_time} to {appointment.get_status_display()}.",
-                    link_url='/appointments/'
-                )
+            status_title = "Appointment Confirmed by Doctor" if new_status == 'UPCOMING' else f"Appointment {appointment.get_status_display()}"
+            notify_patient_profile(
+                patient=appointment.patient,
+                notification_type='APPOINTMENT',
+                title=status_title,
+                message=f"Dr. {doctor.full_name} updated your appointment on {appointment.scheduled_date} at {appointment.scheduled_time} to {appointment.get_status_display()}.",
+                link_url='/patient/appointments/'
+            )
 
             messages.success(request, f"Appointment status updated to {appointment.get_status_display()}.")
 
@@ -2612,6 +2615,13 @@ def notifications_view(request):
             notification_type='FOLLOWUP',
             title=f"Sent to {patient.full_name}: {title}",
             message=msg_text
+        )
+        notify_patient_profile(
+            patient=patient,
+            notification_type='DOCTOR_INSTRUCTION',
+            title=f"Doctor Instruction: {title}",
+            message=msg_text,
+            link_url='/patient/notifications/'
         )
         messages.success(request, f"Instructions & reminders successfully sent to {patient.full_name}!")
         return redirect('doctor:notifications')

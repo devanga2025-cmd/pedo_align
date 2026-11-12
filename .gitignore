@@ -2,8 +2,7 @@
 __pycache__/
 staticfiles/
 *.sqlite3
-media/monitoring_photos/test_*
-media/preoperative_photos/*test*
-media/preoperative_photos/*extra*
-media/radiographs/*test*
-media/treatment_media/*test*
+media/*
+!media/doctor_profiles/dr_dileep_avatar.png
+!media/doctor_profiles/doctor_avatar_sample_hq.png
+!media/doctor_profiles/favicon.ico

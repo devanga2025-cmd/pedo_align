@@ -323,32 +323,25 @@
         <!-- ============================================== -->
         <!-- MOBILE INSTALL BUTTONS (Clean & Compact)       -->
         <!-- ============================================== -->
-        <div class="bg-white/90 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-blue-100 shadow-md shadow-blue-900/5 text-center space-y-2.5">
+        <div class="w-full max-w-xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-blue-100 shadow-md shadow-blue-900/5 text-center space-y-2.5">
             <div class="flex items-center justify-center gap-2">
                 <i class="fa-solid fa-mobile-screen-button text-blue-600 text-sm"></i>
-                <span class="text-xs font-bold text-slate-800">Install PEDO ALIGN on Phone / Tablet</span>
+                <span class="text-xs font-bold text-slate-800">INSTALL THE APP</span>
             </div>
 
             <!-- Install Button -->
             <div class="flex items-center gap-2">
                 <button type="button" 
                         onclick="triggerPWAInstall()" 
-                        class="pwa-install-btn flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer">
-                    <i class="fa-solid fa-download"></i>
-                    <span class="pwa-install-btn-text">Install Directly on Phone</span>
+                        class="pwa-install-btn min-w-0 flex-1 py-3 px-3 sm:px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-download flex-shrink-0"></i>
+                    <span class="pwa-install-btn-text">INSTALL THE APP</span>
                 </button>
 
-                <button type="button" 
-                        onclick="showPWAInstallModal('android')" 
-                        class="py-3 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition"
-                        title="View installation steps & APK download">
-                    <i class="fa-solid fa-circle-question text-blue-600"></i>
-                    <span>Guide</span>
-                </button>
             </div>
 
             <p class="text-[10px] text-slate-400 font-medium">
-                Install as 1-tap mobile app or download APK directly to your phone
+                Install this website in Chrome to open it from your home screen
             </p>
         </div>
 
@@ -402,9 +395,6 @@
             }
         }
 
-        function showMobileInstallGuide(platform) {
-            showPWAInstallModal(platform);
-        }
     </script>
 </body>
 </html>

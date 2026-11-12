@@ -149,7 +149,7 @@
                 <!-- Install Mobile App Button -->
                 <button type="button" onclick="triggerPWAInstall()" class="pwa-install-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 hover:text-sky-700 transition text-left font-bold cursor-pointer">
                     <i class="fa-solid fa-download w-5 text-center text-base"></i>
-                    <span class="pwa-install-btn-text">Install Mobile App</span>
+                    <span class="pwa-install-btn-text">INSTALL THE APP</span>
                 </button>
 
                 <!-- 9. Logout -->
@@ -205,16 +205,18 @@
                     <button type="button" 
                             onclick="triggerPWAInstall()" 
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-bold transition shadow-2xs border border-blue-200/80" 
-                            title="Install App">
+                            title="INSTALL THE APP">
                         <i class="fa-solid fa-download text-xs text-sky-600"></i>
-                        <span class="hidden sm:inline">Install App</span>
+                        <span class="hidden sm:inline">INSTALL THE APP</span>
                     </button>
 
                     <!-- Notifications Bell Shortcut -->
                     <a href="{% url 'patient:notifications' %}" class="relative p-2 rounded-xl text-slate-600 hover:bg-blue-50 transition" title="Notifications">
                         <i class="fa-solid fa-bell text-lg"></i>
                         {% if patient_unread_notifs > 0 %}
-                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                            {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
+                        </span>
                         {% endif %}
                     </a>
 
@@ -313,7 +315,14 @@
             <span class="text-[10px]">Visits</span>
         </a>
         <a href="{% url 'patient:notifications' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
-            <i class="fa-solid fa-bell text-base"></i>
+            <div class="relative">
+                <i class="fa-solid fa-bell text-base"></i>
+                {% if patient_unread_notifs > 0 %}
+                <span class="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                    {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
+                </span>
+                {% endif %}
+            </div>
             <span class="text-[10px]">Alerts</span>
         </a>
         <a href="{% url 'patient:emergency' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'emergency' %}text-rose-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
