@@ -5,9 +5,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-z6%8=(fd!+p&2n7ans34^!atl0@ogc34!2-!3^6t%b3$^pepk@'
 
-DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['52.63.166.199', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -86,6 +86,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'assent',
     BASE_DIR / 'doctor' / 'static',
+    BASE_DIR / 'patient' / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 

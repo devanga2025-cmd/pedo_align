@@ -65,9 +65,9 @@
             <!-- Brand Banner with assent/bg.png & Logo -->
             <div class="relative p-4 border-b border-blue-100/80 bg-cover bg-center" style="background-image: url('{% static 'bg.png' %}?v=2305');">
                 <a href="{% url 'patient:dashboard' %}" class="block text-center focus:outline-none transition-transform hover:scale-[1.02]">
-                    <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" 
+                    <img src="{% static 'sidebar_glowing_logo.png' %}" 
                          alt="PEDO ALIGN" 
-                         onerror="this.src='/static/sidebar_glowing_logo.png'"
+                         onerror="this.onerror=null; this.src='/static/sidebar_glowing_logo.png';"
                          class="max-w-[175px] max-h-14 mx-auto w-auto object-contain drop-shadow-sm">
                 </a>
 

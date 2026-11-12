@@ -1,0 +1,9 @@
+*.pyc
+__pycache__/
+staticfiles/
+*.sqlite3
+media/monitoring_photos/test_*
+media/preoperative_photos/*test*
+media/preoperative_photos/*extra*
+media/radiographs/*test*
+media/treatment_media/*test*

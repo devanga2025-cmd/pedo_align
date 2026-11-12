@@ -1,8 +1,9 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib.staticfiles.views import serve as serve_static
+from django.views.static import serve as serve_media
 from django.views.generic.base import RedirectView
 from doctor.views import service_worker_view, manifest_view, download_apk_view, assetlinks_view
 
@@ -16,11 +17,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('patient/', include('patient.urls', namespace='patient')),
     path('', include('doctor.urls', namespace='doctor')),
+    re_path(r'^media/(?P<path>.*)$', serve_media, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve_static, {'insecure': True}),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += staticfiles_urlpatterns()
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

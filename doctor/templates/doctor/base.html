@@ -89,9 +89,9 @@
             <div class="relative p-4 border-b border-blue-100/80 overflow-hidden bg-cover bg-center shadow-xs" style="background-image: url('{% static 'bg.png' %}?v=2305');">
                 <!-- Logo -->
                 <a href="{% url 'doctor:dashboard' %}" class="relative block mx-auto transition-transform hover:scale-[1.02] focus:outline-none" title="PEDO ALIGN Doctor Portal">
-                    <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" 
+                    <img src="{% static 'sidebar_glowing_logo.png' %}" 
                          alt="PEDO ALIGN DOCTOR PORTAL" 
-                         onerror="this.src='/static/sidebar_glowing_logo.png'"
+                         onerror="this.onerror=null; this.src='/static/sidebar_glowing_logo.png';"
                          class="w-full max-w-[210px] mx-auto h-auto object-contain drop-shadow-sm">
                 </a>
 
