@@ -86,13 +86,13 @@
             <!-- Dual Portal Login Actions & Install App -->
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <!-- Install App Button -->
-                <button type="button" 
-                        onclick="triggerPWAInstall()" 
+                <a href="{% url 'download_app_apk' %}"
                         class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition transform hover:-translate-y-0.5"
-                        title="INSTALL THE APP on this device">
+                        title="Download the PEDO ALIGN Android app"
+                        aria-label="Download the PEDO ALIGN Android app">
                     <i class="fa-solid fa-download text-sky-600"></i>
-                    <span>INSTALL THE APP</span>
-                </button>
+                    <span>Download Android App</span>
+                </a>
 
                 <!-- Patient Login Button -->
                 <a href="{% url 'patient:login' %}" 
@@ -152,10 +152,10 @@
                         </a>
 
                         <!-- Download App Anchor -->
-                        <a href="#mobile-app" 
+                        <a href="{% url 'download_app_apk' %}"
                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-xs font-bold text-slate-600 hover:text-blue-700 hover:bg-blue-50 transition">
                             <i class="fa-solid fa-download text-sky-500"></i>
-                            <span>Get Mobile App</span>
+                            <span>Download Android App</span>
                         </a>
                     </div>
 
@@ -249,29 +249,31 @@
                             <!-- Download Badges Group -->
                             <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-4">
                                 
-                                <!-- iPhone install action -->
-                                <button type="button" 
-                                   onclick="triggerPWAInstall()"
+                                <!-- Browser app install option -->
+                                <a href="{% url 'download_app_apk' %}"
                                    class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-black/80 hover:bg-black text-white border border-white/20 transition shadow-lg transform hover:-translate-y-0.5">
                                     <i class="fa-brands fa-apple text-3xl"></i>
                                     <div class="text-left leading-tight">
-                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Install on iPhone</p>
-                                        <p class="text-sm font-bold">INSTALL THE APP</p>
+                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Android APK · 1.6 MB</p>
+                                        <p class="text-sm font-bold">DOWNLOAD APK</p>
                                     </div>
-                                </button>
+                                </a>
 
-                                <!-- Android browser install action -->
-                                <button type="button" 
-                                   onclick="triggerPWAInstall()"
+                                <!-- Android APK download -->
+                                <a href="{% url 'download_app_apk' %}"
+                                   aria-label="Download PEDO ALIGN Android APK"
                                    class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-black/80 hover:bg-black text-white border border-white/20 transition shadow-lg transform hover:-translate-y-0.5">
-                                    <i class="fa-brands fa-google-play text-2xl text-emerald-400"></i>
+                                    <i class="fa-brands fa-android text-2xl text-emerald-400"></i>
                                     <div class="text-left leading-tight">
-                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Install on Android</p>
-                                        <p class="text-sm font-bold">INSTALL THE APP</p>
+                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Android APK · 1.6 MB</p>
+                                        <p class="text-sm font-bold">DOWNLOAD APK</p>
                                     </div>
-                                </button>
+                                </a>
 
                             </div>
+                            <p class="pt-3 text-xs text-blue-100 leading-relaxed">
+                                After downloading, open <strong>PedoAlign.apk</strong> from your browser’s Downloads. If Android asks, allow your browser to install unknown apps, then review and confirm the installation. You can also use the iPhone button for the browser’s web app install option.
+                            </p>
                         </div>
 
                         <!-- App Highlights on the Right -->
