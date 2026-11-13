@@ -112,17 +112,27 @@
             </div>
         </div>
 
-        <!-- Quick Install PWA Box -->
-        <div class="mt-4 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 border border-slate-200/90 text-center space-y-2 shadow-xs">
-            <div class="flex items-center justify-between text-left">
+        <!-- Quick Install PWA & APK Box -->
+        <div class="mt-4 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 border border-slate-200/90 text-center space-y-2.5 shadow-xs">
+            <div class="flex items-center gap-3 text-left">
+                <img src="{% static 'apple-touch-icon.png' %}" alt="PEDO ALIGN Logo" class="w-9 h-9 rounded-xl shadow-xs border border-blue-200/80 flex-shrink-0 object-cover">
                 <div>
                     <h3 class="text-xs font-black text-slate-800">Install PEDO ALIGN Doctor App</h3>
                     <p class="text-[11px] text-slate-500">Fast access to patient records, approvals & monitoring</p>
                 </div>
-                <a href="{% url 'download_app_apk' %}"
-                        class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 transition">
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" 
+                        onclick="triggerPWAInstall()" 
+                        class="pwa-install-btn flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
                     <i class="fa-solid fa-download"></i>
-                    <span>DOWNLOAD ANDROID APP</span>
+                    <span class="pwa-install-btn-text">INSTALL THE APP</span>
+                </button>
+                <a href="{% url 'download_app_apk' %}" 
+                   download="PedoAlign.apk"
+                   class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition border border-slate-200">
+                    <i class="fa-brands fa-android text-emerald-600 text-xs"></i>
+                    <span>Download APK</span>
                 </a>
             </div>
         </div>

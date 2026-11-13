@@ -321,26 +321,38 @@
         </div>
 
         <!-- ============================================== -->
-        <!-- MOBILE INSTALL BUTTONS (Clean & Compact)       -->
+        <!-- MOBILE INSTALL & DOWNLOAD (Clean & Beautiful)  -->
         <!-- ============================================== -->
-        <div class="w-full max-w-xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-blue-100 shadow-md shadow-blue-900/5 text-center space-y-2.5">
-            <div class="flex items-center justify-center gap-2">
-                <i class="fa-solid fa-mobile-screen-button text-blue-600 text-sm"></i>
-                <span class="text-xs font-bold text-slate-800">DOWNLOAD THE ANDROID APP</span>
+        <div class="w-full max-w-xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 border border-blue-100 shadow-lg shadow-blue-900/5 text-center space-y-3">
+            <div class="flex items-center justify-center gap-3">
+                <img src="{% static 'apple-touch-icon.png' %}" alt="PEDO ALIGN Logo" class="w-10 h-10 rounded-2xl shadow-sm border border-blue-200/80 flex-shrink-0 object-cover">
+                <div class="text-left">
+                    <span class="text-xs font-black text-slate-800 block">PEDO ALIGN Mobile</span>
+                    <span class="text-[11px] text-slate-500 block">Open directly on your phone home screen or download APK</span>
+                </div>
             </div>
 
-            <!-- Install Button -->
-            <div class="flex items-center gap-2">
-                <a href="{% url 'download_app_apk' %}"
-                        class="min-w-0 flex-1 py-3 px-3 sm:px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-600 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95">
+            <!-- Install & Direct Download Buttons -->
+            <div class="flex flex-col sm:flex-row items-center gap-2">
+                <button type="button" 
+                        onclick="triggerPWAInstall()" 
+                        class="pwa-install-btn w-full sm:flex-1 py-3 px-3 sm:px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer"
+                        title="Install directly to phone home screen">
                     <i class="fa-solid fa-download flex-shrink-0"></i>
-                    <span>DOWNLOAD ANDROID APP</span>
-                </a>
+                    <span class="pwa-install-btn-text">INSTALL THE APP</span>
+                </button>
 
+                <a href="{% url 'download_app_apk' %}" 
+                   download="PedoAlign.apk"
+                   class="w-full sm:w-auto py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition border border-slate-200"
+                   title="Download PedoAlign.apk directly">
+                    <i class="fa-brands fa-android text-emerald-600 text-sm"></i>
+                    <span>Download APK</span>
+                </a>
             </div>
 
             <p class="text-[10px] text-slate-400 font-medium">
-                Install this website in Chrome to open it from your home screen
+                Works on all Android devices, tablets & iPhones &bull; Official signed application
             </p>
         </div>
 

@@ -2,6 +2,7 @@
 __pycache__/
 staticfiles/
 *.sqlite3
+scratch/
 media/*
 !media/doctor_profiles/dr_dileep_avatar.png
 !media/doctor_profiles/doctor_avatar_sample_hq.png

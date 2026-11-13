@@ -3114,6 +3114,7 @@ def assetlinks_view(request):
                 "namespace": "android_app",
                 "package_name": "com.pedoalign.app",
                 "sha256_cert_fingerprints": [
+                    "2D:21:5B:D8:AE:B0:DA:3A:A3:A6:5A:96:2A:A1:2D:6B:8F:3B:03:45:E4:BA:69:64:5A:F0:5D:84:6D:EB:9A:46",
                     "70:24:50:3A:9D:BE:27:68:98:D6:24:9C:67:72:2A:91:AF:C5:48:85:FB:69:B2:F5:E2:42:B3:30:88:E1:8B:9E"
                 ]
             }
@@ -3124,6 +3125,7 @@ def assetlinks_view(request):
                 "namespace": "android_app",
                 "package_name": "com.webview.myapplication",
                 "sha256_cert_fingerprints": [
+                    "2D:21:5B:D8:AE:B0:DA:3A:A3:A6:5A:96:2A:A1:2D:6B:8F:3B:03:45:E4:BA:69:64:5A:F0:5D:84:6D:EB:9A:46",
                     "70:24:50:3A:9D:BE:27:68:98:D6:24:9C:67:72:2A:91:AF:C5:48:85:FB:69:B2:F5:E2:42:B3:30:88:E1:8B:9E"
                 ]
             }
@@ -3144,11 +3146,20 @@ def download_apk_view(request):
     from django.conf import settings
     from django.http import FileResponse, Http404
 
-    apk_file = os.path.join(settings.BASE_DIR, 'doctor', 'static', 'app', 'PedoAlign.apk')
-    if not os.path.exists(apk_file):
-        apk_file = os.path.join(settings.BASE_DIR, 'scratch', 'PedoAlign.apk')
+    candidate_paths = [
+        os.path.join(settings.BASE_DIR, 'doctor', 'static', 'app', 'PedoAlign.apk'),
+        os.path.join(settings.BASE_DIR, 'assent', 'app', 'PedoAlign.apk'),
+        os.path.join(settings.BASE_DIR, 'staticfiles', 'app', 'PedoAlign.apk'),
+        os.path.join(settings.BASE_DIR, 'scratch', 'PedoAlign.apk'),
+    ]
 
-    if not os.path.exists(apk_file):
+    apk_file = None
+    for path in candidate_paths:
+        if os.path.exists(path):
+            apk_file = path
+            break
+
+    if not apk_file:
         raise Http404("APK file not found.")
 
     response = FileResponse(
@@ -3158,6 +3169,7 @@ def download_apk_view(request):
         filename='PedoAlign.apk'
     )
     response['Content-Length'] = os.path.getsize(apk_file)
+    response['Content-Disposition'] = 'attachment; filename="PedoAlign.apk"'
     response['Cache-Control'] = 'public, max-age=86400'
     return response
 

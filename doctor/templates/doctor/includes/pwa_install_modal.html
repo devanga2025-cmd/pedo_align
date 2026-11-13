@@ -170,43 +170,43 @@
         window.addEventListener('DOMContentLoaded', registerPWAServiceWorker);
     }
 
-    // Open the native install prompt when available; otherwise give device-specific steps.
+    // Open the native install prompt when available; otherwise directly download the APK.
     async function triggerPWAInstall() {
         if (checkIsAppInstalled()) {
             showPwaToast('info', PWA_INSTALL_COPY.installed);
             return;
         }
 
-        if (isInAppBrowser()) {
-            if (isAndroidDevice()) return;
-            showOpenInChromeOption();
+        if (pwaDeferredPrompt) {
+            try {
+                const installPrompt = pwaDeferredPrompt;
+                pwaDeferredPrompt = null;
+                await installPrompt.prompt();
+                const choiceResult = await installPrompt.userChoice;
+                if (choiceResult && choiceResult.outcome === 'accepted') {
+                    showPwaToast('success', 'Installing PEDO ALIGN...');
+                    return;
+                } else {
+                    showPwaToast('warning', 'Installation was cancelled. You can also download the Android APK directly.');
+                    return;
+                }
+            } catch (err) {
+                console.warn('Native prompt failed, falling back to direct APK download:', err);
+            }
+        }
+
+        if (isIOSDevice()) {
+            showPwaToast('info', PWA_INSTALL_COPY.ios);
             return;
         }
 
-        if (!pwaDeferredPrompt) {
-            if (isIOSDevice()) {
-                showPwaToast('info', PWA_INSTALL_COPY.ios);
-            } else if (isAndroidDevice()) {
-                return;
-            } else {
-                showPwaToast('info', PWA_INSTALL_COPY.browser);
-            }
-            return;
-        }
-
-        try {
-            const installPrompt = pwaDeferredPrompt;
-            pwaDeferredPrompt = null;
-            await installPrompt.prompt();
-            const choiceResult = await installPrompt.userChoice;
-            if (choiceResult && choiceResult.outcome === 'accepted') {
-                showPwaToast('success', 'Opening the PEDO ALIGN installation prompt…');
-            } else {
-                showPwaToast('warning', 'Installation was cancelled. You can try again anytime.');
-            }
-        } catch (err) {
-            console.error('PWA prompt execution error:', err);
-            showPwaToast('error', 'The browser could not start installation. Please try again.');
-        }
-}
+        // Direct mobile/browser download for Android or desktop browser
+        showPwaToast('success', 'Downloading PEDO ALIGN Android APK to your device...');
+        const dlLink = document.createElement('a');
+        dlLink.href = '/download/app/';
+        dlLink.download = 'PedoAlign.apk';
+        document.body.appendChild(dlLink);
+        dlLink.click();
+        document.body.removeChild(dlLink);
+    }
 </script>
