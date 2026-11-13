@@ -147,10 +147,10 @@
                 </a>
 
                 <!-- Install Mobile App Button -->
-                <button type="button" onclick="triggerPWAInstall()" class="pwa-install-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 hover:text-sky-700 transition text-left font-bold">
+                <a href="{% url 'download_app_apk' %}" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 hover:text-sky-700 transition text-left font-bold">
                     <i class="fa-solid fa-download w-5 text-center text-base"></i>
-                    <span class="pwa-install-btn-text">Install Web App</span>
-                </button>
+                    <span>Download Android App</span>
+                </a>
 
                 <!-- 9. Logout -->
                 <a href="{% url 'patient:logout' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition">
@@ -202,12 +202,12 @@
                     {% endif %}
 
                     <!-- Install App Header Pill -->
-                    <button type="button" onclick="triggerPWAInstall()"
+                    <a href="{% url 'download_app_apk' %}"
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-bold transition shadow-2xs border border-blue-200/80" 
-                            title="Install PEDO ALIGN web app">
+                            title="Download PEDO ALIGN Android app">
                         <i class="fa-solid fa-download text-xs text-sky-600"></i>
-                        <span class="hidden sm:inline">Install App</span>
-                    </button>
+                        <span class="hidden sm:inline">Download Android App</span>
+                    </a>
 
                     <!-- Notifications Bell Shortcut -->
                     <a href="{% url 'patient:notifications' %}" class="relative p-2 rounded-xl text-slate-600 hover:bg-blue-50 transition" title="Notifications">

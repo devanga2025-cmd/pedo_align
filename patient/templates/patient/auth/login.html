@@ -331,11 +331,11 @@
 
             <!-- Install Button -->
             <div class="flex items-center gap-2">
-                <button type="button" onclick="triggerPWAInstall()"
-                        class="pwa-install-btn min-w-0 flex-1 py-3 px-3 sm:px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95">
+                <a href="{% url 'download_app_apk' %}"
+                        class="min-w-0 flex-1 py-3 px-3 sm:px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-600 hover:from-blue-700 hover:to-cyan-600 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition transform active:scale-95">
                     <i class="fa-solid fa-download flex-shrink-0"></i>
-                    <span class="pwa-install-btn-text">INSTALL WEB APP</span>
-                </button>
+                    <span>DOWNLOAD ANDROID APP</span>
+                </a>
 
             </div>
 

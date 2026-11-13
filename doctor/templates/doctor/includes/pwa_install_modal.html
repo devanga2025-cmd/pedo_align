@@ -22,9 +22,8 @@
     let toastTimer = null;
 
     const PWA_INSTALL_COPY = {
-        android: 'In Chrome, open the menu and choose Install app or Add to Home screen.',
         ios: 'In Safari, tap Share, then choose Add to Home Screen.',
-        browser: 'Open this page in your browser menu or choose Open in Chrome to install PEDO ALIGN.',
+        browser: 'Use your browser’s built-in install option to add PEDO ALIGN to your home screen.',
         installed: 'PEDO ALIGN is already installed on this device.'
     };
 
@@ -104,7 +103,7 @@
     }
 
     function showOpenInChromeOption() {
-        showPwaToast('info', 'This in-app browser may block installation. Open PEDO ALIGN in Chrome to continue.');
+        showPwaToast('info', 'This in-app browser may not support web app installation.');
         const chromeLink = document.getElementById('pwaOpenChromeLink');
         if (chromeLink && isAndroidDevice()) {
             chromeLink.href = getChromeOpenUrl();
@@ -179,6 +178,7 @@
         }
 
         if (isInAppBrowser()) {
+            if (isAndroidDevice()) return;
             showOpenInChromeOption();
             return;
         }
@@ -187,8 +187,7 @@
             if (isIOSDevice()) {
                 showPwaToast('info', PWA_INSTALL_COPY.ios);
             } else if (isAndroidDevice()) {
-                const isChrome = /Chrome\//i.test(navigator.userAgent) && !/EdgA|OPR\//i.test(navigator.userAgent);
-                showPwaToast('info', isChrome ? PWA_INSTALL_COPY.android : PWA_INSTALL_COPY.browser);
+                return;
             } else {
                 showPwaToast('info', PWA_INSTALL_COPY.browser);
             }
