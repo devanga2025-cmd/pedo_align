@@ -10,6 +10,7 @@
             <i id="pwaToastIcon" class="fa-solid fa-circle-check"></i>
         </div>
         <span id="pwaToastMessage" class="flex-1 text-slate-100 leading-snug">Notice message</span>
+        <a id="pwaOpenChromeLink" class="hidden text-sky-300 underline whitespace-nowrap" href="#" target="_blank" rel="noopener">Open in Chrome</a>
         <button type="button" onclick="hidePwaToast()" class="text-slate-400 hover:text-white p-1">
             <i class="fa-solid fa-xmark text-xs"></i>
         </button>
@@ -20,12 +21,43 @@
     let pwaDeferredPrompt = null;
     let toastTimer = null;
 
+    const PWA_INSTALL_COPY = {
+        android: 'In Chrome, open the menu and choose Install app or Add to Home screen.',
+        ios: 'In Safari, tap Share, then choose Add to Home Screen.',
+        browser: 'Open this page in your browser menu or choose Open in Chrome to install PEDO ALIGN.',
+        installed: 'PEDO ALIGN is already installed on this device.'
+    };
+
     // 1. Detect if App is already running in Standalone Mode or installed
     function checkIsAppInstalled() {
         return window.matchMedia('(display-mode: standalone)').matches ||
+               window.matchMedia('(display-mode: fullscreen)').matches ||
                window.navigator.standalone === true ||
-               document.referrer.includes('android-app://') ||
-               localStorage.getItem('pedo_align_pwa_installed') === 'true';
+               document.referrer.includes('android-app://');
+    }
+
+    function isIOSDevice() {
+        return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+
+    function isAndroidDevice() {
+        return /android/i.test(navigator.userAgent);
+    }
+
+    function isInAppBrowser() {
+        const ua = navigator.userAgent || '';
+        return /; wv\)|\bwv\b|Instagram|FBAN|FBAV|FB_IAB|WhatsApp|Line\/|Twitter|TikTok|Snapchat/i.test(ua);
+    }
+
+    function getChromeOpenUrl() {
+        const url = new URL(window.location.href);
+        if (isIOSDevice()) {
+            url.protocol = url.protocol === 'https:' ? 'googlechromes:' : 'googlechrome:';
+            return url.toString();
+        }
+        if (!isAndroidDevice()) return url.toString();
+        return `intent://${url.host}${url.pathname}${url.search}${url.hash}#Intent;scheme=${url.protocol.slice(0, -1)};package=com.android.chrome;end`;
     }
 
     // 2. Toast Notification Feedback (Success, Warning, Error, Info)
@@ -34,10 +66,12 @@
         const msgEl = document.getElementById('pwaToastMessage');
         const iconEl = document.getElementById('pwaToastIcon');
         const iconWrap = document.getElementById('pwaToastIconWrap');
+        const chromeLink = document.getElementById('pwaOpenChromeLink');
 
         if (!box || !msgEl) return;
 
         msgEl.innerText = message;
+        if (chromeLink) chromeLink.classList.add('hidden');
         if (type === 'success') {
             iconWrap.className = 'w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 text-sm';
             iconEl.className = 'fa-solid fa-circle-check';
@@ -69,6 +103,15 @@
         }
     }
 
+    function showOpenInChromeOption() {
+        showPwaToast('info', 'This in-app browser may block installation. Open PEDO ALIGN in Chrome to continue.');
+        const chromeLink = document.getElementById('pwaOpenChromeLink');
+        if (chromeLink && isAndroidDevice()) {
+            chromeLink.href = getChromeOpenUrl();
+            chromeLink.classList.remove('hidden');
+        }
+    }
+
     // 3. Update Install UI elements across page
     function updateInstallUIState(isInstalled) {
         const buttons = document.querySelectorAll('.pwa-install-btn');
@@ -89,7 +132,8 @@
         }
     }
 
-    // Capture browser beforeinstallprompt event
+    // Capture browser beforeinstallprompt event. It can fire after page load,
+    // and must be retained until a user gesture calls prompt().
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         pwaDeferredPrompt = e;
@@ -101,7 +145,7 @@
     window.addEventListener('appinstalled', () => {
         pwaDeferredPrompt = null;
         updateInstallUIState(true);
-        showPwaToast('success', 'INSTALL THE APP is ready on your device.');
+        showPwaToast('success', 'PEDO ALIGN was added to your device.');
     });
 
     // Register Service Worker with root scope '/'
@@ -110,9 +154,10 @@
             navigator.serviceWorker.register('/sw.js', { scope: '/' })
                 .then(reg => {
                     console.log('PEDO ALIGN: Service Worker active with scope', reg.scope);
+                    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
                 })
                 .catch(err => {
-                    console.warn('PEDO ALIGN: SW registration skipped', err);
+                    console.error('PEDO ALIGN: Service Worker registration failed', err);
                 });
         }
         if (checkIsAppInstalled()) {
@@ -126,15 +171,27 @@
         window.addEventListener('DOMContentLoaded', registerPWAServiceWorker);
     }
 
-    // Open the browser's native PWA installation prompt from the user's click.
+    // Open the native install prompt when available; otherwise give device-specific steps.
     async function triggerPWAInstall() {
         if (checkIsAppInstalled()) {
-            showPwaToast('info', 'INSTALL THE APP is already installed on this device.');
+            showPwaToast('info', PWA_INSTALL_COPY.installed);
+            return;
+        }
+
+        if (isInAppBrowser()) {
+            showOpenInChromeOption();
             return;
         }
 
         if (!pwaDeferredPrompt) {
-            showPwaToast('info', 'Open this page in Chrome over HTTPS to install it with the app logo.');
+            if (isIOSDevice()) {
+                showPwaToast('info', PWA_INSTALL_COPY.ios);
+            } else if (isAndroidDevice()) {
+                const isChrome = /Chrome\//i.test(navigator.userAgent) && !/EdgA|OPR\//i.test(navigator.userAgent);
+                showPwaToast('info', isChrome ? PWA_INSTALL_COPY.android : PWA_INSTALL_COPY.browser);
+            } else {
+                showPwaToast('info', PWA_INSTALL_COPY.browser);
+            }
             return;
         }
 
@@ -144,7 +201,7 @@
             await installPrompt.prompt();
             const choiceResult = await installPrompt.userChoice;
             if (choiceResult && choiceResult.outcome === 'accepted') {
-                showPwaToast('success', 'Installing INSTALL THE APP...');
+                showPwaToast('success', 'Opening the PEDO ALIGN installation prompt…');
             } else {
                 showPwaToast('warning', 'Installation was cancelled. You can try again anytime.');
             }

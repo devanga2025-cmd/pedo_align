@@ -249,15 +249,15 @@
                             <!-- Download Badges Group -->
                             <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-4">
                                 
-                                <!-- Browser app install option -->
-                                <a href="{% url 'download_app_apk' %}"
+                                <!-- iPhone Safari Add to Home Screen guidance -->
+                                <button type="button" onclick="triggerPWAInstall()"
                                    class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-black/80 hover:bg-black text-white border border-white/20 transition shadow-lg transform hover:-translate-y-0.5">
                                     <i class="fa-brands fa-apple text-3xl"></i>
                                     <div class="text-left leading-tight">
-                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">Android APK · 1.6 MB</p>
-                                        <p class="text-sm font-bold">DOWNLOAD APK</p>
+                                        <p class="text-[10px] text-slate-300 uppercase font-semibold">For iPhone</p>
+                                        <p class="text-sm font-bold">ADD TO HOME SCREEN</p>
                                     </div>
-                                </a>
+                                </button>
 
                                 <!-- Android APK download -->
                                 <a href="{% url 'download_app_apk' %}"
@@ -272,7 +272,7 @@
 
                             </div>
                             <p class="pt-3 text-xs text-blue-100 leading-relaxed">
-                                After downloading, open <strong>PedoAlign.apk</strong> from your browser’s Downloads. If Android asks, allow your browser to install unknown apps, then review and confirm the installation. You can also use the iPhone button for the browser’s web app install option.
+                                On Android, download and open <strong>PedoAlign.apk</strong> from Chrome’s Downloads. If prompted, allow Chrome to install unknown apps, then review and confirm. On iPhone, open this site in Safari, tap Share, then choose Add to Home Screen.
                             </p>
                         </div>
 
