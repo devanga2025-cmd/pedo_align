@@ -377,8 +377,7 @@ def sync_patient_reminders_from_schedule(patient):
                 already_exists = PatientNotification.objects.filter(
                     patient=patient,
                     notification_type='TRAY_CHANGE',
-                    title=notif_title,
-                    created_at__date__gte=today - timedelta(days=3)
+                    title=notif_title
                 ).exists()
 
                 if not already_exists:
@@ -397,37 +396,7 @@ def sync_patient_reminders_from_schedule(patient):
                         link_url='/treatment/'
                     )
 
-    # 2. Weekly Photo Upload Reminder
-    recent_photo = PhotoMonitoring.objects.filter(
-        patient=patient.connected_patient_record
-    ).order_by('-upload_date').first()
-
-    should_remind_photos = False
-    if not recent_photo:
-        if (timezone.now() - patient.created_at).days >= 3:
-            should_remind_photos = True
-    else:
-        if (today - recent_photo.upload_date).days >= 7:
-            should_remind_photos = True
-
-    if should_remind_photos:
-        already_reminded = PatientNotification.objects.filter(
-            patient=patient,
-            notification_type='PHOTO_SUBMISSION',
-            title__icontains='Weekly Photo',
-            created_at__date__gte=today - timedelta(days=4)
-        ).exists()
-
-        if not already_reminded:
-            PatientNotification.objects.create(
-                patient=patient,
-                notification_type='PHOTO_SUBMISSION',
-                title='Weekly Teeth Photo Upload Due',
-                message=f'It is time for your weekly 5-angle dental monitoring photos. Dr. {doctor.full_name} tracks your alignment progression each week.',
-                link_url='/photos/upload/'
-            )
-
-    # 3. Upcoming Appointment Reminders (within 48 hours)
+    # 2. Upcoming Appointment Reminders (within 48 hours)
     upcoming_appts = Appointment.objects.filter(
         patient=patient.connected_patient_record,
         status__in=['UPCOMING', 'SCHEDULED'],
