@@ -1209,24 +1209,41 @@
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-2.5 flex-wrap">
                         {% if treatment_plan.current_aligner < treatment_plan.total_aligners %}
-                        <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}">
+                        <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}" class="inline-block m-0">
                             {% csrf_token %}
-                            <button type="submit" class="btn-primary py-2 px-3.5 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 flex items-center gap-1.5 cursor-pointer" title="Advance Patient to Next Stage">
-                                <i class="fa-solid fa-forward-step text-xs"></i>
+                            <button type="submit" 
+                                    class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-600 hover:from-blue-700 hover:via-sky-700 hover:to-indigo-700 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer" 
+                                    title="Advance Patient to Next Stage (Tray #{{ treatment_plan.current_aligner|add:1 }})">
+                                <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-forward-step"></i>
+                                </span>
                                 <span>Stage +1</span>
+                                <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold bg-white/20 text-white rounded-md">Tray #{{ treatment_plan.current_aligner|add:1 }}</span>
                             </button>
                         </form>
                         {% endif %}
 
-                        <a href="{% url 'doctor:treatment_plan_edit' patient.id %}" class="btn-secondary py-2 px-3.5 text-xs font-bold flex items-center gap-1.5 text-slate-700 hover:text-blue-700 hover:border-blue-300">
-                            <i class="fa-solid fa-pen-to-square text-blue-600"></i>
+                        <a href="{% url 'doctor:treatment_plan_edit' patient.id %}" 
+                           class="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-slate-700 bg-white hover:bg-blue-50/50 border-2 border-slate-200 hover:border-blue-400 shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0" 
+                           title="Edit Aligner Plan & Prescription">
+                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </span>
                             <span>Edit Plan</span>
                         </a>
 
-                        <a href="{% url 'doctor:step4_operation' patient.id %}" class="btn-secondary py-2 px-3 text-xs font-semibold text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border-indigo-200" title="Open Turn Quest & 3D Aligner Viewer">
-                            <i class="fa-solid fa-circle-play mr-1"></i> Turn Quest / Visual Protocol
+                        <a href="{% url 'doctor:step4_operation' patient.id %}" 
+                           class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-700 hover:via-purple-700 hover:to-indigo-700 shadow-md shadow-purple-500/25 hover:shadow-lg hover:shadow-purple-500/40 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0" 
+                           title="Launch Interactive 3D Aligner Simulation & Visual Protocol">
+                            <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs text-amber-300 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-play"></i>
+                            </span>
+                            <span>Turn Quest / Visual Protocol</span>
+                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 rounded-full shadow-xs flex items-center gap-1">
+                                <i class="fa-solid fa-cube text-[8px]"></i> 3D
+                            </span>
                         </a>
                     </div>
                 </div>
