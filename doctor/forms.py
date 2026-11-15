@@ -25,13 +25,13 @@ class DoctorRegistrationForm(forms.Form):
     )
     dental_qualification = forms.CharField(
         max_length=200,
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'BDS, MDS - Pediatric Dentistry & Orthodontics'})
+        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'BDS, MDS - Pediatric Dentistry & Preventive Dentistry'})
     )
     specialization = forms.CharField(
         max_length=150,
         required=False,
-        initial='Orthodontist',
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Orthodontist, Pedodontist'})
+        initial='Pedodontist',
+        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Pedodontist, Pediatric Dentist'})
     )
     ksdc_registration_number = forms.CharField(
         max_length=100,
@@ -40,7 +40,7 @@ class DoctorRegistrationForm(forms.Form):
     )
     clinic_name = forms.CharField(
         max_length=250,
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'PedoAlign Orthodontic Clinic'})
+        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'PedoAlign Dental Clinic'})
     )
     clinic_address = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-input', 'rows': 2, 'placeholder': '123 Medical Boulevard, Suite 400, City, State'})
@@ -64,7 +64,7 @@ class DoctorRegistrationForm(forms.Form):
 
     def clean_specialization(self):
         val = (self.cleaned_data.get('specialization') or '').strip()
-        return val if val else 'Orthodontist'
+        return val if val else 'Pedodontist'
 
     def clean(self):
         cleaned_data = super().clean()
@@ -103,7 +103,7 @@ class DoctorProfileForm(forms.ModelForm):
             'full_name': forms.TextInput(attrs={'class': 'form-input'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-input'}),
             'dental_qualification': forms.TextInput(attrs={'class': 'form-input'}),
-            'specialization': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Orthodontist, Pedodontist'}),
+            'specialization': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Pedodontist, Pediatric Dentist'}),
             'ksdc_registration_number': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. KSDC-12345-A'}),
             'clinic_name': forms.TextInput(attrs={'class': 'form-input'}),
             'clinic_address': forms.Textarea(attrs={'class': 'form-input', 'rows': 3}),
@@ -186,7 +186,7 @@ class PatientForm(forms.ModelForm):
             'parent_guardian_email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'parent@example.com'}),
             'parent_guardian_relationship': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Mother, Father, Guardian'}),
             'treatment_duration_months': forms.NumberInput(attrs={'class': 'form-input', 'min': 1, 'max': 60}),
-            'notes': forms.Textarea(attrs={'class': 'form-input', 'rows': 2, 'placeholder': 'Initial clinical notes or case overview...'}),
+            'notes': forms.Textarea(attrs={'class': 'form-input', 'rows': 2, 'placeholder': 'Chief complaint / primary reason for alignment...'}),
         }
 
     def clean_patient_category(self):

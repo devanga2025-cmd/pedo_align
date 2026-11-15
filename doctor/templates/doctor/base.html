@@ -122,80 +122,17 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 px-3 py-3 space-y-1.5 overflow-y-auto custom-scrollbar text-sm font-medium">
+            <nav class="flex-1 px-3 py-3 space-y-2 overflow-y-auto custom-scrollbar text-sm font-medium">
                 
-                <!-- 1. Dashboard -->
-                <a href="{% url 'doctor:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'dashboard' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                <!-- Dashboard -->
+                <a href="{% url 'doctor:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
                     <span>Dashboard</span>
-                </a>
-
-                <!-- 2. Patients -->
-                <a href="{% url 'doctor:patient_list' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_requests' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-users w-5 text-center text-base"></i>
-                    <span>Patients</span>
-                </a>
-
-                <!-- 3. Patient Requests (Joining Code) -->
-                <a href="{% url 'doctor:patient_requests' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'patient_requests' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-key w-5 text-center text-base"></i>
-                        <span>Patient Requests</span>
-                    </div>
-                    {% if pending_requests_count > 0 %}
-                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-amber-500 rounded-full animate-pulse shadow-sm shadow-amber-500/50">
-                        {{ pending_requests_count }}
-                    </span>
-                    {% endif %}
-                </a>
-
-                <!-- 4. Treatment Plans -->
-                <a href="{% url 'doctor:treatment_plans' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'treatment_plan' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-clipboard-list w-5 text-center text-base"></i>
-                    <span>Treatment Plans</span>
-                </a>
-
-                <!-- 5. Clinical Records -->
-                <a href="{% url 'doctor:clinical_records' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'clinical' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-file-medical w-5 text-center text-base"></i>
-                    <span>Clinical Records</span>
-                </a>
-
-                <!-- 6. Photo Monitoring -->
-                <a href="{% url 'doctor:photo_monitoring' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'photo' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-camera-retro w-5 text-center text-base"></i>
-                    <span>Photo Monitoring</span>
-                </a>
-
-
-                <!-- 8. Appointments -->
-                <a href="{% url 'doctor:appointments' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'appointment' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-calendar-check w-5 text-center text-base"></i>
-                    <span>Appointments</span>
-                </a>
-
-                <!-- 9. Notifications -->
-                <a href="{% url 'doctor:notifications' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'notification' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-bell w-5 text-center text-base"></i>
-                        <span>Notifications</span>
-                    </div>
-                    {% if unread_notifications_count > 0 %}
-                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-black leading-none text-white bg-rose-600 rounded-full shadow-xs">
-                        {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
-                    </span>
-                    {% endif %}
                 </a>
 
                 <div class="pt-3 pb-1">
                     <hr class="border-slate-200">
                 </div>
-
-                <!-- 12. Settings -->
-                <a href="{% url 'doctor:settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'settings' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-gear w-5 text-center text-base"></i>
-                    <span>Settings</span>
-                </a>
 
                 <!-- Install Mobile App Button -->
                 <a href="{% url 'download_app_apk' %}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 transition text-left font-bold text-sm">
@@ -203,8 +140,8 @@
                     <span>Download Android App</span>
                 </a>
 
-                <!-- 13. Logout -->
-                <a href="{% url 'doctor:logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors">
+                <!-- Logout -->
+                <a href="{% url 'doctor:logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors font-medium">
                     <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i>
                     <span>Logout</span>
                 </a>
@@ -242,9 +179,9 @@
                 <div class="flex items-center gap-3">
                     
                     <!-- Fast Action: Add Patient -->
-                    <a href="{% url 'doctor:patient_create' %}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition transform hover:-translate-y-0.5">
+                    <a href="{% url 'doctor:patient_create' %}" class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition transform hover:-translate-y-0.5" title="Add New Patient">
                         <i class="fa-solid fa-user-plus text-xs"></i>
-                        <span>Add Patient</span>
+                        <span>+ Add Patient</span>
                     </a>
 
                     <!-- Patient Join Code Shortcut -->

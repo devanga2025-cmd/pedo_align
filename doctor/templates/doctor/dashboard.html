@@ -33,7 +33,7 @@
 
             <div class="mt-5 flex flex-wrap items-center gap-3">
                 <a href="{% url 'doctor:patient_create' %}" class="px-4 py-2.5 bg-white text-blue-950 font-bold text-xs rounded-xl shadow-lg hover:shadow-xl hover:bg-blue-50 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus text-blue-600"></i> New Patient Intake
+                    <i class="fa-solid fa-user-plus text-blue-600"></i> + Add Patient
                 </a>
                 <a href="{% url 'doctor:patient_requests' %}" class="px-4 py-2.5 bg-blue-600/80 hover:bg-blue-600 text-white font-semibold text-xs rounded-xl backdrop-blur-md border border-blue-400/40 shadow-sm transition transform hover:-translate-y-0.5 flex items-center gap-2">
                     <i class="fa-solid fa-key text-sky-300"></i> Review Code Requests ({{ pending_approvals }})
@@ -135,7 +135,7 @@
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                 <div>
                     <h3 class="text-sm font-bold text-slate-900">Patient Treatment Status Breakdown</h3>
-                    <p class="text-xs text-slate-500">Distribution across active, pending, and completed orthodontic therapy</p>
+                    <p class="text-xs text-slate-500">Distribution across active, pending, and completed dental aligner therapy</p>
                 </div>
                 <span class="text-xs font-semibold px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg border border-blue-100">Live Overview</span>
             </div>

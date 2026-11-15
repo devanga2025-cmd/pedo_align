@@ -722,11 +722,11 @@
                     <div class="flex items-center gap-2">
                         <h2 class="text-lg font-bold text-slate-900">Dr. {{ doctor.full_name }}</h2>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-700 uppercase tracking-wider">
-                            {{ doctor.specialization|default:"Prescribing Orthodontist" }}
+                            {{ doctor.specialization|default:"Prescribing Doctor" }}
                         </span>
                     </div>
                     <p class="text-xs text-slate-600 mt-0.5">
-                        {{ doctor.dental_qualification|default:"BDS, MDS Orthodontics" }} • <span class="font-semibold text-slate-800">{{ doctor.clinic_name }}</span>
+                        {{ doctor.dental_qualification|default:"BDS, MDS" }} • <span class="font-semibold text-slate-800">{{ doctor.clinic_name }}</span>
                         {% if doctor.ksdc_registration_number %}
                             • <span class="font-mono text-slate-600 font-bold">KSDC Reg: {{ doctor.ksdc_registration_number }}</span>
                         {% endif %}

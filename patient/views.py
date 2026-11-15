@@ -617,7 +617,7 @@ def connect_doctor_view(request):
         if not code_obj:
             form.add_error('joining_code', "Invalid joining code. Please double-check the code provided by your clinic.")
         elif code_obj.status == 'EXPIRED' or is_expired:
-            form.add_error('joining_code', "This joining code has expired. Please ask your orthodontist to generate a new code.")
+            form.add_error('joining_code', "This joining code has expired. Please ask your doctor to generate a new code.")
         elif code_obj.status == 'REVOKED':
             form.add_error('joining_code', "This joining code has been revoked.")
         elif code_obj.status == 'APPROVED':

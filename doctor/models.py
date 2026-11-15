@@ -15,16 +15,16 @@ def generate_joining_code():
 
 class DoctorProfile(models.Model):
     SPECIALIZATION_CHOICES = [
-        ('Orthodontist', 'Orthodontist'),
         ('Pedodontist', 'Pedodontist'),
-        ('Orthodontist & Pedodontist', 'Orthodontist & Pedodontist'),
+        ('Pediatric Dentist', 'Pediatric Dentist'),
+        ('Dentist', 'Dentist'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='doctor_profile')
     full_name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=50)
-    dental_qualification = models.CharField(max_length=200, help_text="e.g. BDS, MDS Orthodontics, Pediatric Dentist")
-    specialization = models.CharField(max_length=150, default='Orthodontist', help_text="Specialization entered by the doctor")
+    dental_qualification = models.CharField(max_length=200, help_text="e.g. BDS, MDS, Pediatric Dentist")
+    specialization = models.CharField(max_length=150, default='Pedodontist', help_text="Specialization entered by the doctor")
     ksdc_registration_number = models.CharField(max_length=100, blank=True, null=True, help_text="Karnataka State Dental Council (KSDC) Registration Number")
     clinic_name = models.CharField(max_length=250)
     clinic_address = models.TextField()
@@ -174,7 +174,7 @@ class Patient(models.Model):
             (has_preop, "Preoperative Photo Upload", "Baseline photographic documentation archived."),
             (has_radiographs, "Radiograph Upload", "Type 1 & Type 2 diagnostic radiograph records."),
             (has_appointments, "Appointment Scheduling", "Follow-up consultations & treatment visit planning."),
-            (is_treatment_started, "Treatment Started", "Orthodontic / pedodontic treatment actively initiated."),
+            (is_treatment_started, "Treatment Started", "Pedodontic / dental treatment actively initiated."),
             (has_prescriptions, "Prescription Generated", "Digital clinical prescription & medication directions."),
             (has_monthly_notes, "Monthly Treatment Updates", "Ongoing monthly clinical progression & milestones."),
             (has_turns, "Turn / Treatment Sequence Updates", "Turn quest individual therapy stages executed."),

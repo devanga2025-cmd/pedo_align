@@ -163,7 +163,7 @@
             <!-- Bottom Doctor Info Badge -->
             {% if current_patient and current_patient.is_connected %}
             <div class="p-3 border-t border-blue-100/60 bg-blue-50/50 text-xs">
-                <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Assigned Orthodontist</p>
+                <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Assigned Doctor</p>
                 <p class="font-bold text-slate-800 truncate mt-0.5">Dr. {{ current_patient.doctor.full_name }}</p>
                 <p class="text-[11px] text-blue-600 truncate">{{ current_patient.doctor.clinic_name }}</p>
             </div>

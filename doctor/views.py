@@ -148,7 +148,7 @@ def doctor_register_view(request):
         full_name = form.cleaned_data['full_name']
         phone_number = form.cleaned_data['phone_number']
         dental_qualification = form.cleaned_data['dental_qualification']
-        specialization = form.cleaned_data.get('specialization', '').strip() or 'Orthodontist'
+        specialization = form.cleaned_data.get('specialization', '').strip() or 'Pedodontist'
         ksdc_reg = form.cleaned_data.get('ksdc_registration_number', '').strip()
         clinic_name = form.cleaned_data['clinic_name']
         clinic_address = form.cleaned_data['clinic_address']
@@ -383,9 +383,14 @@ def patient_create_view(request):
         patient = form.save(commit=False)
         patient.doctor = doctor
 
-        # Auto-generate unique Patient ID e.g. PA-PT-2026-001
+        # Auto-generate unique Patient ID e.g. PA-PT-2026-0001 (collision-safe)
+        year = timezone.now().year
         count = Patient.objects.count() + 1
-        patient.patient_id = f"PA-PT-{timezone.now().year}-{count:04d}"
+        cand_id = f"PA-PT-{year}-{count:04d}"
+        while Patient.objects.filter(patient_id=cand_id).exists():
+            count += 1
+            cand_id = f"PA-PT-{year}-{count:04d}"
+        patient.patient_id = cand_id
         patient.treatment_status = 'PENDING_CONNECTION'
         patient.save()
 
@@ -1423,7 +1428,7 @@ def patient_join_portal_view(request):
         code_obj = PatientJoiningCode.objects.filter(code__iexact=code_str).first()
 
         if not code_obj:
-            form.add_error('joining_code', "Invalid Joining Code. Please double-check the code provided by your orthodontist.")
+            form.add_error('joining_code', "Invalid Joining Code. Please double-check the code provided by your doctor.")
         elif code_obj.is_expired():
             form.add_error('joining_code', "This joining code has expired. Please contact your doctor for a new code.")
         else:

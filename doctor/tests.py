@@ -157,7 +157,7 @@ class DoctorPortalComprehensiveTests(TestCase):
         self.assertEqual(self.doc_smith.email, 'dr.smith@test.com')
         
         # Update professional information with custom user-typed specialization
-        custom_spec = 'Pediatric Dentist and Orthodontist Specialist'
+        custom_spec = 'Pediatric Dentist and Specialist'
         response = self.client.post(reverse('doctor:settings'), {
             'update_profile': '1',
             'full_name': 'Dr. Arthur J. Smith',
@@ -419,7 +419,7 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
             full_name='Aarav Mehta',
             phone_number='9876501234',
             dental_qualification='BDS, MDS Orthodontics',
-            specialization='Orthodontist',
+            specialization='Pedodontist',
             ksdc_registration_number='KSDC-9876-A',
             clinic_name='Mehta Smiles Orthodontics',
             clinic_address='100 MG Road, Bangalore'
@@ -1195,7 +1195,7 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
         self.assertEqual(doc.ksdc_registration_number, 'KSDC-9988-B')
 
     def test_doctor_registration_omitted_specialization_defaults_gracefully(self):
-        """Test registering without specifying specialization defaults to 'Orthodontist' without failing validation."""
+        """Test registering without specifying specialization defaults to 'Pedodontist' without failing validation."""
         resp = self.client.post(reverse('doctor:register'), {
             'full_name': 'Dr. Default Spec',
             'email': 'default.spec@example.com',
@@ -1212,7 +1212,7 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
 
         doc = DoctorProfile.objects.filter(user__email='default.spec@example.com').first()
         self.assertIsNotNone(doc)
-        self.assertEqual(doc.specialization, 'Orthodontist')
+        self.assertEqual(doc.specialization, 'Pedodontist')
 
 
 
