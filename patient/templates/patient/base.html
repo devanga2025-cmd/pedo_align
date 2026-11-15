@@ -119,20 +119,7 @@
                     </div>
                 </a>
 
-                <!-- 6. Notifications -->
-                <a href="{% url 'patient:notifications' %}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'notifications' %}bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold shadow-md shadow-blue-500/20{% else %}text-slate-600 hover:bg-blue-50/80 hover:text-blue-900{% endif %}">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-bell w-5 text-center text-base"></i>
-                        <span>Notifications</span>
-                    </div>
-                    {% if patient_unread_notifs > 0 %}
-                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-black text-white bg-rose-500 rounded-full animate-pulse shadow-sm">
-                        {{ patient_unread_notifs }}
-                    </span>
-                    {% endif %}
-                </a>
-
-                <!-- 7. Help & Emergency -->
+                <!-- 4. Help & Emergency -->
                 <a href="{% url 'patient:emergency' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'emergency' %}bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold shadow-md shadow-rose-500/20{% else %}text-rose-600 hover:bg-rose-50 hover:text-rose-700{% endif %}">
                     <i class="fa-solid fa-triangle-exclamation w-5 text-center text-base"></i>
                     <span>Help & Emergency</span>
@@ -209,11 +196,13 @@
                         <span class="hidden sm:inline">Download Android App</span>
                     </a>
 
-                    <!-- Notifications Bell Shortcut -->
-                    <a href="{% url 'patient:notifications' %}" class="relative p-2 rounded-xl text-slate-600 hover:bg-blue-50 transition" title="Notifications">
+                    <!-- Notifications Bell Direct Link to Notifications Page -->
+                    <a href="{% url 'patient:notifications' %}" 
+                       class="relative p-2 rounded-xl text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all {% if 'notification' in request.resolver_match.url_name %}bg-blue-50 text-blue-600 font-bold{% endif %}" 
+                       title="View Notifications">
                         <i class="fa-solid fa-bell text-lg"></i>
                         {% if patient_unread_notifs > 0 %}
-                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs animate-pulse">
                             {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
                         </span>
                         {% endif %}
