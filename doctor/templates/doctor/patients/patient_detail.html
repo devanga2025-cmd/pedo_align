@@ -189,49 +189,36 @@
         {% endif %}
     </div>
 
-    <!-- NAVIGATION TABS -->
-    <div class="flex items-center gap-1.5 border-b border-slate-200/80 overflow-x-auto custom-scrollbar pb-1 text-xs font-bold">
+    <!-- NAVIGATION TABS (Simple, User-Friendly & Clean) -->
+    <div class="flex items-center gap-2 border-b border-slate-200/80 overflow-x-auto custom-scrollbar pb-1 text-xs font-bold">
+        <!-- 1. Overview -->
         <a href="?tab=overview" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'overview' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
             <i class="fa-solid fa-id-card-clip mr-1.5"></i> Overview
         </a>
+
+        <!-- 2. Clinical Intake -->
         <a href="?tab=clinical" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'clinical' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
             <i class="fa-solid fa-file-medical mr-1.5"></i> Clinical Intake
         </a>
-        <a href="?tab=timeline" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'timeline' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-timeline mr-1.5"></i> Treatment Timeline
+
+        <!-- 3. Treatment (Renamed from Operations) -->
+        <a href="?tab=treatment" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'treatment' or active_tab == 'operations' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-tooth mr-1.5"></i> Treatment ({{ operation_records.count }})
         </a>
-        <a href="?tab=preop_photos" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'preop_photos' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-camera mr-1.5"></i> Pre-Op Photos ({{ preop_photos.count }})
+
+        <!-- 4. Photos (Pre-Op & Weekly Monitoring Photos) -->
+        <a href="?tab=photos" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'photos' or active_tab == 'preop_photos' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-camera mr-1.5"></i> Photos ({{ preop_photos.count|add:photo_uploads.count }})
         </a>
+
+        <!-- 5. Radiographs -->
         <a href="?tab=radiographs" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'radiographs' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
             <i class="fa-solid fa-x-ray mr-1.5"></i> Radiographs ({{ all_radiographs.count }})
         </a>
-        <a href="?tab=operations" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'operations' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-kit-medical mr-1.5"></i> Operations ({{ operation_records.count }})
-        </a>
-        <a href="?tab=prescriptions" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'prescriptions' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-prescription mr-1.5"></i> Prescriptions ({{ prescriptions.count }})
-        </a>
-        <a href="?tab=duration" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'duration' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-calendar-days mr-1.5"></i> Duration & Notes
-        </a>
-        <a href="?tab=turn_quest" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'turn_quest' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-arrows-turn-to-dots mr-1.5"></i> Turn Quest ({{ treatment_turns.count }})
-        </a>
-        <a href="?tab=doctor_media" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'doctor_media' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-video mr-1.5"></i> Treatment Media
-        </a>
-        <a href="?tab=treatment" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'treatment' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-teeth mr-1.5"></i> Arch Monitoring
-        </a>
-        <a href="?tab=photos" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'photos' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-camera-retro mr-1.5"></i> Weekly Photos ({{ photo_uploads.count }})
-        </a>
+
+        <!-- 6. Appointments -->
         <a href="?tab=appointments" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'appointments' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
             <i class="fa-solid fa-calendar-check mr-1.5"></i> Appointments ({{ appointments.count }})
-        </a>
-        <a href="?tab=emergencies" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'emergencies' %}bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-md shadow-rose-500/20{% else %}bg-white text-rose-600 hover:bg-rose-50 border border-rose-200/70{% endif %}">
-            <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Emergencies ({{ emergencies.count }})
         </a>
     </div>
 
@@ -489,8 +476,8 @@
     </div>
     {% endif %}
 
-    <!-- 4. PREOPERATIVE PHOTOGRAPHS TAB (Section 2 Requirement) -->
-    {% if active_tab == 'preop_photos' %}
+    <!-- 4. PREOPERATIVE PHOTOGRAPHS (Included in Photos tab) -->
+    {% if active_tab == 'preop_photos' or active_tab == 'photos' %}
     <div class="pa-card p-6 sm:p-8 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div>
@@ -651,18 +638,18 @@
     </div>
     {% endif %}
 
-    <!-- 6. OPERATIONS / TREATMENT RECORDS TAB (Section 5 Requirement) -->
-    {% if active_tab == 'operations' %}
+    <!-- 6. TREATMENT RECORDS TAB -->
+    {% if active_tab == 'treatment' or active_tab == 'operations' %}
     <div class="pa-card p-6 sm:p-8 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div>
                 <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-kit-medical text-blue-600"></i> Treatment & Operation Records
+                    <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Records
                 </h3>
                 <p class="text-xs text-slate-500 mt-0.5">Clinical findings, dental problems identified, and treatments performed over time.</p>
             </div>
             <button type="button" onclick="document.getElementById('operationModal').classList.remove('hidden')" class="btn-primary text-xs">
-                <i class="fa-solid fa-plus mr-1"></i> Add Operation Record
+                <i class="fa-solid fa-plus mr-1"></i> Add Treatment Record
             </button>
         </div>
 
@@ -673,7 +660,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
                         <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
-                            <i class="fa-solid fa-hand-holding-medical"></i>
+                            <i class="fa-solid fa-tooth"></i>
                         </span>
                         <div>
                             <h4 class="font-extrabold text-slate-900 text-sm">{{ op.operation_performed }}</h4>
@@ -720,7 +707,7 @@
         {% else %}
         <div class="p-12 text-center text-xs text-slate-400">
             <i class="fa-solid fa-tooth text-3xl text-slate-300 mb-2 block"></i>
-            No treatment or operation records logged yet. Click "+ Add Operation Record" above.
+            No treatment records logged yet. Click "+ Add Treatment Record" above.
         </div>
         {% endif %}
     </div>
@@ -1470,7 +1457,7 @@
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
-                <i class="fa-solid fa-kit-medical text-blue-600"></i> New Treatment / Operation Record
+                <i class="fa-solid fa-tooth text-blue-600"></i> New Treatment Record
             </h3>
             <button type="button" onclick="document.getElementById('operationModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
         </div>
@@ -1478,8 +1465,8 @@
         <form method="POST" action="{% url 'doctor:operation_record_create' patient.id %}" class="space-y-4 text-xs">
             {% csrf_token %}
             <div>
-                <label class="block font-bold text-slate-700 mb-1">Operation / Treatment Performed *</label>
-                <input type="text" name="operation_performed" placeholder="e.g. Aligner IPR, Attachment Placement, Debonding" required class="form-input text-xs">
+                <label class="block font-bold text-slate-700 mb-1">Treatment Performed *</label>
+                <input type="text" name="operation_performed" placeholder="e.g. Aligner Delivery, Attachment Placement, IPR, Arch Adjustment" required class="form-input text-xs">
             </div>
 
             <div>
