@@ -122,12 +122,62 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 px-3 py-3 space-y-2 overflow-y-auto custom-scrollbar text-sm font-medium">
+            <nav class="flex-1 px-3 py-3 space-y-1.5 overflow-y-auto custom-scrollbar text-sm font-medium">
                 
-                <!-- Dashboard -->
-                <a href="{% url 'doctor:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold">
+                <!-- Fast Action: + Add Patient -->
+                <a href="{% url 'doctor:patient_create' %}" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/25 transition transform hover:-translate-y-0.5 mb-2">
+                    <i class="fa-solid fa-user-plus text-sm"></i>
+                    <span>+ Add Patient</span>
+                </a>
+
+                <!-- 1. Dashboard -->
+                <a href="{% url 'doctor:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'dashboard' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
                     <span>Dashboard</span>
+                </a>
+
+                <!-- 2. Patients -->
+                <a href="{% url 'doctor:patient_list' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_requests' and request.resolver_match.url_name != 'patient_create' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-users w-5 text-center text-base"></i>
+                    <span>Patients</span>
+                </a>
+
+                <!-- 3. Patient Requests (Joining Code) -->
+                <a href="{% url 'doctor:patient_requests' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'patient_requests' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-key w-5 text-center text-base"></i>
+                        <span>Patient Requests</span>
+                    </div>
+                    {% if pending_requests_count > 0 %}
+                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-amber-500 rounded-full animate-pulse shadow-sm shadow-amber-500/50">
+                        {{ pending_requests_count }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <!-- 4. Appointments -->
+                <a href="{% url 'doctor:appointments' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'appointment' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-calendar-check w-5 text-center text-base"></i>
+                    <span>Appointments</span>
+                </a>
+
+                <!-- 5. Notifications -->
+                <a href="{% url 'doctor:notifications' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 {% if 'notification' in request.resolver_match.url_name %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-bell w-5 text-center text-base"></i>
+                        <span>Notifications</span>
+                    </div>
+                    {% if unread_notifications_count > 0 %}
+                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-black leading-none text-white bg-rose-600 rounded-full shadow-xs">
+                        {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <!-- 6. Settings -->
+                <a href="{% url 'doctor:settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'settings' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-bold{% else %}text-slate-600 hover:bg-blue-50/70 hover:text-blue-900{% endif %}">
+                    <i class="fa-solid fa-gear w-5 text-center text-base"></i>
+                    <span>Settings</span>
                 </a>
 
                 <div class="pt-3 pb-1">
@@ -320,13 +370,54 @@
             {% endif %}
 
             <!-- MAIN BODY VIEWPORT -->
-            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 custom-scrollbar">
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-6 custom-scrollbar">
                 {% block content %}{% endblock %}
             </main>
 
         </div>
 
     </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION BAR -->
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 flex items-center justify-around py-2 z-40 shadow-lg">
+        <a href="{% url 'doctor:dashboard' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+            <i class="fa-solid fa-chart-pie text-base"></i>
+            <span class="text-[10px]">Dashboard</span>
+        </a>
+        <a href="{% url 'doctor:patient_list' %}" class="flex flex-col items-center gap-0.5 text-xs {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_create' and request.resolver_match.url_name != 'patient_requests' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+            <i class="fa-solid fa-users text-base"></i>
+            <span class="text-[10px]">Patients</span>
+        </a>
+        <!-- Center Floating + Add Patient Action Button -->
+        <a href="{% url 'doctor:patient_create' %}" class="flex flex-col items-center -mt-5" title="Add New Patient">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 ring-4 ring-white transition transform hover:scale-105 active:scale-95">
+                <i class="fa-solid fa-user-plus text-base"></i>
+            </div>
+            <span class="text-[10px] text-blue-600 font-bold mt-0.5">+ Patient</span>
+        </a>
+        <a href="{% url 'doctor:patient_requests' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'patient_requests' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+            <div class="relative">
+                <i class="fa-solid fa-key text-base"></i>
+                {% if pending_requests_count > 0 %}
+                <span class="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] px-1 bg-amber-500 text-white text-[9px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                    {{ pending_requests_count }}
+                </span>
+                {% endif %}
+            </div>
+            <span class="text-[10px]">Requests</span>
+        </a>
+        <a href="{% url 'doctor:notifications' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+            <div class="relative">
+                <i class="fa-solid fa-bell text-base"></i>
+                {% if unread_notifications_count > 0 %}
+                <span class="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                    {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
+                </span>
+                {% endif %}
+            </div>
+            <span class="text-[10px]">Alerts</span>
+        </a>
+    </nav>
 
     <!-- GLOBAL IMAGE ZOOM MODAL -->
     <div id="globalImageModal" class="fixed inset-0 z-50 hidden items-center justify-center image-zoom-overlay p-4" onclick="closeImageModal()">
