@@ -637,18 +637,18 @@
     {% if active_tab == 'treatment' or active_tab == 'operations' %}
     <div class="space-y-6">
 
-        <!-- 4-STEP CLINICAL STEPPER RAIL -->
+        <!-- 3-STEP CLINICAL STEPPER RAIL -->
         <div class="pa-card p-4 sm:p-5 bg-white border-blue-200 shadow-sm rounded-2xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                 <div>
                     <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-timeline text-blue-600"></i> Guided Clinical Intake & Follow-Up Steps
                     </h2>
-                    <p class="text-xs text-slate-500">Step 1: 3 Compulsory Pre-op Photos &rarr; Step 2: Radiographs (OPG & Lateral Cephalograph) &rarr; Step 3: Next Hospital Visit &rarr; Step 4: Operation / Treatment Plan</p>
+                    <p class="text-xs text-slate-500">Step 1: 3 Compulsory Pre-op Photos &rarr; Step 2: Radiographs (OPG & Lateral Cephalograph) &rarr; Step 3: Operation / Treatment Plan</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 
                 <!-- Step 1 Tab Button -->
                 <button type="button" onclick="switchStep('1')" id="stepBtn1" 
@@ -688,40 +688,21 @@
                     </span>
                 </button>
 
-                <!-- Step 3 Tab Button -->
+                <!-- Step 3 Tab Button (Operation / Treatment Plan) -->
                 <button type="button" onclick="switchStep('3')" id="stepBtn3"
                         class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '3' %}bg-white text-blue-700{% elif has_next_appt %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
-                            {% if has_next_appt %}<i class="fa-solid fa-check"></i>{% else %}3{% endif %}
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '3' %}bg-white text-blue-700{% elif treatment_plan %}bg-indigo-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                            {% if treatment_plan.current_aligner > 0 %}<i class="fa-solid fa-check"></i>{% else %}3{% endif %}
                         </div>
                         <div>
-                            <div class="text-xs font-extrabold">Step 3: Next Visit</div>
+                            <div class="text-xs font-extrabold">Step 3: Operation</div>
                             <div class="text-[10px] {% if active_step == '3' %}text-blue-100{% else %}text-slate-500{% endif %}">
-                                Hospital Appointment
-                            </div>
-                        </div>
-                    </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_next_appt %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-purple-100 text-purple-800{% endif %}">
-                        {% if has_next_appt %}Scheduled{% else %}Pending{% endif %}
-                    </span>
-                </button>
-
-                <!-- Step 4 Tab Button -->
-                <button type="button" onclick="switchStep('4')" id="stepBtn4"
-                        class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '4' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '4' %}bg-white text-blue-700{% elif treatment_plan %}bg-indigo-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
-                            {% if treatment_plan.current_aligner > 0 %}<i class="fa-solid fa-check"></i>{% else %}4{% endif %}
-                        </div>
-                        <div>
-                            <div class="text-xs font-extrabold">Step 4: Operation</div>
-                            <div class="text-[10px] {% if active_step == '4' %}text-blue-100{% else %}text-slate-500{% endif %}">
                                 Treatment Plan & Protocol
                             </div>
                         </div>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if active_step == '4' %}bg-white/20 text-white{% elif treatment_plan %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if active_step == '3' %}bg-white/20 text-white{% elif treatment_plan %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
                         {% if treatment_plan %}Active{% else %}Ready{% endif %}
                     </span>
                 </button>
@@ -1083,7 +1064,7 @@
                                 <i class="fa-solid fa-upload"></i> Save Radiograph
                             </button>
                             <button type="button" onclick="switchStep('3')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer">
-                                Proceed to Step 3: Next Visit &rarr;
+                                Proceed to Step 3: Operation &rarr;
                             </button>
                         </div>
                     </div>
@@ -1099,7 +1080,7 @@
                         <h3 class="text-sm font-bold text-slate-900">Saved Diagnostic Radiographs ({{ radiographs.count }})</h3>
                     </div>
                     <button type="button" onclick="switchStep('3')" class="text-xs font-bold text-blue-600 hover:underline cursor-pointer">
-                        Proceed to Step 3: Next Visit &rarr;
+                        Proceed to Step 3: Operation &rarr;
                     </button>
                 </div>
 
@@ -1203,168 +1184,9 @@
         </div>
 
         <!-- ===================================================================== -->
-        <!-- STEP 3: NEXT HOSPITAL APPOINTMENT SCHEDULING                         -->
+        <!-- STEP 3: OPERATION, ALIGNER TREATMENT PLAN & CLINICAL RECORDS          -->
         <!-- ===================================================================== -->
         <div id="stepSection3" class="{% if active_step != '3' %}hidden{% endif %} space-y-6">
-            <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200 rounded-2xl bg-white shadow-sm">
-                <!-- Header Banner -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm">
-                            <i class="fa-solid fa-calendar-check"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-black text-slate-900">Step 3: Schedule Next Hospital Visit</h2>
-                            <p class="text-xs text-slate-500">Select when the patient should return to the clinic/hospital. Configurable with 20-day follow-up interval preset.</p>
-                        </div>
-                    </div>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-800 border border-purple-200">
-                        <i class="fa-solid fa-bell text-purple-600"></i> Auto-notifies Patient Portal
-                    </span>
-                </div>
-
-                <!-- Appointment Form -->
-                <form method="POST" action="{% url 'doctor:patient_clinical_journey' patient.id %}" class="space-y-6">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="save_appointment">
-                    <input type="hidden" name="return_to" value="treatment">
-
-                    <!-- Fast Presets for Date -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                            Quick Follow-Up Presets:
-                        </label>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" onclick="setApptDate(20)" class="px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-extrabold text-xs transition border border-purple-300 shadow-xs cursor-pointer">
-                                <i class="fa-solid fa-clock-rotate-left mr-1"></i> In 20 Days (Recommended Follow-Up)
-                            </button>
-                            <button type="button" onclick="setApptDate(15)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-200 cursor-pointer">
-                                In 15 Days
-                            </button>
-                            <button type="button" onclick="setApptDate(30)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-200 cursor-pointer">
-                                In 1 Month (30 Days)
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Date *</label>
-                            <input type="date" name="scheduled_date" id="apptDateInput" value="{{ default_20day_date }}" required class="form-input text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Time *</label>
-                            <input type="time" name="scheduled_time" value="10:00" required class="form-input text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Type *</label>
-                            <select name="appointment_type" class="form-input text-xs">
-                                <option value="ROUTINE_CHECKUP" selected>Routine Checkup & Progress Evaluation</option>
-                                <option value="ALIGNER_COLLECTION">Aligner Delivery / Next Set Collection</option>
-                                <option value="TREATMENT_PLAN_REVIEW">Treatment Plan Review & Monitoring</option>
-                                <option value="ATTACHMENT_PLACEMENT">Attachment Placement & Bonding</option>
-                                <option value="REFINEMENT_SCAN">Digital Refinement Scan</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Duration</label>
-                            <select name="duration_minutes" class="form-input text-xs">
-                                <option value="15">15 Minutes</option>
-                                <option value="30" selected>30 Minutes</option>
-                                <option value="45">45 Minutes</option>
-                                <option value="60">60 Minutes</option>
-                            </select>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Instructions for Patient Hospital Visit</label>
-                            <textarea name="instructions" rows="2" class="form-input text-xs" placeholder="e.g. Please bring your current and next aligner sets, chewie, and previous X-ray reports when visiting the hospital.">Please bring your current and next aligner sets, aligner case, and previous X-ray films when visiting the hospital.</textarea>
-                        </div>
-                    </div>
-
-                    <!-- Submit Bar -->
-                    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <button type="button" onclick="switchStep('2')" class="btn-secondary text-xs cursor-pointer">
-                            &larr; Back to Step 2: Radiographs
-                        </button>
-                        <div class="flex items-center gap-2">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
-                                <i class="fa-solid fa-calendar-check"></i> Confirm Hospital Appointment & Notify Patient
-                            </button>
-                            <button type="button" onclick="switchStep('4')" class="btn-primary text-xs py-2.5 px-4 cursor-pointer">
-                                Proceed to Step 4: Operation &rarr;
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Scheduled Appointments for this Patient -->
-            {% if upcoming_appointments %}
-            <div class="pa-card p-6 space-y-4 rounded-2xl bg-white border border-slate-200">
-                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-days text-purple-600"></i> Scheduled Upcoming Visits for {{ patient.full_name }}
-                </h3>
-
-                <div class="space-y-3">
-                    {% for appt in upcoming_appointments %}
-                    <div class="p-4 rounded-2xl bg-purple-50/50 border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-extrabold text-purple-950">{{ appt.get_appointment_type_display }}</span>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-purple-200 text-purple-900">
-                                    {{ appt.status }}
-                                </span>
-                            </div>
-                            <p class="text-sm font-bold text-slate-900 mt-1">
-                                <i class="fa-regular fa-calendar mr-1 text-purple-600"></i> {{ appt.scheduled_date|date:"l, F j, Y" }} at {{ appt.scheduled_time|time:"g:i A" }}
-                            </p>
-                            {% if appt.instructions %}
-                            <p class="text-xs text-slate-600 mt-1">
-                                <strong>Instructions:</strong> {{ appt.instructions }}
-                            </p>
-                            {% endif %}
-                        </div>
-                        <div class="text-xs text-slate-400">
-                            Duration: {{ appt.duration_minutes }} mins
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- STEP 4 UNLOCKED BANNER (All 3 Intake Steps Completed) -->
-            {% if has_3_preop and has_radiograph and has_next_appt %}
-            <div class="p-6 rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white uppercase tracking-wider backdrop-blur-xs">
-                            All 3 Intake Steps Completed!
-                        </span>
-                        <span class="text-xs font-bold text-cyan-200">
-                            <i class="fa-solid fa-check-double mr-1"></i> Patient is Eligible for Step 4 Operation & Protocol
-                        </span>
-                    </div>
-                    <h3 class="text-lg font-black tracking-tight">Proceed to Step 4 Operation & Treatment Plan</h3>
-                    <p class="text-xs text-blue-100 max-w-2xl leading-relaxed">
-                        Patient has completed Step 1 (3 Pre-op Photos), Step 2 (Radiographs), and Step 3 (Hospital Appointment). You can now manage active aligner treatment progress, arch leveling, and clinical operation records below.
-                    </p>
-                </div>
-                <button type="button" onclick="switchStep('4')"
-                   class="px-6 py-3 rounded-2xl bg-white text-blue-700 hover:bg-blue-50 font-black text-xs shadow-lg transition flex items-center justify-center gap-2 whitespace-nowrap self-start md:self-auto cursor-pointer">
-                    <i class="fa-solid fa-bullseye text-blue-600"></i> View Step 4 Operation & Plan &rarr;
-                </button>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- ===================================================================== -->
-        <!-- STEP 4: OPERATION, ALIGNER TREATMENT PLAN & CLINICAL RECORDS          -->
-        <!-- ===================================================================== -->
-        <div id="stepSection4" class="{% if active_step != '4' %}hidden{% endif %} space-y-6">
 
             <!-- A. ACTIVE TREATMENT PLAN MASTER CARD (All content from Treatment Plans page) -->
             <div class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-2xl">
@@ -1376,7 +1198,7 @@
                                 <i class="fa-solid fa-clipboard-list text-blue-600"></i>
                             </div>
                             <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                                Step 4: Aligner Treatment Plan & Operation
+                                Step 3: Aligner Treatment Plan & Operation
                             </h3>
                             <span class="badge {% if treatment_plan.status == 'Completed' %}badge-active{% elif treatment_plan.status == 'Paused / Under Review' %}badge-emergency-high{% else %}badge-pending{% endif %}">
                                 {{ treatment_plan.status }}
@@ -1584,10 +1406,10 @@
                 {% endif %}
             </div>
 
-            <!-- Back to Step 3 Navigation -->
+            <!-- Back to Step 2 Navigation -->
             <div class="pt-2 flex items-center justify-between">
-                <button type="button" onclick="switchStep('3')" class="btn-secondary text-xs cursor-pointer">
-                    &larr; Back to Step 3: Next Visit
+                <button type="button" onclick="switchStep('2')" class="btn-secondary text-xs cursor-pointer">
+                    &larr; Back to Step 2: Radiographs
                 </button>
             </div>
 
@@ -2829,9 +2651,10 @@
         }
     }
 
-    // Switch Steps in Treatment Tab (Step 1, Step 2, Step 3, Step 4)
+    // Switch Steps in Treatment Tab (Step 1, Step 2, Step 3)
     function switchStep(step) {
-        for (let i = 1; i <= 4; i++) {
+        if (step.toString() === '4') step = '3';
+        for (let i = 1; i <= 3; i++) {
             const sec = document.getElementById('stepSection' + i);
             const btn = document.getElementById('stepBtn' + i);
             if (sec) {

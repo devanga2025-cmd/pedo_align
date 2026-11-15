@@ -561,8 +561,10 @@ def patient_detail_view(request, patient_id):
     has_3_preop = preop_photos.count() >= 3
     has_radiograph = all_radiographs.exists()
     has_next_appt = appointments.filter(scheduled_date__gte=today).exists()
-    default_step = '4' if (has_3_preop and has_radiograph and has_next_appt) else ('3' if (has_3_preop and has_radiograph) else ('2' if has_3_preop else '1'))
+    default_step = '3' if (has_3_preop and has_radiograph) else ('2' if has_3_preop else '1')
     active_step = request.GET.get('step', default_step)
+    if str(active_step) == '4':
+        active_step = '3'
     opg_radiographs = all_radiographs.filter(radiograph_type__in=['OPG', 'TYPE_1'])
     ceph_radiographs = all_radiographs.filter(radiograph_type__in=['LATERAL_CEPHALOGRAPH', 'TYPE_2'])
 
@@ -744,7 +746,7 @@ def operation_record_create_view(request, patient_id):
         else:
             messages.error(request, "Please correct errors in the treatment operation form.")
 
-    return redirect(f"{reverse('doctor:patient_detail', kwargs={'patient_id': patient.id})}?tab=treatment&step=4")
+    return redirect(f"{reverse('doctor:patient_detail', kwargs={'patient_id': patient.id})}?tab=treatment&step=3")
 
 
 @login_required
@@ -1836,7 +1838,7 @@ def treatment_plan_edit_view(request, patient_id):
             description=f"Tray #{updated_plan.current_aligner}/{updated_plan.total_aligners}. Upper Arch: {updated_plan.upper_arch_status}, Lower Arch: {updated_plan.lower_arch_status}."
         )
         messages.success(request, f"Treatment plan for {patient.full_name} updated successfully.")
-        return redirect(f"/patients/{patient.id}/?tab=treatment&step=4")
+        return redirect(f"/patients/{patient.id}/?tab=treatment&step=3")
 
     upper_history = plan.arch_histories.filter(arch='UPPER')
     lower_history = plan.arch_histories.filter(arch='LOWER')
@@ -1904,7 +1906,7 @@ def advance_aligner_stage_view(request, patient_id):
         else:
             messages.info(request, f"Patient has reached the final aligner (#{plan.total_aligners}).")
 
-    return redirect(f"/patients/{patient.id}/?tab=treatment&step=4")
+    return redirect(f"/patients/{patient.id}/?tab=treatment&step=3")
 
 
 # ----------------- PHOTO MONITORING -----------------
