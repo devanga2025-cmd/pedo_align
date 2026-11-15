@@ -1817,7 +1817,7 @@ def treatment_plan_edit_view(request, patient_id):
             description=f"Tray #{updated_plan.current_aligner}/{updated_plan.total_aligners}. Upper Arch: {updated_plan.upper_arch_status}, Lower Arch: {updated_plan.lower_arch_status}."
         )
         messages.success(request, f"Treatment plan for {patient.full_name} updated successfully.")
-        return redirect('doctor:patient_detail', patient_id=patient.id)
+        return redirect(f"/patients/{patient.id}/?tab=treatment")
 
     upper_history = plan.arch_histories.filter(arch='UPPER')
     lower_history = plan.arch_histories.filter(arch='LOWER')
@@ -1885,7 +1885,7 @@ def advance_aligner_stage_view(request, patient_id):
         else:
             messages.info(request, f"Patient has reached the final aligner (#{plan.total_aligners}).")
 
-    return redirect('doctor:patient_detail', patient_id=patient.id)
+    return redirect(f"/patients/{patient.id}/?tab=treatment")
 
 
 # ----------------- PHOTO MONITORING -----------------

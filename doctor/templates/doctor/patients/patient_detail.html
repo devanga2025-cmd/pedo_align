@@ -633,78 +633,225 @@
     </div>
     {% endif %}
 
-    <!-- 6. TREATMENT RECORDS TAB -->
+    <!-- 6. TREATMENT WORKSPACE TAB (Aligner Treatment Plan + Arch Monitoring + Treatment Records) -->
     {% if active_tab == 'treatment' or active_tab == 'operations' %}
-    <div class="pa-card p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-            <div>
-                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Records
-                </h3>
-                <p class="text-xs text-slate-500 mt-0.5">Clinical findings, dental problems identified, and treatments performed over time.</p>
-            </div>
-            <button type="button" onclick="document.getElementById('operationModal').classList.remove('hidden')" class="btn-primary text-xs">
-                <i class="fa-solid fa-plus mr-1"></i> Add Treatment Record
-            </button>
-        </div>
+    <div class="space-y-6">
 
-        {% if operation_records %}
-        <div class="space-y-4">
-            {% for op in operation_records %}
-            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+        <!-- A. ACTIVE TREATMENT PLAN MASTER CARD (All content from Treatment Plans page) -->
+        <div class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-2xl">
+            <!-- Header with Title, Status & Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div class="space-y-1">
                     <div class="flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
-                            <i class="fa-solid fa-tooth"></i>
+                        <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-list text-blue-600"></i> Aligner Treatment Plan
+                        </h3>
+                        <span class="badge {% if treatment_plan.status == 'Completed' %}badge-active{% elif treatment_plan.status == 'Paused / Under Review' %}badge-emergency-high{% else %}badge-pending{% endif %}">
+                            {{ treatment_plan.status }}
                         </span>
-                        <div>
-                            <h4 class="font-extrabold text-slate-900 text-sm">{{ op.operation_performed }}</h4>
-                            <span class="text-[11px] text-slate-400">Dr. {{ op.doctor.full_name }} • {{ op.record_date|date:"F d, Y h:i A" }}</span>
+                    </div>
+                    <p class="text-xs text-slate-500">
+                        Active aligner prescription, stage pace, wear compliance, and clinical instructions for {{ patient.full_name }}.
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    {% if treatment_plan.current_aligner < treatment_plan.total_aligners %}
+                    <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-primary py-2 px-3.5 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 flex items-center gap-1.5" title="Advance Patient to Next Stage">
+                            <i class="fa-solid fa-forward-step text-xs"></i>
+                            <span>Stage +1</span>
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <a href="{% url 'doctor:treatment_plan_edit' patient.id %}" class="btn-secondary py-2 px-3.5 text-xs font-bold flex items-center gap-1.5 text-slate-700 hover:text-blue-700 hover:border-blue-300">
+                        <i class="fa-solid fa-pen-to-square text-blue-600"></i>
+                        <span>Edit Plan</span>
+                    </a>
+
+                    <a href="{% url 'doctor:patient_clinical_journey' patient.id %}" class="btn-secondary py-2 px-3 text-xs font-semibold text-indigo-700 bg-indigo-50/50 hover:bg-indigo-50 border-indigo-200" title="Open 12-Stage Visual Journey">
+                        <i class="fa-solid fa-diagram-project mr-1"></i> Visual Journey
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stage Progress Bar & Metrics -->
+            <div class="bg-gradient-to-r from-blue-50/70 via-sky-50/50 to-indigo-50/60 p-5 rounded-2xl border border-blue-100/90 space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Current Stage Progress</span>
+                        <div class="text-base font-black text-blue-950 mt-0.5 flex items-center gap-2">
+                            <span>Tray #{{ treatment_plan.current_aligner }}</span>
+                            <span class="text-xs font-bold text-slate-400 font-normal">of {{ treatment_plan.total_aligners }} Trays</span>
                         </div>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <span class="font-bold text-slate-700 block uppercase text-[10px]">Current Dental Condition:</span>
-                        <p class="text-slate-600 mt-0.5 leading-relaxed">{{ op.current_condition }}</p>
-                    </div>
-                    <div>
-                        <span class="font-bold text-slate-700 block uppercase text-[10px]">Identified Dental Problems:</span>
-                        <p class="text-slate-600 mt-0.5 leading-relaxed">{{ op.identified_problems }}</p>
+                    <div class="text-left sm:text-right">
+                        <span class="text-sm font-black text-blue-700">{{ treatment_plan.progress_percentage }}% Complete</span>
+                        <span class="text-[11px] text-slate-500 block">Pace: {{ treatment_plan.aligner_frequency_days }} days per tray</span>
                     </div>
                 </div>
 
-                <div class="text-xs pt-2 border-t border-slate-100">
-                    <span class="font-bold text-slate-700 block uppercase text-[10px]">Treatment Procedure Description:</span>
-                    <p class="text-slate-800 mt-0.5 leading-relaxed">{{ op.treatment_description }}</p>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden shadow-inner">
+                    <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ treatment_plan.progress_percentage }}%"></div>
                 </div>
+            </div>
 
-                {% if op.doctor_observations or op.next_treatment_steps %}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2 bg-slate-50 p-3 rounded-xl">
-                    {% if op.doctor_observations %}
-                    <div>
-                        <span class="font-bold text-slate-700 block uppercase text-[10px]">Observations:</span>
-                        <p class="text-slate-600 mt-0.5">{{ op.doctor_observations }}</p>
-                    </div>
-                    {% endif %}
-                    {% if op.next_treatment_steps %}
-                    <div>
-                        <span class="font-bold text-slate-700 block uppercase text-[10px]">Next Treatment Steps:</span>
-                        <p class="text-slate-600 mt-0.5">{{ op.next_treatment_steps }}</p>
-                    </div>
-                    {% endif %}
+            <!-- 6 Key Clinical Parameters Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Estimated Duration</span>
+                    <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.estimated_duration_months }} Months</span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Daily Wear Time</span>
+                    <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.daily_wear_hours }} hrs / day</span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Compliance</span>
+                    <span class="text-xs font-black {% if treatment_plan.compliance_score >= 85 %}text-emerald-700{% else %}text-amber-700{% endif %} mt-1 block">
+                        {{ treatment_plan.compliance_score }}%
+                    </span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Next Tray Switch</span>
+                    <span class="text-xs font-black text-blue-700 mt-1 block truncate" title="{{ treatment_plan.computed_next_change_date|date:'M d, Y'|default:'As Prescribed' }}">
+                        {{ treatment_plan.computed_next_change_date|date:"M d, Y"|default:"As Prescribed" }}
+                    </span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Start Date</span>
+                    <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.start_date|date:"M d, Y"|default:"Active" }}</span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Expected End</span>
+                    <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.expected_completion_date|date:"M d, Y"|default:"On Track" }}</span>
+                </div>
+            </div>
+
+            <!-- Prescribed Instructions -->
+            {% if treatment_plan.treatment_instructions %}
+            <div class="p-4 rounded-xl bg-blue-50/60 border border-blue-100 text-xs">
+                <span class="font-bold text-blue-950 uppercase tracking-wider text-[10px] block mb-1">
+                    <i class="fa-solid fa-notes-medical text-blue-600 mr-1"></i> Doctor's Clinical Treatment Instructions:
+                </span>
+                <p class="text-blue-900 leading-relaxed font-medium">
+                    {{ treatment_plan.treatment_instructions }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- B. UPPER & LOWER ARCH MONITORING SECTION -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Upper Arch -->
+            <div class="pa-card p-6 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-tooth text-blue-600"></i> Upper Arch Status
+                    </h3>
+                    <span class="badge badge-active">{{ treatment_plan.upper_arch_status }}</span>
+                </div>
+                {% if treatment_plan.upper_arch_photo %}
+                <div class="aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                    <img src="{{ treatment_plan.upper_arch_photo.url }}" alt="Upper Arch" class="w-full h-full object-cover">
                 </div>
                 {% endif %}
+                <p class="text-xs text-slate-600 leading-relaxed">{{ treatment_plan.upper_arch_notes|default:"Upper arch alignment proceeding per schedule." }}</p>
             </div>
-            {% endfor %}
+
+            <!-- Lower Arch -->
+            <div class="pa-card p-6 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-tooth text-cyan-600"></i> Lower Arch Status
+                    </h3>
+                    <span class="badge badge-active">{{ treatment_plan.lower_arch_status }}</span>
+                </div>
+                {% if treatment_plan.lower_arch_photo %}
+                <div class="aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                    <img src="{{ treatment_plan.lower_arch_photo.url }}" alt="Lower Arch" class="w-full h-full object-cover">
+                </div>
+                {% endif %}
+                <p class="text-xs text-slate-600 leading-relaxed">{{ treatment_plan.lower_arch_notes|default:"Lower arch leveling proceeding per schedule." }}</p>
+            </div>
         </div>
-        {% else %}
-        <div class="p-12 text-center text-xs text-slate-400">
-            <i class="fa-solid fa-tooth text-3xl text-slate-300 mb-2 block"></i>
-            No treatment records logged yet. Click "+ Add Treatment Record" above.
+
+        <!-- C. TREATMENT RECORDS & PROCEDURES LOG -->
+        <div class="pa-card p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Records & Procedures Log
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Clinical findings, dental problems identified, and treatments performed over time.</p>
+                </div>
+                <button type="button" onclick="document.getElementById('operationModal').classList.remove('hidden')" class="btn-primary text-xs">
+                    <i class="fa-solid fa-plus mr-1"></i> Add Treatment Record
+                </button>
+            </div>
+
+            {% if operation_records %}
+            <div class="space-y-4">
+                {% for op in operation_records %}
+                <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
+                                <i class="fa-solid fa-tooth"></i>
+                            </span>
+                            <div>
+                                <h4 class="font-extrabold text-slate-900 text-sm">{{ op.operation_performed }}</h4>
+                                <span class="text-[11px] text-slate-400">Dr. {{ op.doctor.full_name }} • {{ op.record_date|date:"F d, Y h:i A" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <span class="font-bold text-slate-700 block uppercase text-[10px]">Current Dental Condition:</span>
+                            <p class="text-slate-600 mt-0.5 leading-relaxed">{{ op.current_condition }}</p>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-700 block uppercase text-[10px]">Identified Dental Problems:</span>
+                            <p class="text-slate-600 mt-0.5 leading-relaxed">{{ op.identified_problems }}</p>
+                        </div>
+                    </div>
+
+                    <div class="text-xs pt-2 border-t border-slate-100">
+                        <span class="font-bold text-slate-700 block uppercase text-[10px]">Treatment Procedure Description:</span>
+                        <p class="text-slate-800 mt-0.5 leading-relaxed">{{ op.treatment_description }}</p>
+                    </div>
+
+                    {% if op.doctor_observations or op.next_treatment_steps %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2 bg-slate-50 p-3 rounded-xl">
+                        {% if op.doctor_observations %}
+                        <div>
+                            <span class="font-bold text-slate-700 block uppercase text-[10px]">Observations:</span>
+                            <p class="text-slate-600 mt-0.5">{{ op.doctor_observations }}</p>
+                        </div>
+                        {% endif %}
+                        {% if op.next_treatment_steps %}
+                        <div>
+                            <span class="font-bold text-slate-700 block uppercase text-[10px]">Next Treatment Steps:</span>
+                            <p class="text-slate-600 mt-0.5">{{ op.next_treatment_steps }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-12 text-center text-xs text-slate-400">
+                <i class="fa-solid fa-tooth text-3xl text-slate-300 mb-2 block"></i>
+                No treatment records logged yet. Click "+ Add Treatment Record" above.
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
+
     </div>
     {% endif %}
 
@@ -1022,42 +1169,7 @@
     </div>
     {% endif %}
 
-    <!-- 11. UPPER & LOWER ARCH MONITORING TAB -->
-    {% if active_tab == 'treatment' %}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Upper Arch -->
-        <div class="pa-card p-6 space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-tooth text-blue-600"></i> Upper Arch Status
-                </h3>
-                <span class="badge badge-active">{{ treatment_plan.upper_arch_status }}</span>
-            </div>
-            {% if treatment_plan.upper_arch_photo %}
-            <div class="aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                <img src="{{ treatment_plan.upper_arch_photo.url }}" alt="Upper Arch" class="w-full h-full object-cover">
-            </div>
-            {% endif %}
-            <p class="text-xs text-slate-600 leading-relaxed">{{ treatment_plan.upper_arch_notes|default:"Upper arch alignment proceeding per schedule." }}</p>
-        </div>
 
-        <!-- Lower Arch -->
-        <div class="pa-card p-6 space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-tooth text-cyan-600"></i> Lower Arch Status
-                </h3>
-                <span class="badge badge-active">{{ treatment_plan.lower_arch_status }}</span>
-            </div>
-            {% if treatment_plan.lower_arch_photo %}
-            <div class="aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                <img src="{{ treatment_plan.lower_arch_photo.url }}" alt="Lower Arch" class="w-full h-full object-cover">
-            </div>
-            {% endif %}
-            <p class="text-xs text-slate-600 leading-relaxed">{{ treatment_plan.lower_arch_notes|default:"Lower arch leveling proceeding per schedule." }}</p>
-        </div>
-    </div>
-    {% endif %}
 
     <!-- 12. WEEKLY MONITORING PHOTOS TAB -->
     {% if active_tab == 'photos' %}
