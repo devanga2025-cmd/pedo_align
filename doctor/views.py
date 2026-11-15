@@ -2700,11 +2700,25 @@ def notifications_view(request):
     if not doctor:
         return redirect('doctor:login')
 
-    notifications_qs = Notification.objects.filter(doctor=doctor)
+    base_qs = Notification.objects.filter(doctor=doctor)
+    total_count = base_qs.count()
+    unread_count = base_qs.filter(is_read=False).count()
+    urgent_count = base_qs.filter(notification_type='EMERGENCY').count()
 
+    current_filter = request.GET.get('filter', '')
     type_filter = request.GET.get('type', 'ALL')
-    if type_filter != 'ALL':
+
+    notifications_qs = base_qs
+
+    if current_filter == 'unread':
+        notifications_qs = notifications_qs.filter(is_read=False)
+    elif current_filter == 'urgent':
+        notifications_qs = notifications_qs.filter(notification_type='EMERGENCY')
+    elif type_filter != 'ALL':
         notifications_qs = notifications_qs.filter(notification_type=type_filter)
+        current_filter = type_filter
+    else:
+        current_filter = 'all'
 
     reminder_form = SendReminderInstructionForm(request.POST or None, doctor=doctor)
 
@@ -2740,6 +2754,10 @@ def notifications_view(request):
         'doctor': doctor,
         'notifications': notifications_qs,
         'type_filter': type_filter,
+        'current_filter': current_filter,
+        'total_count': total_count,
+        'unread_count': unread_count,
+        'urgent_count': urgent_count,
         'reminder_form': reminder_form,
         'type_choices': Notification.NOTIFICATION_TYPE_CHOICES,
     }
