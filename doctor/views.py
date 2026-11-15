@@ -695,6 +695,15 @@ def radiograph_upload_view(request, patient_id):
                 activity_type='Radiograph Uploaded',
                 description=f"{radio.get_radiograph_type_display()} (v{radio.version}) uploaded: {radio.title}"
             )
+
+            notify_patient_profile(
+                patient=patient,
+                notification_type='DOCTOR_INSTRUCTION',
+                title=f'New {radio.get_radiograph_type_display()} Radiograph Uploaded',
+                message=f'Dr. {doctor.display_name} uploaded a diagnostic radiograph ({radio.get_radiograph_type_display()}, v{radio.version}) to your clinical record.',
+                link_url='/patient/#step2Section'
+            )
+
             messages.success(request, f"{radio.get_radiograph_type_display()} (v{radio.version}) successfully uploaded.")
         else:
             messages.error(request, "Please check radiograph upload form errors.")
@@ -740,7 +749,7 @@ def operation_record_create_view(request, patient_id):
                 notification_type='TREATMENT_UPDATE',
                 title="New Clinical Procedure Recorded",
                 message=f"Dr. {doctor.full_name} recorded a clinical procedure: {op.operation_performed}.",
-                link_url='/patient/my-treatment/'
+                link_url='/patient/#step3Section'
             )
             messages.success(request, f"Treatment & Operation record for '{op.operation_performed}' saved successfully.")
         else:
@@ -1828,7 +1837,7 @@ def treatment_plan_edit_view(request, patient_id):
             notification_type='TREATMENT_UPDATE',
             title='Treatment Plan & Arch Update',
             message=f'Dr. {doctor.full_name} updated your upper/lower arch prescription and Tray #{updated_plan.current_aligner} schedule.',
-            link_url='/patient/my-treatment/'
+            link_url='/patient/#step3Section'
         )
 
         PatientActivityLog.objects.create(
@@ -1893,7 +1902,7 @@ def advance_aligner_stage_view(request, patient_id):
                 notification_type='TRAY_CHANGE',
                 title=f'Tray Advanced to #{plan.current_aligner}',
                 message=f'Dr. {doctor.full_name} has advanced your aligner to Tray #{plan.current_aligner}. Next scheduled switch date: {plan.next_tray_change_date.strftime("%b %d, %Y")}.',
-                link_url='/patient/my-treatment/'
+                link_url='/patient/#step3Section'
             )
 
             PatientActivityLog.objects.create(
@@ -2355,7 +2364,7 @@ def photo_review_view(request, photo_id):
             patient=photo_obj.patient,
             notification_type='DOCTOR_FEEDBACK',
             title=f"Doctor Reviewed Week #{photo_obj.week_number} Photos ({reviewed.get_tracking_status_display()})",
-            message=f"Dr. {doctor.display_name} has reviewed your Week #{photo_obj.week_number} progress photos. Status: {reviewed.get_tracking_status_display()}. Remarks: {reviewed.doctor_comments or 'Good progression.'}",
+            message=f"Dr. {doctor.display_name} has reviewed your Week #{photo_obj.week_number} progress photos. Status: {reviewed.get_tracking_status_display()}. Remarks: {reviewed.doctor_feedback or 'Good progression.'}",
             link_url='/patient/#patientProgressSection'
         )
 
@@ -2421,6 +2430,15 @@ def photo_compare_view(request, patient_id):
             target_obj.reviewed_at = timezone.now()
             target_obj.tracking_status = 'TRACKING_WELL'
             target_obj.save()
+
+            notify_patient_profile(
+                patient=patient,
+                notification_type='DOCTOR_FEEDBACK',
+                title=f"Doctor Reviewed Week #{target_obj.week_number} Photos",
+                message=f"Dr. {doctor.display_name} reviewed your Week #{target_obj.week_number} comparison photos. Remarks: {comment_text or 'Good progression.'}",
+                link_url='/patient/#patientProgressSection'
+            )
+
             messages.success(request, f"Clinical comparison comment saved for Week {target_obj.week_number} photo.")
             return redirect(f"{request.path}?left_id={left_photo.id}&right_id={right_photo.id}&angle={angle}")
 

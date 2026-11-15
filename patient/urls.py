@@ -17,6 +17,7 @@ urlpatterns = [
 
     # Core Treatment & Care
     path('treatment/', views.my_treatment_view, name='my_treatment'),
+    path('my-treatment/', views.my_treatment_view, name='my_treatment_alias'),
     path('prescriptions/<int:presc_id>/', views.prescription_view, name='prescription_view'),
     path('prescriptions/<int:presc_id>/print/', views.prescription_print_view, name='prescription_print'),
     path('photos/upload/', views.upload_photos_view, name='upload_photos'),

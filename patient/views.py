@@ -473,6 +473,8 @@ def patient_dashboard_view(request):
     diagnosed_problem = None
     monitoring_frequency = 'WEEKLY'
     patient_photos = []
+    operation_records = []
+    tray_history = []
 
     if patient.is_connected and connected_record:
         # Step 1: Preoperative Photos uploaded by Doctor
@@ -483,7 +485,12 @@ def patient_dashboard_view(request):
         opg_radiographs = radiographs.filter(radiograph_type__in=['OPG', 'TYPE_1'])
         ceph_radiographs = radiographs.filter(radiograph_type__in=['LATERAL_CEPHALOGRAPH', 'TYPE_2'])
 
-        # Step 3: Hospital Consultation Appointments (20-day follow-up)
+        # Step 3: Aligner Treatment Plan & Clinical Operation Records
+        operation_records = connected_record.operation_records.all().order_by('-record_date', '-created_at')
+        if treatment_plan:
+            tray_history = treatment_plan.tray_histories.all().order_by('-tray_number')
+
+        # Hospital Consultation Appointments (20-day follow-up)
         appointments = connected_record.appointments.all().order_by('-scheduled_date', '-scheduled_time')
         today_date = timezone.localdate()
         next_appointment = appointments.filter(
@@ -533,6 +540,8 @@ def patient_dashboard_view(request):
         'patient': patient,
         'doctor': doctor,
         'treatment_plan': treatment_plan,
+        'operation_records': operation_records,
+        'tray_history': tray_history,
         'connected_record': connected_record,
         'preop_photos': preop_photos,
         'radiographs': radiographs,
@@ -680,10 +689,9 @@ def check_connection_status_api(request):
 # ----------------- MY TREATMENT -----------------
 
 @login_required(login_url='patient:login')
-@login_required(login_url='patient:login')
 def my_treatment_view(request):
-    """Consolidated into unified Clinical Journey Home page."""
-    return redirect('patient:dashboard')
+    """Consolidated into unified Clinical Journey Home page (Step 3: Aligner Treatment Plan)."""
+    return redirect('/patient/#step3Section')
 
 
 @login_required(login_url='patient:login')

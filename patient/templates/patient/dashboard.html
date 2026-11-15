@@ -105,19 +105,21 @@
                 </span>
             </a>
 
-            <!-- Appointments Card -->
-            <a href="{% url 'patient:appointments' %}" class="p-3.5 rounded-2xl border border-slate-200 hover:border-purple-400 bg-slate-50/70 hover:bg-purple-50/40 transition flex items-center justify-between gap-2">
+            <!-- Step 3 Card -->
+            <a href="#step3Section" class="p-3.5 rounded-2xl border border-blue-200 hover:border-blue-400 bg-blue-50/50 hover:bg-blue-50/80 transition flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if next_appointment %}bg-purple-600 text-white{% else %}bg-slate-200 text-slate-600{% endif %}">
-                        <i class="fa-solid fa-calendar-check"></i>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black bg-blue-600 text-white">
+                        <i class="fa-solid fa-clipboard-list text-xs"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-black text-slate-900 block">Hospital Visits</span>
-                        <span class="text-[10px] text-purple-700 block font-semibold">View Appointments &rarr;</span>
+                        <span class="text-xs font-black text-slate-900 block">Step 3: Aligner Plan</span>
+                        <span class="text-[10px] text-blue-700 block font-semibold">
+                            {% if treatment_plan %}Tray #{{ treatment_plan.current_aligner }}/{{ treatment_plan.total_aligners }}{% else %}Prescription{% endif %}
+                        </span>
                     </div>
                 </div>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full {% if next_appointment %}bg-purple-100 text-purple-800{% else %}bg-slate-200 text-slate-600{% endif %}">
-                    {% if next_appointment %}{{ next_appointment.scheduled_date|date:"M d" }}{% else %}Manage{% endif %}
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                    {{ progress_percent|default:0 }}% Done
                 </span>
             </a>
 
@@ -343,6 +345,174 @@
             <p>Diagnostic radiograph records have not yet been uploaded by your doctor.</p>
         </div>
         {% endif %}
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- 5. STEP 3: ALIGNER TREATMENT PLAN & CLINICAL RECORDS     -->
+    <!-- ======================================================== -->
+    <div id="step3Section" class="bg-white rounded-3xl p-6 sm:p-8 border border-blue-200/90 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-base font-bold shadow-xs">
+                        <i class="fa-solid fa-clipboard-list text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-blue-600 text-white uppercase tracking-wider">
+                                Step 3
+                            </span>
+                            <h2 class="text-lg font-black text-slate-900 tracking-tight">
+                                Aligner Treatment Plan & Clinical Records
+                            </h2>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Prescribed by {{ doctor.display_name|default:"Your Doctor" }} &bull; Active aligner pace, stage progression, and clinical operation records
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {% if treatment_plan %}
+            <span class="badge {% if treatment_plan.status == 'Completed' %}badge-active{% elif treatment_plan.status == 'Paused / Under Review' %}badge-emergency-high{% else %}badge-pending{% endif %}">
+                {{ treatment_plan.status }}
+            </span>
+            {% endif %}
+        </div>
+
+        {% if treatment_plan %}
+        <!-- Stage Progress Bar & Next Change Countdown -->
+        <div class="bg-gradient-to-r from-blue-50/80 via-sky-50/60 to-indigo-50/70 p-5 rounded-2xl border border-blue-100 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Current Stage Progress</span>
+                    <div class="text-base font-black text-blue-950 mt-0.5 flex items-center gap-2">
+                        <span>Tray #{{ treatment_plan.current_aligner }}</span>
+                        <span class="text-xs font-bold text-slate-400 font-normal">of {{ treatment_plan.total_aligners }} Trays</span>
+                    </div>
+                </div>
+                <div class="text-left sm:text-right">
+                    <span class="text-sm font-black text-blue-700">{{ progress_percent }}% Complete</span>
+                    <span class="text-[11px] text-slate-500 block">
+                        {% if treatment_plan.computed_next_change_date %}
+                        Next Switch: {{ treatment_plan.computed_next_change_date|date:"M d, Y" }} (in {{ days_until_next_change }} days)
+                        {% else %}
+                        Pace: {{ treatment_plan.aligner_frequency_days }} days per tray
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ progress_percent }}%"></div>
+            </div>
+        </div>
+
+        <!-- Clinical Parameters Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Daily Wear Time</span>
+                <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.daily_wear_hours|default:"20-22" }} hrs / day</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Tray Switch Pace</span>
+                <span class="text-xs font-black text-slate-800 mt-1 block">Every {{ treatment_plan.aligner_frequency_days|default:"14" }} Days</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Upper Arch Status</span>
+                <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.upper_arch_status|default:"Leveling / Tracking" }}</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Lower Arch Status</span>
+                <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.lower_arch_status|default:"Leveling / Tracking" }}</span>
+            </div>
+        </div>
+
+        {% if treatment_plan.treatment_instructions %}
+        <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 text-xs space-y-1">
+            <span class="font-bold text-blue-900 block flex items-center gap-1.5">
+                <i class="fa-solid fa-user-doctor text-blue-600"></i> Doctor's Aligner Instructions:
+            </span>
+            <p class="text-slate-700 leading-relaxed font-medium">
+                {{ treatment_plan.treatment_instructions }}
+            </p>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400">
+            Aligner treatment plan prescription is being configured by {{ doctor.display_name }}.
+        </div>
+        {% endif %}
+
+        <!-- Clinical Treatment & Operation Records Log -->
+        <div class="pt-4 border-t border-slate-100 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-stethoscope text-indigo-600"></i> Clinical Treatment & In-Clinic Operation Records
+                    </h3>
+                    <p class="text-[11px] text-slate-500">Procedures, clinical observations, and dental interventions performed by {{ doctor.display_name }}</p>
+                </div>
+                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                    {{ operation_records.count }} Record{{ operation_records.count|pluralize }}
+                </span>
+            </div>
+
+            {% if operation_records %}
+            <div class="space-y-3">
+                {% for op in operation_records %}
+                <div class="p-4 rounded-2xl bg-slate-50 hover:bg-slate-50/80 border border-slate-200/80 space-y-2.5 transition">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-slate-200/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
+                                <i class="fa-solid fa-tooth"></i>
+                            </span>
+                            <span class="text-xs font-black text-slate-900">{{ op.operation_performed }}</span>
+                        </div>
+                        <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+                            <i class="fa-regular fa-calendar"></i> {{ op.record_date|date:"F j, Y" }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        {% if op.identified_problems or op.current_condition %}
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Clinical Findings / Problem</span>
+                            <p class="text-slate-700 bg-white p-2.5 rounded-xl border border-slate-100">{{ op.identified_problems|default:op.current_condition }}</p>
+                        </div>
+                        {% endif %}
+
+                        {% if op.treatment_description %}
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Procedure Performed</span>
+                            <p class="text-slate-700 bg-white p-2.5 rounded-xl border border-slate-100">{{ op.treatment_description }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if op.doctor_observations %}
+                    <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 text-[11px] text-slate-700">
+                        <strong class="text-blue-900">Doctor Observations:</strong> {{ op.doctor_observations }}
+                    </div>
+                    {% endif %}
+
+                    {% if op.next_treatment_steps %}
+                    <div class="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-100 text-[11px] text-indigo-900">
+                        <strong>Next Treatment Steps:</strong> {{ op.next_treatment_steps }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400">
+                <i class="fa-solid fa-notes-medical text-xl text-slate-300 block mb-1"></i>
+                No in-clinic procedure records logged yet. Your doctor will record clinical interventions here as your treatment advances.
+            </div>
+            {% endif %}
+        </div>
     </div>
 
 
