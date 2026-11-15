@@ -540,6 +540,7 @@ def patient_detail_view(request, patient_id):
 
     # Modal Forms
     preop_form = PreoperativePhotoForm()
+    compulsory_preop_form = CompulsoryPreoperativePhotosForm()
     radiograph_form = RadiographRecordForm(initial={'examination_date': timezone.localdate()})
     operation_form = TreatmentOperationRecordForm(initial={'record_date': timezone.now().strftime('%Y-%m-%dT%H:%M')})
     prescription_form = PrescriptionForm(initial={
@@ -557,6 +558,14 @@ def patient_detail_view(request, patient_id):
     })
     archive_form = ArchivePatientForm()
 
+    has_3_preop = preop_photos.count() >= 3
+    has_radiograph = all_radiographs.exists()
+    has_next_appt = appointments.filter(scheduled_date__gte=today).exists()
+    default_step = '4' if (has_3_preop and has_radiograph and has_next_appt) else ('3' if (has_3_preop and has_radiograph) else ('2' if has_3_preop else '1'))
+    active_step = request.GET.get('step', default_step)
+    opg_radiographs = all_radiographs.filter(radiograph_type__in=['OPG', 'TYPE_1'])
+    ceph_radiographs = all_radiographs.filter(radiograph_type__in=['LATERAL_CEPHALOGRAPH', 'TYPE_2'])
+
     context = {
         'doctor': doctor,
         'patient': patient,
@@ -567,6 +576,9 @@ def patient_detail_view(request, patient_id):
         'radiographs_type1': radiographs_type1,
         'radiographs_type2': radiographs_type2,
         'all_radiographs': all_radiographs,
+        'radiographs': all_radiographs,
+        'opg_radiographs': opg_radiographs,
+        'ceph_radiographs': ceph_radiographs,
         'operation_records': operation_records,
         'prescriptions': prescriptions,
         'treatment_turns': treatment_turns,
@@ -582,6 +594,7 @@ def patient_detail_view(request, patient_id):
         'activity_logs': activity_logs,
         'active_tab': active_tab,
         'preop_form': preop_form,
+        'compulsory_preop_form': compulsory_preop_form,
         'radiograph_form': radiograph_form,
         'operation_form': operation_form,
         'prescription_form': prescription_form,
@@ -590,9 +603,15 @@ def patient_detail_view(request, patient_id):
         'monthly_note_form': monthly_note_form,
         'archive_form': archive_form,
         'next_appointment': next_appointment,
+        'upcoming_appointments': appointments.filter(scheduled_date__gte=today).order_by('scheduled_date', 'scheduled_time'),
         'default_10day_date': default_10day_date,
         'default_20day_date': default_20day_date,
         'default_30day_date': default_30day_date,
+        'active_step': str(active_step),
+        'has_3_preop': has_3_preop,
+        'has_radiograph': has_radiograph,
+        'has_next_appt': has_next_appt,
+        'preop_count': preop_photos.count(),
     }
     return render(request, 'doctor/patients/patient_detail.html', context)
 
@@ -725,7 +744,7 @@ def operation_record_create_view(request, patient_id):
         else:
             messages.error(request, "Please correct errors in the treatment operation form.")
 
-    return redirect(f"{reverse('doctor:patient_detail', kwargs={'patient_id': patient.id})}?tab=operations")
+    return redirect(f"{reverse('doctor:patient_detail', kwargs={'patient_id': patient.id})}?tab=treatment&step=4")
 
 
 @login_required
@@ -1817,7 +1836,7 @@ def treatment_plan_edit_view(request, patient_id):
             description=f"Tray #{updated_plan.current_aligner}/{updated_plan.total_aligners}. Upper Arch: {updated_plan.upper_arch_status}, Lower Arch: {updated_plan.lower_arch_status}."
         )
         messages.success(request, f"Treatment plan for {patient.full_name} updated successfully.")
-        return redirect(f"/patients/{patient.id}/?tab=treatment")
+        return redirect(f"/patients/{patient.id}/?tab=treatment&step=4")
 
     upper_history = plan.arch_histories.filter(arch='UPPER')
     lower_history = plan.arch_histories.filter(arch='LOWER')
@@ -1885,7 +1904,7 @@ def advance_aligner_stage_view(request, patient_id):
         else:
             messages.info(request, f"Patient has reached the final aligner (#{plan.total_aligners}).")
 
-    return redirect(f"/patients/{patient.id}/?tab=treatment")
+    return redirect(f"/patients/{patient.id}/?tab=treatment&step=4")
 
 
 # ----------------- PHOTO MONITORING -----------------
@@ -2972,6 +2991,11 @@ def patient_clinical_journey_view(request, patient_id):
     import datetime
     default_20day_date = (timezone.localdate() + datetime.timedelta(days=20)).strftime('%Y-%m-%d')
 
+    def step_redirect(step_num):
+        if request.POST.get('return_to') == 'treatment' or 'tab=treatment' in request.META.get('HTTP_REFERER', ''):
+            return redirect(f"/patients/{patient.id}/?tab=treatment&step={step_num}")
+        return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step={step_num}")
+
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -3024,7 +3048,7 @@ def patient_clinical_journey_view(request, patient_id):
                     link_url='/patient/#step1Section'
                 )
                 messages.success(request, f"Step 1 Complete: {saved_count} Preoperative photographs saved successfully! Proceeding to Step 2: Radiographs (OPG & Lateral Cephalograph).")
-                return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step=2")
+                return step_redirect(2)
             else:
                 messages.error(request, "3 preoperative photos are compulsory! Please provide all 3 photographs and descriptions before saving.")
                 active_step = '1'
@@ -3062,7 +3086,7 @@ def patient_clinical_journey_view(request, patient_id):
                 messages.success(request, f"Additional preoperative photo '{title}' added successfully!")
             else:
                 messages.error(request, "Please select an image file to upload as an additional photograph.")
-            return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step=1")
+            return step_redirect(1)
 
         # ----------------- STEP 2: RADIOGRAPH RECORDS (OPG & LATERAL CEPHALOGRAPH) -----------------
         elif action == 'save_radiograph':
@@ -3091,7 +3115,7 @@ def patient_clinical_journey_view(request, patient_id):
                     link_url='/patient/#step2Section'
                 )
                 messages.success(request, f"Step 2 Progress: {rad.get_radiograph_type_display()} radiograph saved! You can upload another radiograph or proceed to Step 3 for the Next Hospital Appointment.")
-                return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step=2")
+                return step_redirect(2)
             else:
                 messages.error(request, "Please select a valid radiograph image file and type (OPG or Lateral Cephalograph).")
                 active_step = '2'
@@ -3137,7 +3161,7 @@ def patient_clinical_journey_view(request, patient_id):
                         description=f'Scheduled next hospital appointment on {scheduled_date} at {scheduled_time_str}'
                     )
                     messages.success(request, f"Step 3 Complete: Hospital appointment scheduled for {scheduled_date.strftime('%B %d, %Y')} at {scheduled_time_str}. Patient notification sent!")
-                    return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step=3")
+                    return step_redirect(3)
                 except Exception as e:
                     messages.error(request, f"Error scheduling appointment: {str(e)}")
                     active_step = '3'
@@ -3150,7 +3174,7 @@ def patient_clinical_journey_view(request, patient_id):
                 p_obj.photo.delete(save=False)
                 p_obj.delete()
                 messages.info(request, "Preoperative photo removed.")
-            return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step=1")
+            return step_redirect(1)
 
         elif action == 'delete_radiograph_inline':
             radio_id = request.POST.get('radio_id')
@@ -3159,7 +3183,7 @@ def patient_clinical_journey_view(request, patient_id):
                 r_obj.image.delete(save=False)
                 r_obj.delete()
                 messages.info(request, "Radiograph record removed.")
-            return redirect(f"{reverse('doctor:patient_clinical_journey', kwargs={'patient_id': patient.id})}?step=2")
+            return step_redirect(2)
 
     preop_photos = patient.preoperative_photos.all()
     radiographs = patient.radiographs.all()
