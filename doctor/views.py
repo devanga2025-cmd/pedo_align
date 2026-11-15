@@ -526,6 +526,11 @@ def patient_detail_view(request, patient_id):
 
     # Appointments
     appointments = Appointment.objects.filter(patient=patient).order_by('-scheduled_date')
+    today = timezone.localdate()
+    next_appointment = appointments.filter(scheduled_date__gte=today, status='UPCOMING').order_by('scheduled_date', 'scheduled_time').first()
+    default_10day_date = (today + timezone.timedelta(days=10)).isoformat()
+    default_20day_date = (today + timezone.timedelta(days=20)).isoformat()
+    default_30day_date = (today + timezone.timedelta(days=30)).isoformat()
 
     # Emergency Alerts
     emergencies = EmergencyAlert.objects.filter(patient=patient).order_by('-reported_at')
@@ -584,7 +589,10 @@ def patient_detail_view(request, patient_id):
         'media_form': media_form,
         'monthly_note_form': monthly_note_form,
         'archive_form': archive_form,
-        'default_20day_date': (timezone.localdate() + timezone.timedelta(days=20)).isoformat(),
+        'next_appointment': next_appointment,
+        'default_10day_date': default_10day_date,
+        'default_20day_date': default_20day_date,
+        'default_30day_date': default_30day_date,
     }
     return render(request, 'doctor/patients/patient_detail.html', context)
 
@@ -835,6 +843,103 @@ def treatment_duration_update_view(request, patient_id):
         messages.success(request, f"Treatment duration and schedule updated to {patient.treatment_duration_months} months.")
 
     return redirect(f"{reverse('doctor:patient_detail', kwargs={'patient_id': patient.id})}?tab=duration")
+
+
+@login_required
+def patient_carepath_update_view(request, patient_id):
+    doctor = get_doctor_or_none(request.user)
+    if not doctor:
+        return redirect('doctor:login')
+    patient = get_object_or_404(Patient, id=patient_id, doctor=doctor)
+
+    if request.method == 'POST':
+        treatment_name = request.POST.get('treatment_name', '').strip()
+        duration_months = request.POST.get('duration_months', '').strip()
+        scheduled_date_str = request.POST.get('scheduled_date', '').strip()
+        scheduled_time_str = request.POST.get('scheduled_time', '10:00').strip()
+        instructions = request.POST.get('instructions', '').strip()
+
+        # 1. Update Treatment Name / Procedure
+        if treatment_name:
+            patient.current_operation = treatment_name
+            TreatmentOperationRecord.objects.create(
+                patient=patient,
+                doctor=doctor,
+                operation_performed=treatment_name,
+                record_date=timezone.now(),
+                current_condition="Active CarePath treatment progression.",
+                treatment_description=instructions or f"CarePath Treatment: {treatment_name}",
+                identified_problems=patient.diagnosed_problem or "Ongoing clear aligner therapy.",
+                examination_findings="CarePath active clinical review.",
+            )
+
+        # 2. Update Duration (Months)
+        if duration_months:
+            try:
+                dur_int = int(duration_months)
+                if dur_int > 0:
+                    patient.treatment_duration_months = dur_int
+                    plan, _ = TreatmentPlan.objects.get_or_create(patient=patient)
+                    plan.estimated_duration_months = dur_int
+                    plan.save()
+            except ValueError:
+                pass
+
+        patient.save()
+
+        # 3. Schedule Next Appointment
+        if scheduled_date_str:
+            try:
+                scheduled_date = timezone.datetime.strptime(scheduled_date_str, '%Y-%m-%d').date()
+                try:
+                    scheduled_time = timezone.datetime.strptime(scheduled_time_str, '%H:%M').time()
+                except Exception:
+                    scheduled_time = timezone.datetime.strptime('10:00', '%H:%M').time()
+
+                appt_instructions = instructions or f"CarePath visit: {treatment_name or 'Aligner review'} with Dr. {doctor.full_name} at {doctor.clinic_name}."
+
+                Appointment.objects.create(
+                    doctor=doctor,
+                    patient=patient,
+                    appointment_type='ROUTINE_CHECKUP',
+                    scheduled_date=scheduled_date,
+                    scheduled_time=scheduled_time,
+                    duration_minutes=30,
+                    instructions=appt_instructions,
+                    status='UPCOMING'
+                )
+
+                Notification.objects.create(
+                    doctor=doctor,
+                    patient=patient,
+                    notification_type='APPOINTMENT',
+                    title=f"Next Appointment Booked: {patient.full_name}",
+                    message=f"CarePath visit scheduled for {scheduled_date.strftime('%B %d, %Y')} at {scheduled_time.strftime('%I:%M %p')}."
+                )
+
+                notify_patient_profile(
+                    patient=patient,
+                    notification_type='APPOINTMENT',
+                    title=f"Next Visit Scheduled: {scheduled_date.strftime('%b %d, %Y')}",
+                    message=f"Dr. {doctor.full_name} scheduled your next visit for {scheduled_date.strftime('%B %d, %Y')} at {scheduled_time.strftime('%I:%M %p')}. {appt_instructions}",
+                    link_url='/patient/appointments/'
+                )
+            except Exception as e:
+                messages.error(request, f"Could not schedule appointment: {e}")
+
+        PatientActivityLog.objects.create(
+            patient=patient,
+            doctor=doctor,
+            activity_type='CarePath Updated',
+            description=f"CarePath updated: Treatment '{treatment_name or patient.current_operation}', Duration {patient.treatment_duration_months} mo" + (f", next visit on {scheduled_date_str}" if scheduled_date_str else ".")
+        )
+
+        messages.success(
+            request,
+            f"CarePath updated successfully for {patient.full_name}!" + (f" Next appointment scheduled for {scheduled_date_str}." if scheduled_date_str else "")
+        )
+
+    return redirect(f"/patients/{patient.id}/?tab=carepath")
 
 
 @login_required

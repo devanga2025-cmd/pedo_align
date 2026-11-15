@@ -48,6 +48,7 @@ urlpatterns = [
     path('patients/<int:patient_id>/turn-quest/create/', views.turn_quest_create_view, name='turn_quest_create'),
     path('patients/<int:patient_id>/turn-quest/<int:turn_id>/update/', views.turn_quest_update_view, name='turn_quest_update'),
     path('patients/<int:patient_id>/treatment-media/upload/', views.treatment_media_upload_view, name='treatment_media_upload'),
+    path('patients/<int:patient_id>/carepath/update/', views.patient_carepath_update_view, name='patient_carepath_update'),
 
     # Patient Joining Requests (Code verification & Approval)
     path('requests/', views.patient_requests_view, name='patient_requests'),

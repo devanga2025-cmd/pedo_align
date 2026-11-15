@@ -211,14 +211,9 @@
             <i class="fa-solid fa-camera mr-1.5"></i> Photos ({{ preop_photos.count|add:photo_uploads.count }})
         </a>
 
-        <!-- 5. Radiographs -->
-        <a href="?tab=radiographs" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'radiographs' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-x-ray mr-1.5"></i> Radiographs ({{ all_radiographs.count }})
-        </a>
-
-        <!-- 6. Appointments -->
-        <a href="?tab=appointments" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'appointments' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-calendar-check mr-1.5"></i> Appointments ({{ appointments.count }})
+        <!-- 5. CarePath (Treatment, Duration & Next Appointment) -->
+        <a href="?tab=carepath" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'carepath' or active_tab == 'appointments' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
+            <i class="fa-solid fa-route mr-1.5"></i> CarePath
         </a>
     </div>
 
@@ -1161,71 +1156,306 @@
     </div>
     {% endif %}
 
-    <!-- 13. APPOINTMENTS TAB (With 20-Day Follow-Up Workflow) -->
-    {% if active_tab == 'appointments' %}
-    <div class="pa-card p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-            <div>
-                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-check text-blue-600"></i> Scheduled Appointments
-                </h3>
-                <p class="text-xs text-slate-500 mt-0.5">Visits scheduled for {{ patient.full_name }} with 20-day follow-up workflow</p>
+    <!-- 13. CAREPATH TAB (Treatment, Duration & Next Appointment) -->
+    {% if active_tab == 'carepath' or active_tab == 'appointments' %}
+    <div class="space-y-6">
+
+        <!-- Top Header Banner -->
+        <div class="pa-card p-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white rounded-2xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/20 backdrop-blur-sm text-white">
+                    <i class="fa-solid fa-route"></i> CarePath Roadmap
+                </div>
+                <h3 class="text-xl font-black tracking-tight text-white">CarePath Plan & Schedule</h3>
+                <p class="text-xs text-blue-100 max-w-xl">
+                    Configure active treatment procedure, planned duration, and schedule the next in-office follow-up for {{ patient.full_name }}. Updates automatically notify the patient.
+                </p>
             </div>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="document.getElementById('quickFollowupModal').classList.remove('hidden')" class="btn-primary text-xs bg-emerald-600 hover:bg-emerald-700">
-                    <i class="fa-solid fa-clock-rotate-left mr-1"></i> + 20-Day Follow-Up
+                <button type="button" onclick="document.getElementById('carepathFormContainer').scrollIntoView({behavior: 'smooth'})" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-blue-700 hover:bg-blue-50 transition shadow-sm">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Update CarePath
                 </button>
-                <a href="{% url 'doctor:appointment_create' %}?patient={{ patient.id }}" class="btn-secondary text-xs">
-                    <i class="fa-solid fa-plus mr-1"></i> Custom Visit
-                </a>
             </div>
         </div>
 
-        {% if appointments %}
-        <div class="divide-y divide-slate-100">
-            {% for appt in appointments %}
-            <div class="py-4 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 text-purple-700 flex flex-col items-center justify-center font-bold text-xs flex-shrink-0">
-                        <span class="text-[9px] uppercase font-semibold text-purple-500">{{ appt.scheduled_date|date:"M" }}</span>
-                        <span class="text-base font-black leading-none">{{ appt.scheduled_date|date:"d" }}</span>
+        <!-- Live Status Metric Cards (Snapshot) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 1. Treatment -->
+            <div class="pa-card p-5 border-l-4 border-l-blue-500 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Current Treatment</span>
+                    <h4 class="text-base font-black text-slate-900 mt-0.5 truncate max-w-[200px]" title="{{ patient.current_operation|default:'Aligner Therapy' }}">
+                        {{ patient.current_operation|default:"Aligner Therapy" }}
+                    </h4>
+                    <span class="text-[11px] font-semibold text-blue-600 mt-1 inline-flex items-center gap-1">
+                        <i class="fa-solid fa-circle text-[7px]"></i> In Progress
+                    </span>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-tooth"></i>
+                </div>
+            </div>
+
+            <!-- 2. Duration -->
+            <div class="pa-card p-5 border-l-4 border-l-indigo-500 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Planned Duration</span>
+                    <h4 class="text-base font-black text-slate-900 mt-0.5">
+                        {{ patient.treatment_duration_months|default:"12" }} <span class="text-xs font-bold text-slate-500">Months</span>
+                    </h4>
+                    <span class="text-[11px] font-semibold text-indigo-600 mt-1 inline-flex items-center gap-1">
+                        <i class="fa-solid fa-hourglass-half text-[9px]"></i> Total Timeline
+                    </span>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+            </div>
+
+            <!-- 3. Next Appointment -->
+            <div class="pa-card p-5 border-l-4 {% if next_appointment %}border-l-emerald-500{% else %}border-l-amber-500{% endif %} flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Next Appointment</span>
+                    <h4 class="text-base font-black text-slate-900 mt-0.5">
+                        {% if next_appointment %}
+                            {{ next_appointment.scheduled_date|date:"M d, Y" }}
+                        {% else %}
+                            <span class="text-amber-600">Not Booked</span>
+                        {% endif %}
+                    </h4>
+                    <span class="text-[11px] font-semibold {% if next_appointment %}text-emerald-600{% else %}text-amber-600{% endif %} mt-1 inline-flex items-center gap-1">
+                        {% if next_appointment %}
+                            <i class="fa-regular fa-clock text-[9px]"></i> {{ next_appointment.scheduled_time|time:"g:i A" }}
+                        {% else %}
+                            <i class="fa-solid fa-circle-exclamation text-[9px]"></i> Book below
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="w-12 h-12 rounded-2xl {% if next_appointment %}bg-emerald-50 text-emerald-600{% else %}bg-amber-50 text-amber-600{% endif %} flex items-center justify-center text-lg flex-shrink-0">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- The 3-Question CarePath Update Form Card -->
+        <div id="carepathFormContainer" class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                    <h4 class="text-base font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-blue-600"></i> CarePath Quick Update Form
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-0.5">Set the treatment step, duration in months, and date for next appointment in one simple step.</p>
+                </div>
+                <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 hidden sm:inline-flex items-center gap-1">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> Fast CarePath Setup
+                </span>
+            </div>
+
+            <form method="POST" action="{% url 'doctor:patient_carepath_update' patient.id %}" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Question 1: What is the Treatment? -->
+                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
+                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                        1. What is the Treatment? <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" 
+                           name="treatment_name" 
+                           id="carepathTreatmentInput" 
+                           value="{{ patient.current_operation|default:'' }}" 
+                           required 
+                           placeholder="e.g. Aligner Tray Delivery, Arch Expansion, Interceptive Follow-up..." 
+                           class="w-full text-xs font-semibold py-2.5 px-3.5 rounded-xl border border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Quick Presets:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="setCarePathTreatment('Aligner Tray Delivery')" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 text-slate-700 transition shadow-2xs">
+                                + Aligner Tray Delivery
+                            </button>
+                            <button type="button" onclick="setCarePathTreatment('Arch Alignment & Leveling')" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 text-slate-700 transition shadow-2xs">
+                                + Arch Alignment & Leveling
+                            </button>
+                            <button type="button" onclick="setCarePathTreatment('Attachment Check & IPR')" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 text-slate-700 transition shadow-2xs">
+                                + Attachment Check & IPR
+                            </button>
+                            <button type="button" onclick="setCarePathTreatment('Interceptive Expansion')" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 text-slate-700 transition shadow-2xs">
+                                + Interceptive Expansion
+                            </button>
+                            <button type="button" onclick="setCarePathTreatment('Retention Evaluation')" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 text-slate-700 transition shadow-2xs">
+                                + Retention Evaluation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2: What is the Duration? -->
+                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
+                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                        2. What is the Duration? <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <input type="number" 
+                               name="duration_months" 
+                               id="carepathDurationInput" 
+                               value="{{ patient.treatment_duration_months|default:'12' }}" 
+                               min="1" 
+                               max="60" 
+                               required 
+                               class="w-32 text-xs font-bold py-2.5 px-3.5 rounded-xl border border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                        <span class="text-xs font-black text-slate-700 uppercase">Months</span>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900">{{ appt.get_appointment_type_display }}</h4>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            <i class="fa-regular fa-clock mr-1"></i>{{ appt.scheduled_time|time:"g:i A" }} ({{ appt.duration_minutes }} minutes)
-                        </p>
-                        {% if appt.instructions %}
-                        <p class="text-xs text-blue-700 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> {{ appt.instructions }}</p>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Preset Duration:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="setCarePathDuration(3)" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition shadow-2xs">
+                                3 Months
+                            </button>
+                            <button type="button" onclick="setCarePathDuration(6)" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition shadow-2xs">
+                                6 Months
+                            </button>
+                            <button type="button" onclick="setCarePathDuration(9)" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition shadow-2xs">
+                                9 Months
+                            </button>
+                            <button type="button" onclick="setCarePathDuration(12)" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-indigo-300 bg-indigo-50/50 hover:border-indigo-500 hover:bg-indigo-50 text-indigo-700 transition shadow-2xs">
+                                12 Months (Standard)
+                            </button>
+                            <button type="button" onclick="setCarePathDuration(18)" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition shadow-2xs">
+                                18 Months
+                            </button>
+                            <button type="button" onclick="setCarePathDuration(24)" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition shadow-2xs">
+                                24 Months
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3: When is the Next Appointment? -->
+                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
+                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                        3. When is the Next Appointment? <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Appointment Date</span>
+                            <input type="date" 
+                                   name="scheduled_date" 
+                                   id="carepathApptDate" 
+                                   value="{{ default_20day_date }}" 
+                                   required 
+                                   class="w-full text-xs font-semibold py-2.5 px-3.5 rounded-xl border border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                        </div>
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Appointment Time</span>
+                            <input type="time" 
+                                   name="scheduled_time" 
+                                   id="carepathApptTime" 
+                                   value="10:00" 
+                                   required 
+                                   class="w-full text-xs font-semibold py-2.5 px-3.5 rounded-xl border border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Quick Date Shortcuts:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="setCarePathDate('{{ default_10day_date }}')" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 transition shadow-2xs">
+                                +10 Days
+                            </button>
+                            <button type="button" onclick="setCarePathDate('{{ default_20day_date }}')" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 hover:border-emerald-500 transition shadow-2xs">
+                                <i class="fa-solid fa-check mr-1 text-[9px]"></i> +20 Days (Default Recommended)
+                            </button>
+                            <button type="button" onclick="setCarePathDate('{{ default_30day_date }}')" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 transition shadow-2xs">
+                                +30 Days
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions / Patient Note -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        Instructions / Notes for Patient (Optional)
+                    </label>
+                    <textarea name="instructions" 
+                              rows="2" 
+                              placeholder="e.g. Wear Tray #5 for 22 hrs/day. Bring all aligner cases to next visit." 
+                              class="w-full text-xs py-2.5 px-3.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"></textarea>
+                </div>
+
+                <!-- Action Submit Button -->
+                <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p class="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-bell text-blue-500"></i> Saves CarePath, schedules the visit, and dispatches a notification to {{ patient.full_name }}.
+                    </p>
+                    <button type="submit" class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-md shadow-blue-500/25 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Save CarePath & Notify Patient
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Scheduled In-Office Visits Section -->
+        <div class="pa-card p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-blue-600"></i> Scheduled Appointments & History
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Track upcoming and completed in-office appointments for {{ patient.full_name }}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="{% url 'doctor:appointment_create' %}?patient={{ patient.id }}" class="btn-secondary text-xs">
+                        <i class="fa-solid fa-plus mr-1"></i> Custom Visit
+                    </a>
+                </div>
+            </div>
+
+            {% if appointments %}
+            <div class="divide-y divide-slate-100">
+                {% for appt in appointments %}
+                <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl {% if appt.status == 'COMPLETED' %}bg-emerald-50 border border-emerald-100 text-emerald-700{% elif appt.status == 'UPCOMING' %}bg-purple-50 border border-purple-100 text-purple-700{% else %}bg-rose-50 border border-rose-100 text-rose-700{% endif %} flex flex-col items-center justify-center font-bold text-xs flex-shrink-0">
+                            <span class="text-[9px] uppercase font-semibold">{{ appt.scheduled_date|date:"M" }}</span>
+                            <span class="text-base font-black leading-none">{{ appt.scheduled_date|date:"d" }}</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">{{ appt.get_appointment_type_display }}</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                <i class="fa-regular fa-clock mr-1"></i>{{ appt.scheduled_time|time:"g:i A" }} ({{ appt.duration_minutes }} minutes)
+                            </p>
+                            {% if appt.instructions %}
+                            <p class="text-xs text-blue-700 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> {{ appt.instructions }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 self-end sm:self-auto">
+                        <span class="badge 
+                            {% if appt.status == 'UPCOMING' %}badge-pending
+                            {% elif appt.status == 'COMPLETED' %}badge-active
+                            {% else %}badge-emergency-high{% endif %}">
+                            {{ appt.get_status_display }}
+                        </span>
+                        {% if appt.status == 'UPCOMING' %}
+                        <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="COMPLETED">
+                            <button type="submit" class="btn-secondary py-1 px-2.5 text-xs text-emerald-700 hover:bg-emerald-50 font-bold">
+                                <i class="fa-solid fa-check mr-1"></i> Mark Completed
+                            </button>
+                        </form>
                         {% endif %}
                     </div>
                 </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="badge 
-                        {% if appt.status == 'UPCOMING' %}badge-pending
-                        {% elif appt.status == 'COMPLETED' %}badge-active
-                        {% else %}badge-emergency-high{% endif %}">
-                        {{ appt.get_status_display }}
-                    </span>
-                    {% if appt.status == 'UPCOMING' %}
-                    <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="status" value="COMPLETED">
-                        <button type="submit" class="btn-secondary py-1 px-2.5 text-xs text-emerald-700 hover:bg-emerald-50">
-                            Mark Completed
-                        </button>
-                    </form>
-                    {% endif %}
-                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            {% else %}
+            <div class="p-8 text-center text-xs text-slate-400">
+                No appointments booked yet. Use the CarePath Quick Update Form above to set the first appointment.
+            </div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="p-8 text-center text-xs text-slate-400">
-            No appointments booked yet. Click "+ 20-Day Follow-Up" or "Custom Visit" above.
-        </div>
-        {% endif %}
+
     </div>
     {% endif %}
 
@@ -1719,6 +1949,30 @@
             });
         } else {
             container.classList.add('hidden');
+        }
+    }
+
+    function setCarePathTreatment(val) {
+        const input = document.getElementById('carepathTreatmentInput');
+        if (input) {
+            input.value = val;
+            input.focus();
+        }
+    }
+
+    function setCarePathDuration(val) {
+        const input = document.getElementById('carepathDurationInput');
+        if (input) {
+            input.value = val;
+            input.focus();
+        }
+    }
+
+    function setCarePathDate(dateStr) {
+        const input = document.getElementById('carepathApptDate');
+        if (input) {
+            input.value = dateStr;
+            input.focus();
         }
     }
 </script>
