@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -81,10 +82,16 @@ class PatientRegistrationForm(forms.Form):
         })
     )
     mobile_number = forms.CharField(
-        max_length=50,
+        max_length=10,
+        min_length=10,
         widget=forms.TextInput(attrs={
             'class': 'form-input-patient',
-            'placeholder': '+1 (555) 987-6543'
+            'placeholder': '10-digit Mobile Number',
+            'maxlength': '10',
+            'pattern': '[0-9]{10}',
+            'inputmode': 'numeric',
+            'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
+            'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57);",
         })
     )
     parent_guardian_name = forms.CharField(
@@ -97,10 +104,15 @@ class PatientRegistrationForm(forms.Form):
     )
     parent_guardian_phone = forms.CharField(
         required=False,
-        max_length=50,
+        max_length=10,
         widget=forms.TextInput(attrs={
             'class': 'form-input-patient',
-            'placeholder': 'Parent Contact Phone'
+            'placeholder': '10-digit Parent Contact Phone',
+            'maxlength': '10',
+            'pattern': '[0-9]{10}',
+            'inputmode': 'numeric',
+            'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
+            'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57);",
         })
     )
     parent_guardian_email = forms.EmailField(
@@ -140,6 +152,24 @@ class PatientRegistrationForm(forms.Form):
         if User.objects.filter(username__iexact=email).exists() or User.objects.filter(email__iexact=email).exists():
             raise ValidationError("An account with this email address already exists. Please log in.")
         return email
+
+    def clean_mobile_number(self):
+        phone = (self.cleaned_data.get('mobile_number') or '').strip()
+        if not phone:
+            raise ValidationError("Mobile number is required.")
+        digits = re.sub(r'\D', '', phone)
+        if len(digits) != 10 or not digits.isdigit() or len(phone) != 10:
+            raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
+        return digits
+
+    def clean_parent_guardian_phone(self):
+        phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
+        if phone:
+            digits = re.sub(r'\D', '', phone)
+            if len(digits) != 10 or not digits.isdigit():
+                raise ValidationError("Parent phone must be exactly 10 digits (numbers only, no alphabets).")
+            return digits
+        return ''
 
     def clean(self):
         cleaned_data = super().clean()
@@ -314,11 +344,45 @@ class PatientProfileEditForm(forms.ModelForm):
         widgets = {
             'full_name': forms.TextInput(attrs={'class': 'form-input-patient'}),
             'patient_category': forms.Select(attrs={'class': 'form-input-patient'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-input-patient'}),
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-input-patient',
+                'placeholder': '10-digit Mobile Number',
+                'maxlength': '10',
+                'pattern': '[0-9]{10}',
+                'inputmode': 'numeric',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57);",
+            }),
             'date_of_birth': forms.DateInput(attrs={'class': 'form-input-patient', 'type': 'date'}),
             'parent_guardian_name': forms.TextInput(attrs={'class': 'form-input-patient', 'placeholder': 'Parent or Guardian Full Name'}),
-            'parent_guardian_phone': forms.TextInput(attrs={'class': 'form-input-patient', 'placeholder': 'Parent Contact Phone'}),
+            'parent_guardian_phone': forms.TextInput(attrs={
+                'class': 'form-input-patient',
+                'placeholder': '10-digit Parent Contact Phone',
+                'maxlength': '10',
+                'pattern': '[0-9]{10}',
+                'inputmode': 'numeric',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57);",
+            }),
             'parent_guardian_email': forms.EmailInput(attrs={'class': 'form-input-patient', 'placeholder': 'parent@example.com'}),
             'parent_guardian_relationship': forms.TextInput(attrs={'class': 'form-input-patient', 'placeholder': 'Father, Mother, Guardian'}),
         }
+
+    def clean_phone_number(self):
+        phone = (self.cleaned_data.get('phone_number') or '').strip()
+        if phone:
+            digits = re.sub(r'\D', '', phone)
+            if len(digits) != 10 or not digits.isdigit():
+                raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
+            return digits
+        return ''
+
+    def clean_parent_guardian_phone(self):
+        phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
+        if phone:
+            digits = re.sub(r'\D', '', phone)
+            if len(digits) != 10 or not digits.isdigit():
+                raise ValidationError("Parent phone must be exactly 10 digits (numbers only, no alphabets).")
+            return digits
+        return ''
 

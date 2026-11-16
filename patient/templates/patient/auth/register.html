@@ -135,6 +135,51 @@
                         }
                     }
                     document.addEventListener('DOMContentLoaded', toggleParentFields);
+
+                    // Global phone number strict validation: max 10 digits, numbers only, no alphabets
+                    (function initPhoneValidation() {
+                        function isPhoneField(el) {
+                            if (!el || el.tagName !== 'INPUT') return false;
+                            var name = (el.name || '').toLowerCase();
+                            var id = (el.id || '').toLowerCase();
+                            var type = (el.type || '').toLowerCase();
+                            return type === 'tel' || name.includes('phone') || name.includes('mobile') || id.includes('phone') || id.includes('mobile');
+                        }
+
+                        document.addEventListener('input', function(e) {
+                            if (isPhoneField(e.target)) {
+                                var digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                if (e.target.value !== digits) {
+                                    e.target.value = digits;
+                                }
+                            }
+                        }, true);
+
+                        document.addEventListener('keypress', function(e) {
+                            if (isPhoneField(e.target)) {
+                                if (!/\d/.test(e.key) && !e.ctrlKey && !e.metaKey && e.key.length === 1) {
+                                    e.preventDefault();
+                                }
+                                if (e.target.value.length >= 10 && e.target.selectionStart === e.target.selectionEnd && !e.ctrlKey && !e.metaKey && e.key.length === 1) {
+                                    e.preventDefault();
+                                }
+                            }
+                        }, true);
+
+                        document.addEventListener('paste', function(e) {
+                            if (isPhoneField(e.target)) {
+                                e.preventDefault();
+                                var text = (e.clipboardData || window.clipboardData).getData('text') || '';
+                                var digits = text.replace(/\D/g, '');
+                                var currentVal = e.target.value;
+                                var start = e.target.selectionStart || 0;
+                                var end = e.target.selectionEnd || 0;
+                                var newVal = (currentVal.slice(0, start) + digits + currentVal.slice(end)).replace(/\D/g, '').slice(0, 10);
+                                e.target.value = newVal;
+                                e.target.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        }, true);
+                    })();
                 </script>
 
                 <div class="pt-4 border-t border-slate-100 text-center">
