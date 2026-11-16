@@ -3322,7 +3322,6 @@ def download_apk_view(request):
         os.path.join(settings.BASE_DIR, 'doctor', 'static', 'app', 'PedoAlign.apk'),
         os.path.join(settings.BASE_DIR, 'assent', 'app', 'PedoAlign.apk'),
         os.path.join(settings.BASE_DIR, 'staticfiles', 'app', 'PedoAlign.apk'),
-        os.path.join(settings.BASE_DIR, 'scratch', 'PedoAlign.apk'),
     ]
 
     apk_file = None
