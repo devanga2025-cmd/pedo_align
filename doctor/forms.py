@@ -210,8 +210,8 @@ class PatientForm(forms.ModelForm):
             'appointment_frequency', 'treatment_duration_months', 'notes', 'profile_photo'
         ]
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'First Name'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Last Name'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'First Name', 'required': 'required'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Last Name', 'required': 'required'}),
             'email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'patient@example.com'}),
             'phone': forms.TextInput(attrs={
                 'class': 'form-input',
@@ -219,26 +219,28 @@ class PatientForm(forms.ModelForm):
                 'maxlength': '10',
                 'pattern': '[0-9]{10}',
                 'inputmode': 'numeric',
+                'required': 'required',
                 'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
                 'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57);",
             }),
-            'age': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': 'Age (years)', 'min': 1, 'max': 99}),
-            'gender': forms.Select(attrs={'class': 'form-input'}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-input', 'type': 'date'}),
-            'parent_guardian_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Parent or Legal Guardian'}),
+            'age': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': 'Age (years)', 'min': 1, 'max': 99, 'required': 'required'}),
+            'gender': forms.Select(attrs={'class': 'form-input', 'required': 'required'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-input', 'type': 'date', 'required': 'required'}),
+            'parent_guardian_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Parent or Legal Guardian Full Name', 'required': 'required'}),
             'parent_guardian_phone': forms.TextInput(attrs={
                 'class': 'form-input',
                 'placeholder': '10-digit Parent Contact Phone',
                 'maxlength': '10',
                 'pattern': '[0-9]{10}',
                 'inputmode': 'numeric',
+                'required': 'required',
                 'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);",
                 'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57);",
             }),
             'parent_guardian_email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'parent@example.com'}),
-            'parent_guardian_relationship': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Mother, Father, Guardian'}),
-            'treatment_duration_months': forms.NumberInput(attrs={'class': 'form-input', 'min': 1, 'max': 60}),
-            'notes': forms.Textarea(attrs={'class': 'form-input', 'rows': 2, 'placeholder': 'Chief complaint / primary reason for alignment...'}),
+            'parent_guardian_relationship': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Mother, Father, Guardian', 'required': 'required'}),
+            'treatment_duration_months': forms.NumberInput(attrs={'class': 'form-input', 'min': 1, 'max': 60, 'placeholder': '12', 'required': 'required'}),
+            'notes': forms.Textarea(attrs={'class': 'form-input', 'rows': 2, 'placeholder': 'Chief complaint / primary reason for alignment...', 'required': 'required'}),
         }
 
     def clean_patient_category(self):
@@ -250,20 +252,44 @@ class PatientForm(forms.ModelForm):
     def clean_phone(self):
         phone = (self.cleaned_data.get('phone') or '').strip()
         if not phone:
-            raise ValidationError("Patient mobile number is required.")
+            raise ValidationError("Patient mobile number is compulsory.")
         digits = re.sub(r'\D', '', phone)
         if len(digits) != 10 or not digits.isdigit():
             raise ValidationError("Patient mobile number must be exactly 10 digits (numbers only, no alphabets).")
         return digits
 
+    def clean_parent_guardian_name(self):
+        name = (self.cleaned_data.get('parent_guardian_name') or '').strip()
+        if not name:
+            raise ValidationError("Parent or guardian full name is compulsory.")
+        return name
+
+    def clean_parent_guardian_relationship(self):
+        rel = (self.cleaned_data.get('parent_guardian_relationship') or '').strip()
+        if not rel:
+            raise ValidationError("Parent / guardian relationship is compulsory.")
+        return rel
+
     def clean_parent_guardian_phone(self):
         phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
-        if phone:
-            digits = re.sub(r'\D', '', phone)
-            if len(digits) != 10 or not digits.isdigit():
-                raise ValidationError("Parent mobile number must be exactly 10 digits (numbers only, no alphabets).")
-            return digits
-        return ''
+        if not phone:
+            raise ValidationError("Parent / guardian mobile number is compulsory.")
+        digits = re.sub(r'\D', '', phone)
+        if len(digits) != 10 or not digits.isdigit():
+            raise ValidationError("Parent mobile number must be exactly 10 digits (numbers only, no alphabets).")
+        return digits
+
+    def clean_treatment_duration_months(self):
+        dur = self.cleaned_data.get('treatment_duration_months')
+        if not dur:
+            raise ValidationError("Expected treatment duration (months) is compulsory.")
+        return dur
+
+    def clean_notes(self):
+        notes = (self.cleaned_data.get('notes') or '').strip()
+        if not notes:
+            raise ValidationError("Chief complaint is compulsory.")
+        return notes
 
     def clean(self):
         cleaned_data = super().clean()

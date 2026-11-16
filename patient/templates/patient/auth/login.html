@@ -105,14 +105,16 @@
                         <button type="button" 
                                 id="subBtnCode"
                                 onclick="switchPatientSubTab('code')"
-                                class="py-1 px-2.5 rounded-lg transition-all {% if active_tab != 'password' %}bg-white text-blue-700 shadow-xs font-extrabold{% else %}text-slate-500{% endif %}">
-                            🔑 Joining Code
+                                class="py-1 px-2.5 rounded-lg transition-all flex items-center gap-1.5 {% if active_tab != 'password' %}bg-white text-blue-700 shadow-xs font-extrabold{% else %}text-slate-500{% endif %}">
+                            <i class="fa-solid fa-key text-[11px] text-blue-600"></i>
+                            <span>Joining Code</span>
                         </button>
                         <button type="button" 
                                 id="subBtnPwd"
                                 onclick="switchPatientSubTab('password')"
-                                class="py-1 px-2.5 rounded-lg transition-all {% if active_tab == 'password' %}bg-white text-blue-700 shadow-xs font-extrabold{% else %}text-slate-500{% endif %}">
-                            🔒 Password
+                                class="py-1 px-2.5 rounded-lg transition-all flex items-center gap-1.5 {% if active_tab == 'password' %}bg-white text-blue-700 shadow-xs font-extrabold{% else %}text-slate-500{% endif %}">
+                            <i class="fa-solid fa-lock text-[11px] text-blue-600"></i>
+                            <span>Password</span>
                         </button>
                     </div>
                 </div>

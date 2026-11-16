@@ -114,4 +114,21 @@ body {
     scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
 }
 
+/* Ensure no element or card causes mobile horizontal scroll or blowout */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.pa-patient-card, .patient-card, .pa-card {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+
 

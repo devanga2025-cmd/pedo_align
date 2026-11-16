@@ -66,6 +66,9 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     border: 1px solid var(--card-border);
     border-radius: 1rem;
     box-shadow: var(--card-shadow);
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     transition: box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
                 transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.25s ease;
