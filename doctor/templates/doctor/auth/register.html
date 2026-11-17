@@ -111,12 +111,12 @@
                         <div class="relative">
                             {{ form.password }}
                             <button type="button"
-                                    onclick="togglePasswordVisibility('id_password', 'eye_doctor_reg_pwd')"
-                                    data-toggle-password="id_password"
-                                    class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                    onclick="togglePasswordVisibility('id_password', 'eye_doctor_reg_pwd', event); return false;"
+                                    class="password-toggle-btn absolute inset-y-0 right-0 w-10 flex items-center justify-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors cursor-pointer z-10"
                                     tabindex="-1"
+                                    title="Show password"
                                     aria-label="Toggle password visibility">
-                                <i id="eye_doctor_reg_pwd" class="fa-solid fa-eye text-xs"></i>
+                                <i id="eye_doctor_reg_pwd" class="fa-solid fa-eye text-xs pointer-events-none"></i>
                             </button>
                         </div>
                     </div>
@@ -126,12 +126,12 @@
                         <div class="relative">
                             {{ form.confirm_password }}
                             <button type="button"
-                                    onclick="togglePasswordVisibility('id_confirm_password', 'eye_doctor_reg_confirm')"
-                                    data-toggle-password="id_confirm_password"
-                                    class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                    onclick="togglePasswordVisibility('id_confirm_password', 'eye_doctor_reg_confirm', event); return false;"
+                                    class="password-toggle-btn absolute inset-y-0 right-0 w-10 flex items-center justify-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors cursor-pointer z-10"
                                     tabindex="-1"
+                                    title="Show password"
                                     aria-label="Toggle password visibility">
-                                <i id="eye_doctor_reg_confirm" class="fa-solid fa-eye text-xs"></i>
+                                <i id="eye_doctor_reg_confirm" class="fa-solid fa-eye text-xs pointer-events-none"></i>
                             </button>
                         </div>
                     </div>

@@ -387,69 +387,76 @@
         })();
 
         // Reusable Password Visibility Toggle Helper
-        function togglePasswordVisibility(targetInputOrId, iconElemOrId) {
-            const input = typeof targetInputOrId === 'string' ? document.getElementById(targetInputOrId) : targetInputOrId;
-            let icon = null;
+        function togglePasswordVisibility(targetInputOrId, iconElemOrId, event) {
+            if (event) {
+                if (typeof event.preventDefault === 'function') event.preventDefault();
+                if (typeof event.stopPropagation === 'function') event.stopPropagation();
+            }
+
+            var input = typeof targetInputOrId === 'string' ? document.getElementById(targetInputOrId) : targetInputOrId;
+            if (!input) return;
+
+            var isPassword = (input.type === 'password') || (input.getAttribute('type') === 'password');
+            var nextType = isPassword ? 'text' : 'password';
+
+            try {
+                input.type = nextType;
+            } catch (e) {}
+            try {
+                input.setAttribute('type', nextType);
+            } catch (e) {}
+
+            var icon = null;
             if (iconElemOrId) {
                 icon = typeof iconElemOrId === 'string' ? document.getElementById(iconElemOrId) : iconElemOrId;
             }
-            if (!input) return;
-
-            const isPassword = input.getAttribute('type') === 'password';
-            input.setAttribute('type', isPassword ? 'text' : 'password');
-
             if (!icon) {
-                const parent = input.closest('.relative') || input.parentElement;
-                if (parent) {
-                    icon = parent.querySelector('.fa-eye, .fa-eye-slash');
+                var container = input.closest('.relative') || input.parentElement;
+                if (container) {
+                    icon = container.querySelector('.fa-eye, .fa-eye-slash');
                 }
             }
 
             if (icon) {
-                if (isPassword) {
+                if (nextType === 'text') {
                     icon.classList.remove('fa-eye');
                     icon.classList.add('fa-eye-slash');
+                    if (icon.parentElement && icon.parentElement.tagName === 'BUTTON') {
+                        icon.parentElement.setAttribute('title', 'Hide password');
+                        icon.parentElement.setAttribute('aria-label', 'Hide password');
+                    }
                 } else {
                     icon.classList.remove('fa-eye-slash');
                     icon.classList.add('fa-eye');
+                    if (icon.parentElement && icon.parentElement.tagName === 'BUTTON') {
+                        icon.parentElement.setAttribute('title', 'Show password');
+                        icon.parentElement.setAttribute('aria-label', 'Show password');
+                    }
                 }
             }
         }
 
-        // Global click listener for password toggle buttons
+        // Global click listener for password toggle buttons (avoids double execution if onclick is present)
         document.addEventListener('click', function(e) {
-            const btn = e.target.closest('[data-toggle-password], .password-toggle-btn');
+            var btn = e.target.closest('[data-toggle-password], .password-toggle-btn');
             if (!btn) return;
+            if (btn.hasAttribute('onclick')) return; // Avoid double invocation
+
             e.preventDefault();
             e.stopPropagation();
 
-            let targetInput = null;
-            const targetId = btn.getAttribute('data-toggle-password');
-            if (targetId) {
-                targetInput = document.getElementById(targetId);
-            }
+            var targetId = btn.getAttribute('data-toggle-password');
+            var targetInput = targetId ? document.getElementById(targetId) : null;
             if (!targetInput) {
-                const container = btn.closest('.relative') || btn.parentElement;
+                var container = btn.closest('.relative') || btn.parentElement;
                 if (container) {
-                    targetInput = container.querySelector('input[type="password"], input[type="text"][data-is-password="true"]');
+                    targetInput = container.querySelector('input');
                 }
             }
             if (!targetInput) return;
 
-            const isPassword = targetInput.getAttribute('type') === 'password';
-            targetInput.setAttribute('type', isPassword ? 'text' : 'password');
-            targetInput.setAttribute('data-is-password', 'true');
-
-            const icon = btn.querySelector('.fa-eye, .fa-eye-slash') || (btn.classList.contains('fa-eye') || btn.classList.contains('fa-eye-slash') ? btn : null);
-            if (icon) {
-                if (isPassword) {
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            }
+            var icon = btn.querySelector('.fa-eye, .fa-eye-slash') || btn;
+            togglePasswordVisibility(targetInput, icon, e);
         });
     </script>
 
