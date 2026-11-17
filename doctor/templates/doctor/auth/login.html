@@ -79,7 +79,15 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                             <i class="fa-solid fa-lock text-xs"></i>
                         </div>
-                        <input type="password" name="password" required placeholder="••••••••" class="form-input pl-9 text-xs">
+                        <input type="password" name="password" id="id_doctor_login_password" required placeholder="••••••••" class="form-input pl-9 pr-10 text-xs">
+                        <button type="button"
+                                onclick="togglePasswordVisibility('id_doctor_login_password', 'eye_doctor_login_password')"
+                                data-toggle-password="id_doctor_login_password"
+                                class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility">
+                            <i id="eye_doctor_login_password" class="fa-solid fa-eye text-xs"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -144,5 +152,6 @@
     </div>
 
     {% include 'doctor/includes/pwa_install_modal.html' %}
+    {% include 'doctor/includes/password_toggle_script.html' %}
 </body>
 </html>

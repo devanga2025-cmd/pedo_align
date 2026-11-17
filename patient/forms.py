@@ -43,8 +43,9 @@ class PatientLoginForm(forms.Form):
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
-            'class': 'form-input-patient',
-            'placeholder': '••••••••'
+            'class': 'form-input-patient pr-10',
+            'placeholder': '••••••••',
+            'id': 'id_patient_login_pwd'
         })
     )
     remember_me = forms.BooleanField(
@@ -132,14 +133,16 @@ class PatientRegistrationForm(forms.Form):
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
-            'class': 'form-input-patient',
-            'placeholder': 'Create password (min 8 chars)'
+            'class': 'form-input-patient pr-10',
+            'placeholder': 'Create password (min 8 chars)',
+            'id': 'id_password'
         })
     )
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={
-            'class': 'form-input-patient',
-            'placeholder': 'Re-enter password'
+            'class': 'form-input-patient pr-10',
+            'placeholder': 'Re-enter password',
+            'id': 'id_confirm_password'
         })
     )
 

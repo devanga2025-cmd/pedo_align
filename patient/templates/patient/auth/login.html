@@ -235,10 +235,19 @@
                                     <i class="fa-solid fa-lock text-xs"></i>
                                 </div>
                                 <input type="password" 
+                                       id="id_patient_login_pwd"
                                        name="password" 
                                        required 
                                        placeholder="••••••••" 
-                                       class="form-input-patient pl-9 text-xs">
+                                       class="form-input-patient pl-9 pr-10 text-xs">
+                                <button type="button"
+                                        onclick="togglePasswordVisibility('id_patient_login_pwd', 'eye_patient_login_pwd')"
+                                        data-toggle-password="id_patient_login_pwd"
+                                        class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                        tabindex="-1"
+                                        aria-label="Toggle password visibility">
+                                    <i id="eye_patient_login_pwd" class="fa-solid fa-eye text-xs"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -302,10 +311,19 @@
                                 <i class="fa-solid fa-lock text-xs"></i>
                             </div>
                             <input type="password" 
+                                   id="id_doctor_quick_password"
                                    name="password" 
                                    required 
                                    placeholder="••••••••" 
-                                   class="form-input-patient pl-9 text-xs">
+                                   class="form-input-patient pl-9 pr-10 text-xs">
+                            <button type="button"
+                                    onclick="togglePasswordVisibility('id_doctor_quick_password', 'eye_doctor_quick_pwd')"
+                                    data-toggle-password="id_doctor_quick_password"
+                                    class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                    tabindex="-1"
+                                    aria-label="Toggle password visibility">
+                                <i id="eye_doctor_quick_pwd" class="fa-solid fa-eye text-xs"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -402,5 +420,6 @@
             }
         }
     </script>
+    {% include 'doctor/includes/password_toggle_script.html' %}
 </body>
 </html>

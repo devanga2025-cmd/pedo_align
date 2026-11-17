@@ -191,17 +191,47 @@
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Current Password *</label>
-                <input type="password" name="old_password" required placeholder="••••••••" class="form-input">
+                <div class="relative">
+                    <input type="password" name="old_password" id="id_doc_settings_old_pwd" required placeholder="••••••••" class="form-input pr-10">
+                    <button type="button"
+                            onclick="togglePasswordVisibility('id_doc_settings_old_pwd', 'eye_doc_settings_old')"
+                            data-toggle-password="id_doc_settings_old_pwd"
+                            class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                            tabindex="-1"
+                            aria-label="Toggle password visibility">
+                        <i id="eye_doc_settings_old" class="fa-solid fa-eye text-xs"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">New Password (min 8 chars) *</label>
-                    <input type="password" name="new_password" required placeholder="••••••••" class="form-input">
+                    <div class="relative">
+                        <input type="password" name="new_password" id="id_doc_settings_new_pwd" required placeholder="••••••••" class="form-input pr-10">
+                        <button type="button"
+                                onclick="togglePasswordVisibility('id_doc_settings_new_pwd', 'eye_doc_settings_new')"
+                                data-toggle-password="id_doc_settings_new_pwd"
+                                class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility">
+                            <i id="eye_doc_settings_new" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Confirm New Password *</label>
-                    <input type="password" name="confirm_password" required placeholder="••••••••" class="form-input">
+                    <div class="relative">
+                        <input type="password" name="confirm_password" id="id_doc_settings_confirm_pwd" required placeholder="••••••••" class="form-input pr-10">
+                        <button type="button"
+                                onclick="togglePasswordVisibility('id_doc_settings_confirm_pwd', 'eye_doc_settings_confirm')"
+                                data-toggle-password="id_doc_settings_confirm_pwd"
+                                class="password-toggle-btn absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility">
+                            <i id="eye_doc_settings_confirm" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 

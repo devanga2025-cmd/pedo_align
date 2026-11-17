@@ -385,6 +385,72 @@
                 }
             }, true);
         })();
+
+        // Reusable Password Visibility Toggle Helper
+        function togglePasswordVisibility(targetInputOrId, iconElemOrId) {
+            const input = typeof targetInputOrId === 'string' ? document.getElementById(targetInputOrId) : targetInputOrId;
+            let icon = null;
+            if (iconElemOrId) {
+                icon = typeof iconElemOrId === 'string' ? document.getElementById(iconElemOrId) : iconElemOrId;
+            }
+            if (!input) return;
+
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+
+            if (!icon) {
+                const parent = input.closest('.relative') || input.parentElement;
+                if (parent) {
+                    icon = parent.querySelector('.fa-eye, .fa-eye-slash');
+                }
+            }
+
+            if (icon) {
+                if (isPassword) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
+
+        // Global click listener for password toggle buttons
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-toggle-password], .password-toggle-btn');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            let targetInput = null;
+            const targetId = btn.getAttribute('data-toggle-password');
+            if (targetId) {
+                targetInput = document.getElementById(targetId);
+            }
+            if (!targetInput) {
+                const container = btn.closest('.relative') || btn.parentElement;
+                if (container) {
+                    targetInput = container.querySelector('input[type="password"], input[type="text"][data-is-password="true"]');
+                }
+            }
+            if (!targetInput) return;
+
+            const isPassword = targetInput.getAttribute('type') === 'password';
+            targetInput.setAttribute('type', isPassword ? 'text' : 'password');
+            targetInput.setAttribute('data-is-password', 'true');
+
+            const icon = btn.querySelector('.fa-eye, .fa-eye-slash') || (btn.classList.contains('fa-eye') || btn.classList.contains('fa-eye-slash') ? btn : null);
+            if (icon) {
+                if (isPassword) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        });
     </script>
 
     {% include 'doctor/includes/pwa_install_modal.html' %}

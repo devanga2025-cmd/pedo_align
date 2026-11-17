@@ -59,10 +59,10 @@ class DoctorRegistrationForm(forms.Form):
         widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*'})
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Create a secure password (min 8 chars)'})
+        widget=forms.PasswordInput(attrs={'class': 'form-input pr-10', 'placeholder': 'Create a secure password (min 8 chars)', 'id': 'id_password'})
     )
     confirm_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Confirm your password'})
+        widget=forms.PasswordInput(attrs={'class': 'form-input pr-10', 'placeholder': 'Confirm your password', 'id': 'id_confirm_password'})
     )
 
     def clean_email(self):
