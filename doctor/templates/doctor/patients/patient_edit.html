@@ -5,86 +5,86 @@
 {% block breadcrumb %}<a href="{% url 'doctor:patient_list' %}" class="hover:underline">Patients</a> / <a href="{% url 'doctor:patient_detail' patient.id %}" class="hover:underline">{{ patient.full_name }}</a> / Edit{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-5">
 
-    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-user-pen text-blue-600"></i> Edit Patient Information
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-user-pen text-blue-600 text-sm"></i> Edit Patient Record
             </h1>
             <p class="text-xs text-slate-500 mt-1">
-                Updating profile and treatment parameters for {{ patient.full_name }} ({{ patient.patient_id }})
+                Updating profile and clinical parameters for {{ patient.full_name }} ({{ patient.patient_id }})
             </p>
         </div>
         <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs">
-            <i class="fa-solid fa-arrow-left"></i> Cancel & Return
+            <i class="fa-solid fa-arrow-left text-[11px]"></i> Cancel & Return
         </a>
     </div>
 
     {% if form.errors %}
-    <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
-        <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Please fix form errors:</p>
+    <div class="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+        <p class="font-semibold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Please fix form errors:</p>
         {% for field in form %}
             {% for error in field.errors %}
-                <p class="pl-4">• <strong>{{ field.label }}:</strong> {{ error }}</p>
+                <p class="pl-4">&bull; <strong>{{ field.label }}:</strong> {{ error }}</p>
             {% endfor %}
         {% endfor %}
     </div>
     {% endif %}
 
-    <form method="POST" enctype="multipart/form-data" class="pa-card p-6 sm:p-8 space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="pa-card p-5 sm:p-6 space-y-5 bg-white">
         {% csrf_token %}
 
         <!-- Personal Info -->
         <div>
-            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-id-card text-blue-600"></i> Personal Information
+            <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-id-card text-blue-600 text-xs"></i> Personal Information
             </h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient Category *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Patient Category *</label>
                     {{ form.patient_category }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">First Name *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">First Name *</label>
                     {{ form.first_name }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Last Name *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Last Name *</label>
                     {{ form.last_name }}
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                    <label class="block text-xs font-medium text-slate-700 mb-1 flex items-center justify-between">
                         <span>Date of Birth</span>
-                        <span class="text-[10px] text-blue-600 font-semibold"><i class="fa-solid fa-calculator mr-1"></i>Auto-calculates Age</span>
+                        <span class="text-[10px] text-blue-600 font-medium"><i class="fa-solid fa-calculator mr-1"></i>Auto Age</span>
                     </label>
                     {{ form.date_of_birth }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Age *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Age *</label>
                     {{ form.age }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Gender *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Gender *</label>
                     {{ form.gender }}
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Email</label>
                     {{ form.email }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Phone *</label>
                     {{ form.phone }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Prescribed Visit Frequency *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Prescribed Frequency *</label>
                     {{ form.appointment_frequency }}
                 </div>
             </div>
@@ -92,28 +92,28 @@
 
         <!-- Guardian Info -->
         <div class="pt-2">
-            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-hands-holding-child text-blue-600"></i> Parent / Guardian Details (For Child Patients)
+            <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-hands-holding-child text-blue-600 text-xs"></i> Parent / Guardian Details
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Name</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Guardian Name</label>
                     {{ form.parent_guardian_name }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Relationship</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Relationship</label>
                     {{ form.parent_guardian_relationship }}
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Phone</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Guardian Phone</label>
                     {{ form.parent_guardian_phone }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Guardian Email</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Guardian Email</label>
                     {{ form.parent_guardian_email }}
                 </div>
             </div>
@@ -121,40 +121,40 @@
 
         <!-- Treatment Status & Duration -->
         <div class="pt-2">
-            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-tooth text-blue-600"></i> Treatment Status
+            <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-tooth text-blue-600 text-xs"></i> Treatment Status
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Status *</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Treatment Status *</label>
                     {{ form.treatment_status }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Treatment Start Date</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Treatment Start Date</label>
                     {{ form.treatment_start_date }}
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Duration (Months)</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Duration (Months)</label>
                     {{ form.treatment_duration_months }}
                 </div>
             </div>
 
-            <div class="mt-4">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Chief Complaint</label>
+            <div class="mt-3">
+                <label class="block text-xs font-medium text-slate-700 mb-1">Chief Complaint</label>
                 {{ form.notes }}
             </div>
 
-            <div class="mt-4">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Profile Photo</label>
+            <div class="mt-3">
+                <label class="block text-xs font-medium text-slate-700 mb-1">Profile Photo</label>
                 {{ form.profile_photo }}
             </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
             <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs">Cancel</a>
-            <button type="submit" class="btn-primary text-xs shadow-md">
-                <i class="fa-solid fa-save mr-1"></i> Save Changes
+            <button type="submit" class="btn-primary text-xs">
+                <i class="fa-solid fa-check text-xs mr-1"></i> Save Changes
             </button>
         </div>
 
@@ -181,8 +181,6 @@
                 }
                 if (age >= 0) {
                     ageInput.value = age;
-                    ageInput.classList.add('ring-2', 'ring-emerald-400');
-                    setTimeout(() => ageInput.classList.remove('ring-2', 'ring-emerald-400'), 1500);
                 }
             }
             dobInput.addEventListener('change', calculateAge);

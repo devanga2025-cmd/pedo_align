@@ -8,10 +8,10 @@
 <div class="space-y-6">
 
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> Patient Emergency & Discomfort Alerts
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-rose-600 text-sm"></i> Patient Emergency & Discomfort Alerts
             </h1>
             <p class="text-xs text-slate-500 mt-1">
                 Real-time patient reports for tooth pain, aligner discomfort, broken or loose aligners
@@ -19,43 +19,43 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <a href="{% url 'doctor:emergency_create' %}" class="btn-primary text-xs bg-rose-600 hover:bg-rose-700 shadow-md">
-                <i class="fa-solid fa-plus mr-1"></i> Log Patient Issue
+            <a href="{% url 'doctor:emergency_create' %}" class="btn-primary text-xs bg-rose-600 hover:bg-rose-700">
+                <i class="fa-solid fa-plus text-xs mr-1"></i> Log Patient Issue
             </a>
         </div>
     </div>
 
     <!-- 3 Status KPI Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="pa-card p-4 border-l-4 border-rose-500 flex items-center justify-between">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <div class="pa-card p-4 bg-white flex items-center justify-between">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Unresolved Issues</span>
-                <div class="text-2xl font-black text-rose-700 mt-1">{{ pending_count }}</div>
-                <p class="text-[11px] text-rose-600 mt-0.5">Awaiting clinical guidance</p>
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Unresolved Issues</span>
+                <div class="text-xl font-bold text-rose-600 mt-0.5">{{ pending_count }}</div>
+                <p class="text-[11px] text-slate-500 mt-0.5">Awaiting clinical guidance</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+            <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-bell-exclamation"></i>
             </div>
         </div>
 
-        <div class="pa-card p-4 border-l-4 border-amber-500 flex items-center justify-between">
+        <div class="pa-card p-4 bg-white flex items-center justify-between">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">In Review / Contacted</span>
-                <div class="text-2xl font-black text-amber-700 mt-1">{{ in_review_count }}</div>
-                <p class="text-[11px] text-slate-500 mt-0.5">Doctor responded / in-clinic check</p>
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">In Review / Contacted</span>
+                <div class="text-xl font-bold text-amber-600 mt-0.5">{{ in_review_count }}</div>
+                <p class="text-[11px] text-slate-500 mt-0.5">Doctor responded</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+            <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-comments"></i>
             </div>
         </div>
 
-        <div class="pa-card p-4 border-l-4 border-emerald-500 flex items-center justify-between">
+        <div class="pa-card p-4 bg-white flex items-center justify-between">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Resolved Cases</span>
-                <div class="text-2xl font-black text-emerald-700 mt-1">{{ resolved_count }}</div>
-                <p class="text-[11px] text-emerald-600 mt-0.5">Successfully addressed</p>
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Resolved Cases</span>
+                <div class="text-xl font-bold text-emerald-600 mt-0.5">{{ resolved_count }}</div>
+                <p class="text-[11px] text-slate-500 mt-0.5">Successfully addressed</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+            <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-shield-check"></i>
             </div>
         </div>

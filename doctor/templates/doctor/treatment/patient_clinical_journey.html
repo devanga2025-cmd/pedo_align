@@ -15,7 +15,7 @@ Clinical Visit Journey
     <div class="pa-card p-6 border-blue-200/80 bg-gradient-to-r from-white via-blue-50/30 to-sky-50/40 shadow-sm">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div class="flex items-start sm:items-center gap-4 min-w-0">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-2xl flex items-center justify-center shadow-md flex-shrink-0">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-2xl flex items-center justify-center shadow-md flex-shrink-0">
                     {{ patient.first_name|first }}{{ patient.last_name|first }}
                 </div>
                 <div class="min-w-0 space-y-1">
@@ -71,7 +71,7 @@ Clinical Visit Journey
             
             <!-- Step 1 Tab Button -->
             <button type="button" onclick="switchStep('1')" id="stepBtn1" 
-                    class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '1' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                    class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '1' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '1' %}bg-white text-blue-700{% elif has_3_preop %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {% if has_3_preop %}<i class="fa-solid fa-check"></i>{% else %}1{% endif %}
@@ -90,7 +90,7 @@ Clinical Visit Journey
 
             <!-- Step 2 Tab Button -->
             <button type="button" onclick="switchStep('2')" id="stepBtn2"
-                    class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '2' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                    class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '2' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '2' %}bg-white text-blue-700{% elif has_radiograph %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {% if has_radiograph %}<i class="fa-solid fa-check"></i>{% else %}2{% endif %}
@@ -109,7 +109,7 @@ Clinical Visit Journey
 
             <!-- Step 3 Tab Button -->
             <button type="button" onclick="switchStep('3')" id="stepBtn3"
-                    class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                    class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '3' %}bg-white text-blue-700{% elif has_next_appt %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {% if has_next_appt %}<i class="fa-solid fa-check"></i>{% else %}3{% endif %}
@@ -128,7 +128,7 @@ Clinical Visit Journey
 
             <!-- Step 4 Link / Status Tab Button -->
             <a href="{% url 'doctor:step4_operation' patient.id %}" id="stepBtn4"
-               class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if has_3_preop and has_radiograph and has_next_appt %}bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-indigo-300 text-indigo-950 font-bold{% else %}bg-slate-50 border-slate-200 text-slate-400 pointer-events-none opacity-60{% endif %}">
+               class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if has_3_preop and has_radiograph and has_next_appt %}bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-indigo-300 text-indigo-950 font-bold{% else %}bg-slate-50 border-slate-200 text-slate-400 pointer-events-none opacity-60{% endif %}">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-600 text-white shadow-xs{% else %}bg-slate-200 text-slate-500{% endif %}">
                         {% if patient.treatment_media.exists %}<i class="fa-solid fa-check"></i>{% else %}4{% endif %}
@@ -158,7 +158,7 @@ Clinical Visit Journey
             <!-- Header Banner -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
                         <i class="fa-solid fa-camera"></i>
                     </div>
                     <div>
@@ -185,7 +185,7 @@ Clinical Visit Journey
                 <div id="preopSlotsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     
                     <!-- Slot 1: Frontal View -->
-                    <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone1">
+                    <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone1">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">1</span>
@@ -215,7 +215,7 @@ Clinical Visit Journey
                     </div>
 
                     <!-- Slot 2: Upper Arch View -->
-                    <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone2">
+                    <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone2">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">2</span>
@@ -245,7 +245,7 @@ Clinical Visit Journey
                     </div>
 
                     <!-- Slot 3: Lower Arch / Lateral View -->
-                    <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone3">
+                    <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone3">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">3</span>
@@ -277,7 +277,7 @@ Clinical Visit Journey
                     <!-- Slot 4+: Dynamic Slots will be inserted right here before addSlotCard -->
 
                     <!-- Dedicated "+" Symbol Card to Add More Photo Slots -->
-                    <div id="addSlotCard" class="p-5 rounded-2xl border-2 border-dashed border-sky-300 hover:border-blue-500 bg-sky-50/40 hover:bg-sky-50/80 transition flex flex-col items-center justify-center text-center cursor-pointer group min-h-[290px]" onclick="addExtraPhotoSlot()" title="Click to add another preoperative photo angle">
+                    <div id="addSlotCard" class="p-5 rounded-xl border-2 border-dashed border-sky-300 hover:border-blue-500 bg-sky-50/40 hover:bg-sky-50/80 transition flex flex-col items-center justify-center text-center cursor-pointer group min-h-[290px]" onclick="addExtraPhotoSlot()" title="Click to add another preoperative photo angle">
                         <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center text-2xl font-black shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-plus"></i>
                         </div>
@@ -326,7 +326,7 @@ Clinical Visit Journey
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {% for p in preop_photos %}
-                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                     <div class="h-44 w-full rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center relative group">
                         <img src="{{ p.photo.url }}" alt="{{ p.title }}" class="w-full h-full object-contain">
                         <a href="{{ p.photo.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/70 hover:bg-black text-white text-[10px] font-bold transition">
@@ -352,7 +352,7 @@ Clinical Visit Journey
                 {% endfor %}
 
                 <!-- Add Extra Photo in Gallery Card -->
-                <div class="p-4 bg-sky-50/40 hover:bg-sky-50 rounded-2xl border-2 border-dashed border-sky-300 hover:border-blue-500 flex flex-col items-center justify-center text-center transition group cursor-pointer min-h-[220px]" onclick="openAddSinglePreopModal()">
+                <div class="p-4 bg-sky-50/40 hover:bg-sky-50 rounded-xl border-2 border-dashed border-sky-300 hover:border-blue-500 flex flex-col items-center justify-center text-center transition group cursor-pointer min-h-[220px]" onclick="openAddSinglePreopModal()">
                     <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-sm group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-plus"></i>
                     </div>
@@ -365,7 +365,7 @@ Clinical Visit Journey
 
         <!-- Modal for Adding an Extra Preoperative Photo into Gallery -->
         <div id="addSinglePreopModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg space-y-4 border border-slate-100 animate-in fade-in zoom-in duration-200">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
@@ -421,7 +421,7 @@ Clinical Visit Journey
             <!-- Header Banner -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-sm">
                         <i class="fa-solid fa-x-ray"></i>
                     </div>
                     <div>
@@ -453,7 +453,7 @@ Clinical Visit Journey
                                 Select Radiograph Type *
                             </label>
                             <div class="grid grid-cols-2 gap-3">
-                                <label class="p-4 rounded-2xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:text-blue-950 border-slate-200">
+                                <label class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:text-blue-950 border-slate-200">
                                     <input type="radio" name="radiograph_type" value="OPG" checked class="text-blue-600 focus:ring-blue-500">
                                     <div>
                                         <div class="text-xs font-black">OPG</div>
@@ -461,7 +461,7 @@ Clinical Visit Journey
                                     </div>
                                 </label>
 
-                                <label class="p-4 rounded-2xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-cyan-50/50 has-[:checked]:border-cyan-600 has-[:checked]:bg-cyan-50/70 has-[:checked]:text-cyan-950 border-slate-200">
+                                <label class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-cyan-50/50 has-[:checked]:border-cyan-600 has-[:checked]:bg-cyan-50/70 has-[:checked]:text-cyan-950 border-slate-200">
                                     <input type="radio" name="radiograph_type" value="LATERAL_CEPHALOGRAPH" class="text-cyan-600 focus:ring-cyan-500">
                                     <div>
                                         <div class="text-xs font-black">LATERAL CEPHALOGRAPH</div>
@@ -472,7 +472,7 @@ Clinical Visit Journey
                         </div>
 
                         <!-- Image File & Paste Zone -->
-                        <div class="p-4 rounded-2xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2 cursor-pointer" onclick="document.getElementById('radio_file_input').click()">
+                        <div class="p-4 rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2 cursor-pointer" onclick="document.getElementById('radio_file_input').click()">
                             <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-600"></i>
                             <p class="text-xs font-bold text-slate-800">Upload or Paste X-Ray Image *</p>
                             <p class="text-[11px] text-slate-500">Click to browse or press <strong>Ctrl+V</strong> to paste from clipboard</p>
@@ -489,7 +489,7 @@ Clinical Visit Journey
                     <!-- Right: Preview & Clinical Description -->
                     <div class="space-y-4">
                         <!-- Preview Box -->
-                        <div class="h-56 w-full rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden relative shadow-inner">
+                        <div class="h-56 w-full rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden relative shadow-inner">
                             <img id="radio_preview" class="hidden w-full h-full object-contain p-2">
                             <div id="radio_placeholder" class="text-center p-4 text-slate-500">
                                 <i class="fa-solid fa-x-ray text-4xl mb-2 text-slate-700"></i>
@@ -549,7 +549,7 @@ Clinical Visit Journey
                     {% if opg_radiographs %}
                     <div class="space-y-3">
                         {% for r in opg_radiographs %}
-                        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                             <div class="h-44 w-full rounded-xl overflow-hidden bg-black flex items-center justify-center relative group">
                                 <img src="{{ r.image.url }}" alt="OPG" class="w-full h-full object-contain">
                                 <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
@@ -578,7 +578,7 @@ Clinical Visit Journey
                         {% endfor %}
                     </div>
                     {% else %}
-                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                    <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
                         No OPG panoramic radiograph uploaded yet.
                     </div>
                     {% endif %}
@@ -595,7 +595,7 @@ Clinical Visit Journey
                     {% if ceph_radiographs %}
                     <div class="space-y-3">
                         {% for r in ceph_radiographs %}
-                        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                             <div class="h-44 w-full rounded-xl overflow-hidden bg-black flex items-center justify-center relative group">
                                 <img src="{{ r.image.url }}" alt="Lateral Cephalograph" class="w-full h-full object-contain">
                                 <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
@@ -624,7 +624,7 @@ Clinical Visit Journey
                         {% endfor %}
                     </div>
                     {% else %}
-                    <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                    <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
                         No Lateral Cephalograph radiograph uploaded yet.
                     </div>
                     {% endif %}
@@ -646,7 +646,7 @@ Clinical Visit Journey
             <!-- Header Banner -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm">
                         <i class="fa-solid fa-calendar-check"></i>
                     </div>
                     <div>
@@ -740,7 +740,7 @@ Clinical Visit Journey
 
             <div class="space-y-3">
                 {% for appt in upcoming_appointments %}
-                <div class="p-4 rounded-2xl bg-purple-50/50 border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-extrabold text-purple-950">{{ appt.get_appointment_type_display }}</span>
@@ -768,7 +768,7 @@ Clinical Visit Journey
 
         <!-- STEP 4 UNLOCKED BANNER (All 3 Intake Steps Completed) -->
         {% if has_3_preop and has_radiograph and has_next_appt %}
-        <div class="p-6 rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="p-6 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white uppercase tracking-wider backdrop-blur-xs">
@@ -784,7 +784,7 @@ Clinical Visit Journey
                 </p>
             </div>
             <a href="{% url 'doctor:step4_operation' patient.id %}"
-               class="px-6 py-3 rounded-2xl bg-white text-blue-700 hover:bg-blue-50 font-black text-xs shadow-lg transition flex items-center justify-center gap-2 whitespace-nowrap self-start md:self-auto">
+               class="px-6 py-3 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-black text-xs shadow-lg transition flex items-center justify-center gap-2 whitespace-nowrap self-start md:self-auto">
                 <i class="fa-solid fa-bullseye text-blue-600"></i> Open Step 4 Operation & Diagnosis &rarr;
             </a>
         </div>
@@ -809,9 +809,9 @@ Clinical Visit Journey
         for (let i = 1; i <= 3; i++) {
             const btn = document.getElementById('stepBtn' + i);
             if (i.toString() === step.toString()) {
-                btn.className = "p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold";
+                btn.className = "p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 bg-blue-600 text-white shadow-xs font-semibold";
             } else {
-                btn.className = "p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700";
+                btn.className = "p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700";
             }
         }
 
@@ -864,7 +864,7 @@ Clinical Visit Journey
 
         const slotDiv = document.createElement('div');
         slotDiv.id = `slot_extra_${currentSlotNum}`;
-        slotDiv.className = 'p-4 rounded-2xl border-2 border-dashed border-sky-300 hover:border-sky-400 bg-sky-50/20 transition space-y-3 relative group animate-in fade-in zoom-in-95 duration-150';
+        slotDiv.className = 'p-4 rounded-xl border-2 border-dashed border-sky-300 hover:border-sky-400 bg-sky-50/20 transition space-y-3 relative group animate-in fade-in zoom-in-95 duration-150';
         slotDiv.innerHTML = `
             <div class="flex items-center justify-between">
                 <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">

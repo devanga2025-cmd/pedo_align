@@ -8,10 +8,10 @@
 <div class="space-y-6">
 
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-blue-600"></i> Treatment Progress & Compliance Monitoring
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-blue-600 text-sm"></i> Treatment Progress & Compliance Monitoring
             </h1>
             <p class="text-xs text-slate-500 mt-1">
                 Monitor aligner stage progression, daily wear fidelity, and treatment milestones across your patient caseload
@@ -20,30 +20,30 @@
     </div>
 
     <!-- Summary KPI Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
         
-        <div class="pa-card p-4">
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Active Caseload</span>
-            <span class="text-2xl font-black text-blue-900 mt-1 block">{{ patients.count }} Patients</span>
+        <div class="pa-card p-4 bg-white">
+            <span class="text-[10px] font-semibold uppercase text-slate-400 block">Active Caseload</span>
+            <span class="text-xl font-bold text-slate-900 mt-0.5 block">{{ patients.count }} Patients</span>
             <span class="text-xs text-slate-500">Under direct monitoring</span>
         </div>
 
-        <div class="pa-card p-4">
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Average Compliance</span>
-            <span class="text-2xl font-black text-emerald-700 mt-1 block">{{ avg_compliance }}%</span>
-            <span class="text-xs text-emerald-600 font-semibold">High clinical compliance</span>
+        <div class="pa-card p-4 bg-white">
+            <span class="text-[10px] font-semibold uppercase text-slate-400 block">Average Compliance</span>
+            <span class="text-xl font-bold text-emerald-600 mt-0.5 block">{{ avg_compliance }}%</span>
+            <span class="text-xs text-emerald-600 font-medium">Clinical compliance</span>
         </div>
 
-        <div class="pa-card p-4">
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Average Treatment Duration</span>
-            <span class="text-2xl font-black text-blue-800 mt-1 block">{{ avg_duration }} Mos</span>
+        <div class="pa-card p-4 bg-white">
+            <span class="text-[10px] font-semibold uppercase text-slate-400 block">Average Duration</span>
+            <span class="text-xl font-bold text-slate-900 mt-0.5 block">{{ avg_duration }} Mos</span>
             <span class="text-xs text-slate-500">Pediatric & teen cases</span>
         </div>
 
-        <div class="pa-card p-4">
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Target Daily Wear Time</span>
-            <span class="text-2xl font-black text-purple-900 mt-1 block">22.0 Hours</span>
-            <span class="text-xs text-slate-500">Standard clear aligner protocol</span>
+        <div class="pa-card p-4 bg-white">
+            <span class="text-[10px] font-semibold uppercase text-slate-400 block">Target Daily Wear</span>
+            <span class="text-xl font-bold text-slate-900 mt-0.5 block">22.0 Hours</span>
+            <span class="text-xs text-slate-500">Standard protocol</span>
         </div>
 
     </div>

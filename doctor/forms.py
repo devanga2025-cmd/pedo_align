@@ -21,8 +21,7 @@ class DoctorRegistrationForm(forms.Form):
         widget=forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'doctor@example.com'})
     )
     phone_number = forms.CharField(
-        max_length=10,
-        min_length=10,
+        max_length=25,
         widget=forms.TextInput(attrs={
             'class': 'form-input',
             'placeholder': '10-digit Mobile Number',
@@ -76,10 +75,18 @@ class DoctorRegistrationForm(forms.Form):
         phone = (self.cleaned_data.get('phone_number') or '').strip()
         if not phone:
             raise ValidationError("Mobile number is required.")
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Mobile number cannot contain alphabets.")
         digits = re.sub(r'\D', '', phone)
-        if len(digits) != 10 or not digits.isdigit() or len(phone) != 10:
-            raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
-        return digits
+        if digits.startswith('91') and len(digits) == 12:
+            norm_digits = digits[2:]
+        elif digits.startswith('1') and len(digits) == 11:
+            norm_digits = digits[1:]
+        else:
+            norm_digits = digits
+        if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+            raise ValidationError("Mobile number must be at most 10 digits (numbers only, no alphabets).")
+        return phone
 
     def clean_specialization(self):
         val = (self.cleaned_data.get('specialization') or '').strip()
@@ -150,10 +157,18 @@ class DoctorProfileForm(forms.ModelForm):
         phone = (self.cleaned_data.get('phone_number') or '').strip()
         if not phone:
             raise ValidationError("Mobile number is required.")
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Mobile number cannot contain alphabets.")
         digits = re.sub(r'\D', '', phone)
-        if len(digits) != 10 or not digits.isdigit():
-            raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
-        return digits
+        if digits.startswith('91') and len(digits) == 12:
+            norm_digits = digits[2:]
+        elif digits.startswith('1') and len(digits) == 11:
+            norm_digits = digits[1:]
+        else:
+            norm_digits = digits
+        if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+            raise ValidationError("Mobile number must be at most 10 digits (numbers only, no alphabets).")
+        return phone
 
     def save(self, commit=True):
         profile = super().save(commit=commit)
@@ -253,31 +268,43 @@ class PatientForm(forms.ModelForm):
         phone = (self.cleaned_data.get('phone') or '').strip()
         if not phone:
             raise ValidationError("Patient mobile number is compulsory.")
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Patient mobile number cannot contain alphabets.")
         digits = re.sub(r'\D', '', phone)
-        if len(digits) != 10 or not digits.isdigit():
-            raise ValidationError("Patient mobile number must be exactly 10 digits (numbers only, no alphabets).")
-        return digits
+        if digits.startswith('91') and len(digits) == 12:
+            norm_digits = digits[2:]
+        elif digits.startswith('1') and len(digits) == 11:
+            norm_digits = digits[1:]
+        else:
+            norm_digits = digits
+        if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+            raise ValidationError("Patient mobile number must be at most 10 digits (numbers only, no alphabets).")
+        return phone
 
     def clean_parent_guardian_name(self):
         name = (self.cleaned_data.get('parent_guardian_name') or '').strip()
-        if not name:
-            raise ValidationError("Parent or guardian full name is compulsory.")
         return name
 
     def clean_parent_guardian_relationship(self):
         rel = (self.cleaned_data.get('parent_guardian_relationship') or '').strip()
-        if not rel:
-            raise ValidationError("Parent / guardian relationship is compulsory.")
         return rel
 
     def clean_parent_guardian_phone(self):
         phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
         if not phone:
-            raise ValidationError("Parent / guardian mobile number is compulsory.")
+            return ''
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Parent mobile number cannot contain alphabets.")
         digits = re.sub(r'\D', '', phone)
-        if len(digits) != 10 or not digits.isdigit():
-            raise ValidationError("Parent mobile number must be exactly 10 digits (numbers only, no alphabets).")
-        return digits
+        if digits.startswith('91') and len(digits) == 12:
+            norm_digits = digits[2:]
+        elif digits.startswith('1') and len(digits) == 11:
+            norm_digits = digits[1:]
+        else:
+            norm_digits = digits
+        if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+            raise ValidationError("Parent mobile number must be at most 10 digits (numbers only, no alphabets).")
+        return phone
 
     def clean_treatment_duration_months(self):
         dur = self.cleaned_data.get('treatment_duration_months')
@@ -287,8 +314,6 @@ class PatientForm(forms.ModelForm):
 
     def clean_notes(self):
         notes = (self.cleaned_data.get('notes') or '').strip()
-        if not notes:
-            raise ValidationError("Chief complaint is compulsory.")
         return notes
 
     def clean(self):
@@ -386,18 +411,34 @@ class PatientEditForm(forms.ModelForm):
         phone = (self.cleaned_data.get('phone') or '').strip()
         if not phone:
             raise ValidationError("Patient mobile number is required.")
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Patient mobile number cannot contain alphabets.")
         digits = re.sub(r'\D', '', phone)
-        if len(digits) != 10 or not digits.isdigit():
-            raise ValidationError("Patient mobile number must be exactly 10 digits (numbers only, no alphabets).")
-        return digits
+        if digits.startswith('91') and len(digits) == 12:
+            norm_digits = digits[2:]
+        elif digits.startswith('1') and len(digits) == 11:
+            norm_digits = digits[1:]
+        else:
+            norm_digits = digits
+        if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+            raise ValidationError("Patient mobile number must be at most 10 digits (numbers only, no alphabets).")
+        return phone
 
     def clean_parent_guardian_phone(self):
         phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
         if phone:
+            if re.search(r'[a-zA-Z]', phone):
+                raise ValidationError("Parent mobile number cannot contain alphabets.")
             digits = re.sub(r'\D', '', phone)
-            if len(digits) != 10 or not digits.isdigit():
-                raise ValidationError("Parent mobile number must be exactly 10 digits (numbers only, no alphabets).")
-            return digits
+            if digits.startswith('91') and len(digits) == 12:
+                norm_digits = digits[2:]
+            elif digits.startswith('1') and len(digits) == 11:
+                norm_digits = digits[1:]
+            else:
+                norm_digits = digits
+            if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+                raise ValidationError("Parent mobile number must be at most 10 digits (numbers only, no alphabets).")
+            return phone
         return ''
 
     def clean(self):
@@ -646,7 +687,7 @@ class PatientJoinCodeForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Patient Last Name (Optional)'})
     )
     phone = forms.CharField(
-        max_length=10,
+        max_length=25,
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-input',
@@ -666,10 +707,18 @@ class PatientJoinCodeForm(forms.Form):
     def clean_phone(self):
         phone = (self.cleaned_data.get('phone') or '').strip()
         if phone:
+            if re.search(r'[a-zA-Z]', phone):
+                raise ValidationError("Mobile number cannot contain alphabets.")
             digits = re.sub(r'\D', '', phone)
-            if len(digits) != 10 or not digits.isdigit():
-                raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
-            return digits
+            if digits.startswith('91') and len(digits) == 12:
+                norm_digits = digits[2:]
+            elif digits.startswith('1') and len(digits) == 11:
+                norm_digits = digits[1:]
+            else:
+                norm_digits = digits
+            if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+                raise ValidationError("Mobile number must be at most 10 digits (numbers only, no alphabets).")
+            return phone
         return ''
 
 

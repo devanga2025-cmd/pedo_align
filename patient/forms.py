@@ -82,8 +82,7 @@ class PatientRegistrationForm(forms.Form):
         })
     )
     mobile_number = forms.CharField(
-        max_length=10,
-        min_length=10,
+        max_length=25,
         widget=forms.TextInput(attrs={
             'class': 'form-input-patient',
             'placeholder': '10-digit Mobile Number',
@@ -104,7 +103,7 @@ class PatientRegistrationForm(forms.Form):
     )
     parent_guardian_phone = forms.CharField(
         required=False,
-        max_length=10,
+        max_length=25,
         widget=forms.TextInput(attrs={
             'class': 'form-input-patient',
             'placeholder': '10-digit Parent Contact Phone',
@@ -157,18 +156,34 @@ class PatientRegistrationForm(forms.Form):
         phone = (self.cleaned_data.get('mobile_number') or '').strip()
         if not phone:
             raise ValidationError("Mobile number is required.")
+        if re.search(r'[a-zA-Z]', phone):
+            raise ValidationError("Mobile number cannot contain alphabets.")
         digits = re.sub(r'\D', '', phone)
-        if len(digits) != 10 or not digits.isdigit() or len(phone) != 10:
-            raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
-        return digits
+        if digits.startswith('91') and len(digits) == 12:
+            norm_digits = digits[2:]
+        elif digits.startswith('1') and len(digits) == 11:
+            norm_digits = digits[1:]
+        else:
+            norm_digits = digits
+        if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+            raise ValidationError("Mobile number must be at most 10 digits (numbers only, no alphabets).")
+        return phone
 
     def clean_parent_guardian_phone(self):
         phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
         if phone:
+            if re.search(r'[a-zA-Z]', phone):
+                raise ValidationError("Parent phone cannot contain alphabets.")
             digits = re.sub(r'\D', '', phone)
-            if len(digits) != 10 or not digits.isdigit():
-                raise ValidationError("Parent phone must be exactly 10 digits (numbers only, no alphabets).")
-            return digits
+            if digits.startswith('91') and len(digits) == 12:
+                norm_digits = digits[2:]
+            elif digits.startswith('1') and len(digits) == 11:
+                norm_digits = digits[1:]
+            else:
+                norm_digits = digits
+            if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+                raise ValidationError("Parent phone must be at most 10 digits (numbers only, no alphabets).")
+            return phone
         return ''
 
     def clean(self):
@@ -371,18 +386,34 @@ class PatientProfileEditForm(forms.ModelForm):
     def clean_phone_number(self):
         phone = (self.cleaned_data.get('phone_number') or '').strip()
         if phone:
+            if re.search(r'[a-zA-Z]', phone):
+                raise ValidationError("Mobile number cannot contain alphabets.")
             digits = re.sub(r'\D', '', phone)
-            if len(digits) != 10 or not digits.isdigit():
-                raise ValidationError("Mobile number must be exactly 10 digits (numbers only, no alphabets).")
-            return digits
+            if digits.startswith('91') and len(digits) == 12:
+                norm_digits = digits[2:]
+            elif digits.startswith('1') and len(digits) == 11:
+                norm_digits = digits[1:]
+            else:
+                norm_digits = digits
+            if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+                raise ValidationError("Mobile number must be at most 10 digits (numbers only, no alphabets).")
+            return phone
         return ''
 
     def clean_parent_guardian_phone(self):
         phone = (self.cleaned_data.get('parent_guardian_phone') or '').strip()
         if phone:
+            if re.search(r'[a-zA-Z]', phone):
+                raise ValidationError("Parent phone cannot contain alphabets.")
             digits = re.sub(r'\D', '', phone)
-            if len(digits) != 10 or not digits.isdigit():
-                raise ValidationError("Parent phone must be exactly 10 digits (numbers only, no alphabets).")
-            return digits
+            if digits.startswith('91') and len(digits) == 12:
+                norm_digits = digits[2:]
+            elif digits.startswith('1') and len(digits) == 11:
+                norm_digits = digits[1:]
+            else:
+                norm_digits = digits
+            if len(norm_digits) > 10 or (len(norm_digits) < 7 and len(norm_digits) > 0):
+                raise ValidationError("Parent phone must be at most 10 digits (numbers only, no alphabets).")
+            return phone
         return ''
 

@@ -5,136 +5,125 @@
 {% block breadcrumb %}Clinical Journey & Records{% endblock %}
 
 {% block content %}
-<div class="space-y-6 sm:space-y-8 pb-16 w-full max-w-full min-w-0 overflow-x-hidden">
+<div class="space-y-5 pb-16 w-full max-w-full min-w-0 overflow-x-hidden">
 
-    <!-- ======================================================== -->
-    <!-- 1. HERO BANNER: DOCTOR & PATIENT CLINICAL PROFILE        -->
-    <!-- ======================================================== -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 via-blue-600 to-sky-500 p-6 sm:p-8 text-white shadow-xl shadow-blue-500/15">
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="space-y-2 max-w-2xl">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-white/20 backdrop-blur-md text-white">
-                        <i class="fa-solid fa-tooth"></i> Clinical Journey & Records
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/15 text-blue-100">
-                        Patient ID: <strong class="text-white font-mono">{{ patient.patient_id }}</strong>
-                    </span>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight">
-                    Hello, {{ patient.full_name }}!
-                </h1>
-                <p class="text-xs sm:text-sm text-blue-50/90 leading-relaxed">
-                    Welcome to your PEDO ALIGN Patient Portal. Here you can review all clinical records, photographs, and diagnostic X-rays uploaded by your doctor, follow your appointment schedule, and submit your progress tracking photos.
-                </p>
+    <!-- 1. HERO BANNER: DOCTOR & PATIENT CLINICAL PROFILE -->
+    <div class="pa-card p-5 sm:p-6 bg-white flex flex-col md:flex-row md:items-center justify-between gap-5 border border-slate-200">
+        <div class="space-y-1.5 max-w-2xl min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                    <i class="fa-solid fa-tooth text-[10px]"></i> Clinical Journey
+                </span>
+                <span class="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                    ID: {{ patient.patient_id }}
+                </span>
             </div>
-
-            <!-- Doctor Information Badge -->
-            {% if doctor %}
-            <div class="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-xs space-y-2 w-full md:w-auto md:min-w-[240px] max-w-full shadow-sm">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-white text-blue-700 flex items-center justify-center font-black text-sm shadow-xs flex-shrink-0">
-                        <i class="fa-solid fa-user-doctor"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] uppercase font-bold text-blue-100 block">Assigned Doctor</span>
-                        <span class="font-black text-sm text-white block">{{ doctor.display_name }}</span>
-                    </div>
-                </div>
-                <div class="space-y-0.5 text-[11px] text-blue-50 pt-1 border-t border-white/15">
-                    <p><strong>Clinic:</strong> {{ doctor.clinic_name|default:"PEDO ALIGN Dental Hospital" }}</p>
-                    {% if doctor.specialization %}
-                    <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
-                    {% endif %}
-                    {% if doctor.registration_number %}
-                    <p><strong>Reg No:</strong> {{ doctor.registration_number }}</p>
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                Hello, {{ patient.full_name }}
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                Welcome to your PEDO ALIGN Patient Portal. Review clinical records, diagnostic X-rays uploaded by your doctor, follow your appointment schedule, and submit weekly progress photos.
+            </p>
         </div>
 
-        <i class="fa-solid fa-shield-heart absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+        <!-- Doctor Information Badge -->
+        {% if doctor %}
+        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1.5 w-full md:w-auto md:min-w-[240px] max-w-full flex-shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] uppercase font-medium text-slate-400 block">Assigned Doctor</span>
+                    <span class="font-semibold text-xs text-slate-900 block truncate">{{ doctor.display_name }}</span>
+                </div>
+            </div>
+            <div class="space-y-0.5 text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                <p class="truncate"><strong class="font-medium text-slate-700">Clinic:</strong> {{ doctor.clinic_name|default:"PEDO ALIGN Dental Practice" }}</p>
+                {% if doctor.specialization %}
+                <p class="truncate"><strong class="font-medium text-slate-700">Specialty:</strong> {{ doctor.specialization }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 
 
-    <!-- ======================================================== -->
-    <!-- 2. CLINICAL JOURNEY 4-STEP PROGRESS OVERVIEW             -->
-    <!-- ======================================================== -->
-    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+    <!-- 2. CLINICAL JOURNEY 4-STEP PROGRESS OVERVIEW -->
+    <div class="pa-card p-4 sm:p-5 bg-white space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-slate-100">
             <div>
-                <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-timeline text-blue-600"></i> My 4-Step Clinical Journey
+                <h2 class="text-xs font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-timeline text-blue-600 text-xs"></i> My 4-Step Clinical Journey
                 </h2>
-                <p class="text-xs text-slate-500">Your doctor's examination workflow, intake diagnostics, and progress photo monitoring</p>
+                <p class="text-[11px] text-slate-500">Clinical workflow, diagnostic intake, and progress photo monitoring</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             
             <!-- Step 1 Card -->
-            <a href="#step1Section" class="p-3.5 rounded-2xl border border-slate-200 hover:border-blue-400 bg-slate-50/70 hover:bg-blue-50/40 transition flex items-center justify-between gap-2">
+            <a href="#step1Section" class="p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100/70 transition flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if preop_photos %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-600{% endif %}">
-                        {% if preop_photos %}<i class="fa-solid fa-check"></i>{% else %}1{% endif %}
+                    <div class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold {% if preop_photos %}bg-emerald-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        {% if preop_photos %}<i class="fa-solid fa-check text-[10px]"></i>{% else %}1{% endif %}
                     </div>
                     <div>
-                        <span class="text-xs font-black text-slate-900 block">Step 1: Pre-op Photos</span>
-                        <span class="text-[10px] text-slate-500 block">By {{ doctor.display_name|default:"Doctor" }}</span>
+                        <span class="text-xs font-semibold text-slate-900 block">Step 1: Pre-op Photos</span>
+                        <span class="text-[10px] text-slate-500 block">Baseline Photos</span>
                     </div>
                 </div>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full {% if preop_photos %}bg-emerald-100 text-emerald-800{% else %}bg-slate-200 text-slate-600{% endif %}">
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-full {% if preop_photos %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-slate-100 text-slate-600{% endif %}">
                     {{ preop_photos.count }} Photos
                 </span>
             </a>
 
             <!-- Step 2 Card -->
-            <a href="#step2Section" class="p-3.5 rounded-2xl border border-slate-200 hover:border-blue-400 bg-slate-50/70 hover:bg-blue-50/40 transition flex items-center justify-between gap-2">
+            <a href="#step2Section" class="p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100/70 transition flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if radiographs %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-600{% endif %}">
-                        {% if radiographs %}<i class="fa-solid fa-check"></i>{% else %}2{% endif %}
+                    <div class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold {% if radiographs %}bg-emerald-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        {% if radiographs %}<i class="fa-solid fa-check text-[10px]"></i>{% else %}2{% endif %}
                     </div>
                     <div>
-                        <span class="text-xs font-black text-slate-900 block">Step 2: Radiographs</span>
-                        <span class="text-[10px] text-slate-500 block">OPG & Cephalograph</span>
+                        <span class="text-xs font-semibold text-slate-900 block">Step 2: Radiographs</span>
+                        <span class="text-[10px] text-slate-500 block">OPG & Cephalogram</span>
                     </div>
                 </div>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full {% if radiographs %}bg-emerald-100 text-emerald-800{% else %}bg-slate-200 text-slate-600{% endif %}">
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-full {% if radiographs %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-slate-100 text-slate-600{% endif %}">
                     {{ radiographs.count }} X-Rays
                 </span>
             </a>
 
             <!-- Step 3 Card -->
-            <a href="#step3Section" class="p-3.5 rounded-2xl border border-blue-200 hover:border-blue-400 bg-blue-50/50 hover:bg-blue-50/80 transition flex items-center justify-between gap-2">
+            <a href="#step3Section" class="p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100/70 transition flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black bg-blue-600 text-white">
-                        <i class="fa-solid fa-clipboard-list text-xs"></i>
+                    <div class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold bg-blue-600 text-white">
+                        <i class="fa-solid fa-clipboard-list text-[10px]"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-black text-slate-900 block">Step 3: Aligner Plan</span>
-                        <span class="text-[10px] text-blue-700 block font-semibold">
+                        <span class="text-xs font-semibold text-slate-900 block">Step 3: Aligner Plan</span>
+                        <span class="text-[10px] text-slate-500 block font-medium">
                             {% if treatment_plan %}Tray #{{ treatment_plan.current_aligner }}/{{ treatment_plan.total_aligners }}{% else %}Prescription{% endif %}
                         </span>
                     </div>
                 </div>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                     {{ progress_percent|default:0 }}% Done
                 </span>
             </a>
 
             <!-- Step 4 Card -->
-            <a href="#step4Section" class="p-3.5 rounded-2xl border border-indigo-200 hover:border-indigo-400 bg-indigo-50/60 hover:bg-indigo-50 transition flex items-center justify-between gap-2">
+            <a href="#step4Section" class="p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100/70 transition flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if doctor_media %}bg-indigo-600 text-white{% else %}bg-slate-200 text-slate-600{% endif %}">
-                        {% if doctor_media %}<i class="fa-solid fa-check"></i>{% else %}4{% endif %}
+                    <div class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold {% if doctor_media %}bg-indigo-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        {% if doctor_media %}<i class="fa-solid fa-check text-[10px]"></i>{% else %}4{% endif %}
                     </div>
                     <div>
-                        <span class="text-xs font-black text-slate-900 block">Step 4: {{ current_operation|default:'Turn Quest' }}</span>
-                        <span class="text-[10px] text-indigo-700 block">{{ monitoring_frequency|title }} Cadence</span>
+                        <span class="text-xs font-semibold text-slate-900 block">Step 4: {{ current_operation|default:'Monitoring' }}</span>
+                        <span class="text-[10px] text-slate-500 block">{{ monitoring_frequency|title }} Cadence</span>
                     </div>
                 </div>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
                     Active
                 </span>
             </a>
@@ -143,68 +132,64 @@
     </div>
 
 
-    <!-- ======================================================== -->
-    <!-- 3. STEP 1: PREOPERATIVE PHOTOGRAPHS (UPLOADED BY DOCTOR) -->
-    <!-- ======================================================== -->
-    <div id="step1Section" class="bg-white rounded-3xl p-6 sm:p-8 border border-blue-100/90 shadow-sm space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-md shadow-blue-500/20 flex-shrink-0">
+    <!-- 3. STEP 1: PREOPERATIVE CLINICAL PHOTOGRAPHS -->
+    <div id="step1Section" class="pa-card p-5 sm:p-6 bg-white space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm flex-shrink-0">
                     <i class="fa-solid fa-camera"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 uppercase tracking-wider">
+                        <span class="px-2 py-0.2 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200 uppercase">
                             Step 1
                         </span>
-                        <h2 class="text-lg font-black text-slate-900 tracking-tight">
+                        <h2 class="text-sm font-semibold text-slate-900">
                             Preoperative Clinical Photographs
                         </h2>
                     </div>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        First-visit baseline clinical photographs uploaded by {{ doctor.display_name|default:"Your Doctor" }}
+                        Baseline examination photographs uploaded by {{ doctor.display_name|default:"Your Doctor" }}
                     </p>
                 </div>
             </div>
 
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 self-start sm:self-auto">
-                <i class="fa-solid fa-image mr-1"></i> {{ preop_photos.count }} Photographs on File
+            <span class="text-xs font-medium px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 self-start sm:self-auto">
+                {{ preop_photos.count }} Photograph{{ preop_photos.count|pluralize }}
             </span>
         </div>
 
         {% if preop_photos %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {% for photo in preop_photos %}
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/90 hover:border-blue-300 transition space-y-3">
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 transition space-y-2">
                 
-                <!-- Photo Thumbnail with Zoom Trigger -->
-                <div class="aspect-4/3 bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer border border-slate-200"
-                     onclick="openImageModal('{{ photo.photo.url }}', '{{ photo.title }} — Uploaded by {{ doctor.display_name }}')">
-                    <img src="{{ photo.photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="{{ photo.title }}">
-                    <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
-                        <i class="fa-solid fa-magnifying-glass-plus"></i> Click to Zoom Photo
+                <div class="aspect-4/3 bg-slate-900 rounded-md overflow-hidden relative group cursor-pointer border border-slate-200"
+                     onclick="openImageModal('{{ photo.photo.url }}', '{{ photo.title }} &bull; Uploaded by {{ doctor.display_name }}')">
+                    <img src="{{ photo.photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="{{ photo.title }}">
+                    <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-medium gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom Photo
                     </div>
                 </div>
 
-                <!-- Photo Details -->
                 <div class="space-y-1">
                     <div class="flex items-center justify-between gap-2">
-                        <h3 class="text-xs font-black text-slate-900 leading-tight">
+                        <h3 class="text-xs font-semibold text-slate-900 truncate">
                             {{ photo.title }}
                         </h3>
-                        <span class="text-[10px] font-mono text-slate-400 flex-shrink-0">
+                        <span class="text-[10px] text-slate-400 font-mono flex-shrink-0">
                             {{ photo.uploaded_at|date:"M d, Y" }}
                         </span>
                     </div>
 
                     {% if photo.description %}
-                    <p class="text-[11px] text-slate-600 leading-relaxed bg-white p-2 rounded-lg border border-slate-100">
+                    <p class="text-[11px] text-slate-600 bg-white p-2 rounded border border-slate-100">
                         {{ photo.description }}
                     </p>
                     {% endif %}
 
-                    <div class="text-[10px] text-blue-700 font-bold flex items-center gap-1 pt-1">
-                        <i class="fa-solid fa-user-doctor text-blue-500"></i> Uploaded by {{ doctor.display_name }}
+                    <div class="text-[10px] text-slate-500 flex items-center gap-1 pt-0.5">
+                        <i class="fa-solid fa-user-doctor text-slate-400"></i> By {{ doctor.display_name }}
                     </div>
                 </div>
 
@@ -212,56 +197,51 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="p-8 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400 space-y-2">
-            <i class="fa-solid fa-camera text-2xl text-slate-300 block"></i>
-            <p>Preoperative photographs have not yet been uploaded by your doctor.</p>
+        <div class="p-8 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-400">
+            <i class="fa-solid fa-camera text-xl text-slate-300 block mb-1"></i>
+            Preoperative photographs have not yet been uploaded by your doctor.
         </div>
         {% endif %}
     </div>
 
 
-    <!-- ======================================================== -->
-    <!-- 4. STEP 2: DIAGNOSTIC RADIOGRAPHS (UPLOADED BY DOCTOR)    -->
-    <!-- ======================================================== -->
-    <div id="step2Section" class="bg-white rounded-3xl p-6 sm:p-8 border border-blue-100/90 shadow-sm space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-md shadow-cyan-500/20 flex-shrink-0">
+    <!-- 4. STEP 2: DIAGNOSTIC RADIOGRAPHS -->
+    <div id="step2Section" class="pa-card p-5 sm:p-6 bg-white space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-sm flex-shrink-0">
                     <i class="fa-solid fa-x-ray"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-cyan-100 text-cyan-800 uppercase tracking-wider">
+                        <span class="px-2 py-0.2 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200 uppercase">
                             Step 2
                         </span>
-                        <h2 class="text-lg font-black text-slate-900 tracking-tight">
+                        <h2 class="text-sm font-semibold text-slate-900">
                             Diagnostic Radiographs & X-Rays
                         </h2>
                     </div>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        OPG (Orthopantomogram) and Lateral Cephalograph images uploaded by {{ doctor.display_name|default:"Your Doctor" }}
+                        OPG (Panoramic) and Lateral Cephalograph diagnostic records
                     </p>
                 </div>
             </div>
 
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200 self-start sm:self-auto">
-                <i class="fa-solid fa-film mr-1"></i> {{ radiographs.count }} Radiograph Records
+            <span class="text-xs font-medium px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 self-start sm:self-auto">
+                {{ radiographs.count }} Record{{ radiographs.count|pluralize }}
             </span>
         </div>
 
         {% if radiographs %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             <!-- Type 1: OPG Radiographs -->
-            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-cyan-600 text-white flex items-center justify-center text-xs font-black">1</span>
-                        <h3 class="text-xs font-black uppercase tracking-wider text-slate-900">
-                            OPG (Orthopantomogram / Panoramic)
-                        </h3>
-                    </div>
-                    <span class="text-[10px] font-black px-2 py-0.5 rounded bg-cyan-100 text-cyan-800">
+                    <h3 class="text-xs font-semibold text-slate-900">
+                        OPG (Orthopantomogram / Panoramic)
+                    </h3>
+                    <span class="text-[10px] font-medium px-2 py-0.2 rounded bg-slate-100 text-slate-700">
                         {{ opg_radiographs.count }} Record(s)
                     </span>
                 </div>
@@ -269,42 +249,39 @@
                 {% if opg_radiographs %}
                     {% for rad in opg_radiographs %}
                     <div class="space-y-2 pt-2 border-t border-slate-200">
-                        <div class="aspect-video bg-slate-950 rounded-xl overflow-hidden relative group cursor-pointer border border-slate-800"
-                             onclick="openImageModal('{{ rad.image.url }}', '{{ rad.title|default:'OPG Panoramic Radiograph' }} — Uploaded by {{ doctor.display_name }}')">
-                            <img src="{{ rad.image.url }}" class="w-full h-full object-contain group-hover:scale-105 transition" alt="OPG Radiograph">
-                            <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
+                        <div class="aspect-video bg-slate-950 rounded-md overflow-hidden relative group cursor-pointer border border-slate-800"
+                             onclick="openImageModal('{{ rad.image.url }}', '{{ rad.title|default:'OPG Panoramic Radiograph' }} &bull; Uploaded by {{ doctor.display_name }}')">
+                            <img src="{{ rad.image.url }}" class="w-full h-full object-contain group-hover:scale-102 transition duration-200" alt="OPG Radiograph">
+                            <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-medium gap-1.5">
                                 <i class="fa-solid fa-magnifying-glass-plus"></i> View Full X-Ray
                             </div>
                         </div>
-                        <div class="space-y-1">
-                            <span class="text-xs font-bold text-slate-900 block">{{ rad.title|default:"Panoramic Full Dentition View" }}</span>
+                        <div class="space-y-0.5">
+                            <span class="text-xs font-medium text-slate-900 block">{{ rad.title|default:"Panoramic Dentition View" }}</span>
                             {% if rad.description %}
-                            <p class="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-100">{{ rad.description }}</p>
+                            <p class="text-[11px] text-slate-600 bg-white p-2 rounded border border-slate-100">{{ rad.description }}</p>
                             {% endif %}
-                            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1">
-                                <span><i class="fa-solid fa-user-doctor text-cyan-600 mr-1"></i> Uploaded by {{ doctor.display_name }}</span>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
                                 <span>Exam Date: {{ rad.examination_date|date:"M d, Y" }}</span>
+                                <span>By {{ doctor.display_name }}</span>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="p-6 text-center text-xs text-slate-400">
+                    <div class="p-5 text-center text-xs text-slate-400">
                         OPG radiograph record is pending upload.
                     </div>
                 {% endif %}
             </div>
 
             <!-- Type 2: Lateral Cephalograph -->
-            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-black">2</span>
-                        <h3 class="text-xs font-black uppercase tracking-wider text-slate-900">
-                            Lateral Cephalograph (Ceph X-Ray)
-                        </h3>
-                    </div>
-                    <span class="text-[10px] font-black px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
+                    <h3 class="text-xs font-semibold text-slate-900">
+                        Lateral Cephalograph (Ceph X-Ray)
+                    </h3>
+                    <span class="text-[10px] font-medium px-2 py-0.2 rounded bg-slate-100 text-slate-700">
                         {{ ceph_radiographs.count }} Record(s)
                     </span>
                 </div>
@@ -312,27 +289,27 @@
                 {% if ceph_radiographs %}
                     {% for rad in ceph_radiographs %}
                     <div class="space-y-2 pt-2 border-t border-slate-200">
-                        <div class="aspect-video bg-slate-950 rounded-xl overflow-hidden relative group cursor-pointer border border-slate-800"
-                             onclick="openImageModal('{{ rad.image.url }}', '{{ rad.title|default:'Lateral Cephalograph' }} — Uploaded by {{ doctor.display_name }}')">
-                            <img src="{{ rad.image.url }}" class="w-full h-full object-contain group-hover:scale-105 transition" alt="Lateral Cephalograph">
-                            <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
+                        <div class="aspect-video bg-slate-950 rounded-md overflow-hidden relative group cursor-pointer border border-slate-800"
+                             onclick="openImageModal('{{ rad.image.url }}', '{{ rad.title|default:'Lateral Cephalograph' }} &bull; Uploaded by {{ doctor.display_name }}')">
+                            <img src="{{ rad.image.url }}" class="w-full h-full object-contain group-hover:scale-102 transition duration-200" alt="Lateral Cephalograph">
+                            <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-medium gap-1.5">
                                 <i class="fa-solid fa-magnifying-glass-plus"></i> View Full X-Ray
                             </div>
                         </div>
-                        <div class="space-y-1">
-                            <span class="text-xs font-bold text-slate-900 block">{{ rad.title|default:"Lateral Cephalometric View" }}</span>
+                        <div class="space-y-0.5">
+                            <span class="text-xs font-medium text-slate-900 block">{{ rad.title|default:"Lateral Cephalometric View" }}</span>
                             {% if rad.description %}
-                            <p class="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-100">{{ rad.description }}</p>
+                            <p class="text-[11px] text-slate-600 bg-white p-2 rounded border border-slate-100">{{ rad.description }}</p>
                             {% endif %}
-                            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1">
-                                <span><i class="fa-solid fa-user-doctor text-indigo-600 mr-1"></i> Uploaded by {{ doctor.display_name }}</span>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
                                 <span>Exam Date: {{ rad.examination_date|date:"M d, Y" }}</span>
+                                <span>By {{ doctor.display_name }}</span>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="p-6 text-center text-xs text-slate-400">
+                    <div class="p-5 text-center text-xs text-slate-400">
                         Lateral Cephalograph record is pending upload.
                     </div>
                 {% endif %}
@@ -340,37 +317,33 @@
 
         </div>
         {% else %}
-        <div class="p-8 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400 space-y-2">
-            <i class="fa-solid fa-x-ray text-2xl text-slate-300 block"></i>
-            <p>Diagnostic radiograph records have not yet been uploaded by your doctor.</p>
+        <div class="p-8 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-400">
+            <i class="fa-solid fa-x-ray text-xl text-slate-300 block mb-1"></i>
+            Diagnostic radiograph records have not yet been uploaded by your doctor.
         </div>
         {% endif %}
     </div>
 
 
-    <!-- ======================================================== -->
-    <!-- 5. STEP 3: ALIGNER TREATMENT PLAN & CLINICAL RECORDS     -->
-    <!-- ======================================================== -->
-    <div id="step3Section" class="bg-white rounded-3xl p-6 sm:p-8 border border-blue-200/90 shadow-sm space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-base font-bold shadow-xs">
-                        <i class="fa-solid fa-clipboard-list text-blue-600"></i>
+    <!-- 5. STEP 3: ALIGNER TREATMENT PLAN & CLINICAL RECORDS -->
+    <div id="step3Section" class="pa-card p-5 sm:p-6 bg-white space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm flex-shrink-0">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.2 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200 uppercase">
+                            Step 3
+                        </span>
+                        <h2 class="text-sm font-semibold text-slate-900">
+                            Aligner Treatment Plan & Clinical Records
+                        </h2>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-blue-600 text-white uppercase tracking-wider">
-                                Step 3
-                            </span>
-                            <h2 class="text-lg font-black text-slate-900 tracking-tight">
-                                Aligner Treatment Plan & Clinical Records
-                            </h2>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Prescribed by {{ doctor.display_name|default:"Your Doctor" }} &bull; Active aligner pace, stage progression, and clinical operation records
-                        </p>
-                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Prescribed aligner schedule and in-clinic treatment logs
+                    </p>
                 </div>
             </div>
 
@@ -382,18 +355,18 @@
         </div>
 
         {% if treatment_plan %}
-        <!-- Stage Progress Bar & Next Change Countdown -->
-        <div class="bg-gradient-to-r from-blue-50/80 via-sky-50/60 to-indigo-50/70 p-5 rounded-2xl border border-blue-100 space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <!-- Stage Progress Bar -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <div>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Current Stage Progress</span>
-                    <div class="text-base font-black text-blue-950 mt-0.5 flex items-center gap-2">
+                    <span class="text-[10px] font-medium uppercase text-slate-400 block">Current Stage Progress</span>
+                    <div class="text-sm font-bold text-slate-900 mt-0.5 flex items-center gap-2">
                         <span>Tray #{{ treatment_plan.current_aligner }}</span>
-                        <span class="text-xs font-bold text-slate-400 font-normal">of {{ treatment_plan.total_aligners }} Trays</span>
+                        <span class="text-xs font-normal text-slate-500">of {{ treatment_plan.total_aligners }} Trays</span>
                     </div>
                 </div>
                 <div class="text-left sm:text-right">
-                    <span class="text-sm font-black text-blue-700">{{ progress_percent }}% Complete</span>
+                    <span class="text-xs font-semibold text-blue-700">{{ progress_percent }}% Complete</span>
                     <span class="text-[11px] text-slate-500 block">
                         {% if treatment_plan.computed_next_change_date %}
                         Next Switch: {{ treatment_plan.computed_next_change_date|date:"M d, Y" }} (in {{ days_until_next_change }} days)
@@ -404,273 +377,239 @@
                 </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden shadow-inner">
-                <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ progress_percent }}%"></div>
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ progress_percent }}%"></div>
             </div>
         </div>
 
         <!-- Clinical Parameters Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Daily Wear Time</span>
-                <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.daily_wear_hours|default:"20-22" }} hrs / day</span>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-[10px] font-medium uppercase text-slate-400 block">Daily Wear Time</span>
+                <span class="text-xs font-semibold text-slate-800 mt-0.5 block">{{ treatment_plan.daily_wear_hours|default:"20-22" }} hrs / day</span>
             </div>
-            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Tray Switch Pace</span>
-                <span class="text-xs font-black text-slate-800 mt-1 block">Every {{ treatment_plan.aligner_frequency_days|default:"14" }} Days</span>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-[10px] font-medium uppercase text-slate-400 block">Tray Switch Pace</span>
+                <span class="text-xs font-semibold text-slate-800 mt-0.5 block">Every {{ treatment_plan.aligner_frequency_days|default:"14" }} Days</span>
             </div>
-            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Upper Arch Status</span>
-                <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.upper_arch_status|default:"Leveling / Tracking" }}</span>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-[10px] font-medium uppercase text-slate-400 block">Upper Arch</span>
+                <span class="text-xs font-semibold text-slate-800 mt-0.5 block">{{ treatment_plan.upper_arch_status|default:"Leveling" }}</span>
             </div>
-            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Lower Arch Status</span>
-                <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.lower_arch_status|default:"Leveling / Tracking" }}</span>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="text-[10px] font-medium uppercase text-slate-400 block">Lower Arch</span>
+                <span class="text-xs font-semibold text-slate-800 mt-0.5 block">{{ treatment_plan.lower_arch_status|default:"Leveling" }}</span>
             </div>
         </div>
 
         {% if treatment_plan.treatment_instructions %}
-        <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 text-xs space-y-1">
-            <span class="font-bold text-blue-900 block flex items-center gap-1.5">
-                <i class="fa-solid fa-user-doctor text-blue-600"></i> Doctor's Aligner Instructions:
+        <div class="p-3.5 rounded-lg bg-blue-50/60 border border-blue-200 text-xs space-y-1">
+            <span class="font-medium text-blue-900 block flex items-center gap-1.5">
+                <i class="fa-solid fa-user-doctor text-blue-600 text-xs"></i> Doctor's Aligner Instructions:
             </span>
-            <p class="text-slate-700 leading-relaxed font-medium">
+            <p class="text-slate-700 leading-relaxed font-normal">
                 {{ treatment_plan.treatment_instructions }}
             </p>
         </div>
         {% endif %}
         {% else %}
-        <div class="p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400">
-            Aligner treatment plan prescription is being configured by {{ doctor.display_name }}.
+        <div class="p-6 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-400">
+            Aligner treatment plan prescription is being prepared by {{ doctor.display_name }}.
         </div>
         {% endif %}
 
-        <!-- Clinical Treatment & Operation Records Log -->
-        <div class="pt-4 border-t border-slate-100 space-y-4">
+        <!-- In-Clinic Operation Records Log -->
+        <div class="pt-4 border-t border-slate-100 space-y-3">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-stethoscope text-indigo-600"></i> Clinical Treatment & In-Clinic Operation Records
+                    <h3 class="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-stethoscope text-blue-600"></i> In-Clinic Procedure Records
                     </h3>
-                    <p class="text-[11px] text-slate-500">Procedures, clinical observations, and dental interventions performed by {{ doctor.display_name }}</p>
+                    <p class="text-[11px] text-slate-500">Procedures and interventions performed by {{ doctor.display_name }}</p>
                 </div>
-                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                     {{ operation_records.count }} Record{{ operation_records.count|pluralize }}
                 </span>
             </div>
 
             {% if operation_records %}
-            <div class="space-y-3">
+            <div class="space-y-2.5">
                 {% for op in operation_records %}
-                <div class="p-4 rounded-2xl bg-slate-50 hover:bg-slate-50/80 border border-slate-200/80 space-y-2.5 transition">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-slate-200/60">
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1.5 border-b border-slate-200">
                         <div class="flex items-center gap-2">
-                            <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
+                            <span class="w-6 h-6 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-medium">
                                 <i class="fa-solid fa-tooth"></i>
                             </span>
-                            <span class="text-xs font-black text-slate-900">{{ op.operation_performed }}</span>
+                            <span class="text-xs font-semibold text-slate-900">{{ op.operation_performed }}</span>
                         </div>
-                        <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+                        <span class="text-[11px] text-slate-500 flex items-center gap-1">
                             <i class="fa-regular fa-calendar"></i> {{ op.record_date|date:"F j, Y" }}
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
                         {% if op.identified_problems or op.current_condition %}
-                        <div class="space-y-1">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Clinical Findings / Problem</span>
-                            <p class="text-slate-700 bg-white p-2.5 rounded-xl border border-slate-100">{{ op.identified_problems|default:op.current_condition }}</p>
+                        <div>
+                            <span class="text-[10px] font-medium uppercase text-slate-400 block">Clinical Findings</span>
+                            <p class="text-slate-700 bg-white p-2 rounded border border-slate-100 mt-0.5">{{ op.identified_problems|default:op.current_condition }}</p>
                         </div>
                         {% endif %}
 
                         {% if op.treatment_description %}
-                        <div class="space-y-1">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Procedure Performed</span>
-                            <p class="text-slate-700 bg-white p-2.5 rounded-xl border border-slate-100">{{ op.treatment_description }}</p>
+                        <div>
+                            <span class="text-[10px] font-medium uppercase text-slate-400 block">Procedure Performed</span>
+                            <p class="text-slate-700 bg-white p-2 rounded border border-slate-100 mt-0.5">{{ op.treatment_description }}</p>
                         </div>
                         {% endif %}
                     </div>
 
                     {% if op.doctor_observations %}
-                    <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 text-[11px] text-slate-700">
-                        <strong class="text-blue-900">Doctor Observations:</strong> {{ op.doctor_observations }}
-                    </div>
-                    {% endif %}
-
-                    {% if op.next_treatment_steps %}
-                    <div class="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-100 text-[11px] text-indigo-900">
-                        <strong>Next Treatment Steps:</strong> {{ op.next_treatment_steps }}
+                    <div class="p-2 rounded bg-white border border-slate-100 text-[11px] text-slate-600">
+                        <strong class="text-slate-800">Observations:</strong> {{ op.doctor_observations }}
                     </div>
                     {% endif %}
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <div class="p-6 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400">
-                <i class="fa-solid fa-notes-medical text-xl text-slate-300 block mb-1"></i>
-                No in-clinic procedure records logged yet. Your doctor will record clinical interventions here as your treatment advances.
+            <div class="p-5 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-400">
+                No in-clinic procedure records logged yet.
             </div>
             {% endif %}
         </div>
     </div>
 
 
-    <!-- ======================================================== -->
-    <!-- 6. STEP 4: PRESCRIBED OPERATION & PROBLEM DIAGNOSIS       -->
-    <!-- ======================================================== -->
-    <div id="step4Section" class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-indigo-200 shadow-md space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-indigo-100">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-600 text-white flex items-center justify-center text-lg shadow-md shadow-indigo-500/25 flex-shrink-0">
+    <!-- 6. STEP 4: PRESCRIBED OPERATION & PROBLEM DIAGNOSIS -->
+    <div id="step4Section" class="pa-card p-5 sm:p-6 bg-white space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm flex-shrink-0">
                     <i class="fa-solid fa-bullseye"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-white uppercase tracking-wider">
+                        <span class="px-2 py-0.2 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase">
                             Step 4
                         </span>
-                        <h2 class="text-lg font-black text-slate-900 tracking-tight">
+                        <h2 class="text-sm font-semibold text-slate-900">
                             Prescribed Operation & Clinical Diagnosis
                         </h2>
                     </div>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        Clinical problem identified by {{ doctor.display_name|default:"Your Doctor" }} and prescribed <strong>{{ current_operation }}</strong> protocol
+                        Clinical problem identified by doctor and prescribed <strong>{{ current_operation }}</strong> protocol
                     </p>
                 </div>
             </div>
 
-            <!-- Monitoring Frequency Cadence Badge -->
-            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider 
-                {% if monitoring_frequency == 'DAILY' %}bg-blue-100 text-blue-900 border border-blue-300
-                {% elif monitoring_frequency == 'MONTHLY' %}bg-purple-100 text-purple-900 border border-purple-300
-                {% else %}bg-emerald-100 text-emerald-900 border border-emerald-300{% endif %}">
+            <span class="badge badge-active self-start sm:self-auto">
                 <i class="fa-solid fa-clock-rotate-left"></i> {{ monitoring_frequency|title }} Photo Updates Required
             </span>
         </div>
 
-        <!-- Diagnosed Clinical Problem Callout -->
         {% if diagnosed_problem %}
-        <div class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border border-blue-200 text-xs space-y-1.5">
-            <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-black">
-                    <i class="fa-solid fa-stethoscope"></i>
-                </span>
-                <h3 class="text-xs font-black uppercase tracking-wider text-blue-950">
-                    What is the problem of the patient (Clinical Diagnosis by {{ doctor.display_name }}):
-                </h3>
-            </div>
-            <p class="text-slate-800 text-sm font-semibold leading-relaxed pl-8">
+        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1">
+            <span class="text-[10px] font-medium uppercase text-slate-400 block">Clinical Diagnosis:</span>
+            <p class="text-slate-800 font-medium leading-relaxed">
                 "{{ diagnosed_problem }}"
             </p>
         </div>
         {% endif %}
 
         <!-- Operation Details & Media Grid -->
-        <div class="space-y-4">
+        <div class="space-y-3">
             <div class="flex items-center justify-between flex-wrap gap-2 text-xs">
                 <div class="flex items-center gap-2">
-                    <span class="font-bold text-slate-500">Operation Name:</span>
-                    <span class="px-3 py-1 rounded-xl bg-indigo-100 text-indigo-900 font-black text-sm border border-indigo-200">
-                        <i class="fa-solid fa-bullseye text-indigo-600 mr-1"></i> {{ current_operation }}
+                    <span class="font-medium text-slate-500">Operation:</span>
+                    <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-semibold text-xs border border-slate-200">
+                        {{ current_operation }}
                     </span>
                 </div>
                 {% if doctor_media %}
                 <span class="text-slate-400 text-[11px]">
-                    Prescribed on {{ doctor_media.upload_date|date:"M d, Y" }} (v{{ doctor_media.version }})
+                    Prescribed on {{ doctor_media.upload_date|date:"M d, Y" }}
                 </span>
                 {% endif %}
             </div>
 
-            <!-- 2-Column Doctor Guidance Media: Reference Photo & Video -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 2-Column Doctor Guidance Media -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
                 <!-- 1. Doctor Reference Photograph -->
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                    <span class="text-xs font-black uppercase tracking-wider text-slate-800 block flex items-center gap-1.5">
-                        <i class="fa-solid fa-camera text-blue-600"></i> Doctor Reference / Appliance Photo
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                    <span class="text-xs font-semibold text-slate-800 block flex items-center gap-1.5">
+                        <i class="fa-solid fa-camera text-blue-600 text-xs"></i> Doctor Reference Photo
                     </span>
                     
                     {% if doctor_media and doctor_media.photo %}
-                    <div class="aspect-video bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer border border-slate-200"
-                         onclick="openImageModal('{{ doctor_media.photo.url }}', '{{ current_operation }} Reference Photo — Uploaded by {{ doctor.display_name }}')">
-                        <img src="{{ doctor_media.photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="{{ current_operation }} Reference">
-                        <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
-                            <i class="fa-solid fa-magnifying-glass-plus"></i> Click to Zoom Photo
+                    <div class="aspect-video bg-slate-950 rounded-md overflow-hidden relative group cursor-pointer border border-slate-200"
+                         onclick="openImageModal('{{ doctor_media.photo.url }}', '{{ current_operation }} Reference Photo &bull; Uploaded by {{ doctor.display_name }}')">
+                        <img src="{{ doctor_media.photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="{{ current_operation }} Reference">
+                        <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-medium gap-1.5">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom Photo
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-600 font-medium">
+                    <p class="text-[11px] text-slate-600">
                         {{ doctor_media.photo_description|default:"Reference photo showing correct appliance seating" }}
                     </p>
                     {% else %}
-                    <div class="aspect-video bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center text-xs text-slate-400">
+                    <div class="aspect-video bg-slate-100 rounded-md border border-slate-200 flex items-center justify-center text-xs text-slate-400">
                         No reference photo uploaded yet
                     </div>
                     {% endif %}
-                    
-                    <div class="text-[10px] text-blue-700 font-bold">
-                        <i class="fa-solid fa-user-doctor mr-1"></i> Uploaded by {{ doctor.display_name }}
-                    </div>
                 </div>
 
                 <!-- 2. Doctor Demonstration Video -->
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                    <span class="text-xs font-black uppercase tracking-wider text-slate-800 block flex items-center gap-1.5">
-                        <i class="fa-solid fa-video text-indigo-600"></i> Doctor Instructional & Demonstration Video
+                <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                    <span class="text-xs font-semibold text-slate-800 block flex items-center gap-1.5">
+                        <i class="fa-solid fa-video text-indigo-600 text-xs"></i> Demonstration Video
                     </span>
                     
                     {% if doctor_media and doctor_media.video %}
-                    <div class="aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-xs flex items-center justify-center">
+                    <div class="aspect-video bg-slate-950 rounded-md overflow-hidden border border-slate-800 flex items-center justify-center">
                         <video controls class="w-full h-full object-contain" preload="metadata">
                             <source src="{{ doctor_media.video.url }}">
                             Your browser does not support the video tag.
                         </video>
                     </div>
-                    <p class="text-[11px] text-slate-600 font-medium">
-                        {{ doctor_media.video_description|default:"Video demonstration of appliance placement and key turning" }}
+                    <p class="text-[11px] text-slate-600">
+                        {{ doctor_media.video_description|default:"Video demonstration of appliance placement" }}
                     </p>
                     {% else %}
-                    <div class="aspect-video bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center text-xs text-slate-400">
+                    <div class="aspect-video bg-slate-100 rounded-md border border-slate-200 flex items-center justify-center text-xs text-slate-400">
                         No demonstration video uploaded yet
                     </div>
                     {% endif %}
-
-                    <div class="text-[10px] text-indigo-700 font-bold">
-                        <i class="fa-solid fa-user-doctor mr-1"></i> Uploaded by {{ doctor.display_name }}
-                    </div>
                 </div>
 
             </div>
 
-            <!-- Doctor Specific Instructions -->
+            <!-- Doctor Instructions -->
             {% if doctor_media and doctor_media.doctor_instructions %}
-            <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-xs space-y-1">
-                <span class="font-black text-indigo-950 uppercase tracking-wider block">
-                    <i class="fa-solid fa-user-doctor text-indigo-600 mr-1"></i> Doctor's Wear & Turn Instructions:
+            <div class="p-3.5 rounded-lg bg-indigo-50/60 border border-indigo-200 text-xs space-y-1">
+                <span class="font-medium text-indigo-900 block">
+                    <i class="fa-solid fa-user-doctor text-indigo-600 mr-1"></i> Doctor's Instructions:
                 </span>
-                <p class="text-slate-800 leading-relaxed font-medium">
+                <p class="text-slate-800 leading-relaxed font-normal">
                     {{ doctor_media.doctor_instructions }}
                 </p>
             </div>
             {% endif %}
 
-            <!-- Call to Action: Post Progress Photos -->
-            <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-md">
-                <div class="space-y-1">
-                    <span class="text-xs font-black uppercase tracking-wider text-blue-200">
-                        Step 4 Patient Monitoring Protocol
-                    </span>
-                    <h3 class="text-base font-black">
-                        Submit Your {{ monitoring_frequency|title }} Progress Photographs
+            <!-- Call to Action Banner -->
+            <div class="p-4 sm:p-5 rounded-lg bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                    <h3 class="text-xs sm:text-sm font-semibold text-white">
+                        Submit {{ monitoring_frequency|title }} Progress Photos
                     </h3>
-                    <p class="text-xs text-blue-100 max-w-lg leading-relaxed">
-                        Your doctor has prescribed <strong>{{ monitoring_frequency|title }}</strong> photo submissions. Take or paste (Ctrl+V) your photos to keep your doctor updated on tooth movement.
+                    <p class="text-[11px] text-slate-300 max-w-lg leading-relaxed">
+                        Submit your scheduled 5-angle progress check-in photos so your doctor can review tooth tracking.
                     </p>
                 </div>
 
-                <a href="{% url 'patient:upload_photos' %}"
-                   class="px-6 py-3 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-black text-xs shadow-md transition flex items-center justify-center gap-2 whitespace-nowrap self-start sm:self-auto">
-                    <i class="fa-solid fa-camera"></i> Post {{ monitoring_frequency|title }} Photos &rarr;
+                <a href="{% url 'patient:upload_photos' %}" class="btn-primary text-xs py-2 px-4 whitespace-nowrap self-start sm:self-auto">
+                    <i class="fa-solid fa-camera mr-1"></i> Post Photos
                 </a>
             </div>
 
@@ -678,35 +617,33 @@
     </div>
 
 
-    <!-- ======================================================== -->
     <!-- 7. PATIENT'S SUBMITTED PROGRESS PHOTOS & DOCTOR FEEDBACK -->
-    <!-- ======================================================== -->
-    <div id="patientProgressSection" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+    <div id="patientProgressSection" class="pa-card p-5 sm:p-6 bg-white space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
             <div>
-                <h2 class="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-images text-blue-600"></i> My Submitted Progress Photos & Reviews
                 </h2>
                 <p class="text-xs text-slate-500 mt-0.5">
-                    History of your {{ monitoring_frequency|lower }} check-in photographs reviewed by {{ doctor.display_name }}
+                    History of your check-in submissions and doctor feedback
                 </p>
             </div>
 
-            <a href="{% url 'patient:upload_photos' %}" class="btn-primary text-xs py-2 px-4 inline-flex items-center gap-1.5 self-start sm:self-auto">
-                <i class="fa-solid fa-plus"></i> Post New Progress Photos
+            <a href="{% url 'patient:upload_photos' %}" class="btn-primary text-xs self-start sm:self-auto">
+                <i class="fa-solid fa-plus mr-1"></i> Post Check-in
             </a>
         </div>
 
         {% if patient_photos %}
-        <div class="space-y-4">
+        <div class="space-y-3">
             {% for upload in patient_photos %}
-            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-3">
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-md text-xs font-black bg-blue-100 text-blue-800">
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                             Check-in #{{ upload.week_number }}
                         </span>
-                        <span class="text-xs font-semibold text-slate-600">
+                        <span class="text-xs text-slate-500">
                             {{ upload.upload_date|date:"F j, Y" }}
                         </span>
                     </div>
@@ -717,45 +654,45 @@
                 </div>
 
                 <!-- 5 Photo Thumbnails -->
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                     {% if upload.front_bite_photo %}
-                    <div class="aspect-square bg-slate-900 rounded-xl overflow-hidden cursor-pointer group relative border border-slate-200"
-                         onclick="openImageModal('{{ upload.front_bite_photo.url }}', 'Front Bite - Check-in #{{ upload.week_number }}')">
-                        <img src="{{ upload.front_bite_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Front Bite">
+                    <div class="aspect-square bg-slate-900 rounded-md overflow-hidden cursor-pointer group relative border border-slate-200"
+                         onclick="openImageModal('{{ upload.front_bite_photo.url }}', 'Front Bite &bull; Check-in #{{ upload.week_number }}')">
+                        <img src="{{ upload.front_bite_photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="Front Bite">
                     </div>
                     {% endif %}
                     {% if upload.upper_arch_photo %}
-                    <div class="aspect-square bg-slate-900 rounded-xl overflow-hidden cursor-pointer group relative border border-slate-200"
-                         onclick="openImageModal('{{ upload.upper_arch_photo.url }}', 'Upper Arch - Check-in #{{ upload.week_number }}')">
-                        <img src="{{ upload.upper_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Upper Arch">
+                    <div class="aspect-square bg-slate-900 rounded-md overflow-hidden cursor-pointer group relative border border-slate-200"
+                         onclick="openImageModal('{{ upload.upper_arch_photo.url }}', 'Upper Arch &bull; Check-in #{{ upload.week_number }}')">
+                        <img src="{{ upload.upper_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="Upper Arch">
                     </div>
                     {% endif %}
                     {% if upload.lower_arch_photo %}
-                    <div class="aspect-square bg-slate-900 rounded-xl overflow-hidden cursor-pointer group relative border border-slate-200"
-                         onclick="openImageModal('{{ upload.lower_arch_photo.url }}', 'Lower Arch - Check-in #{{ upload.week_number }}')">
-                        <img src="{{ upload.lower_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Lower Arch">
+                    <div class="aspect-square bg-slate-900 rounded-md overflow-hidden cursor-pointer group relative border border-slate-200"
+                         onclick="openImageModal('{{ upload.lower_arch_photo.url }}', 'Lower Arch &bull; Check-in #{{ upload.week_number }}')">
+                        <img src="{{ upload.lower_arch_photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="Lower Arch">
                     </div>
                     {% endif %}
                     {% if upload.right_occlusion_photo %}
-                    <div class="aspect-square bg-slate-900 rounded-xl overflow-hidden cursor-pointer group relative border border-slate-200"
-                         onclick="openImageModal('{{ upload.right_occlusion_photo.url }}', 'Right Occlusion - Check-in #{{ upload.week_number }}')">
-                        <img src="{{ upload.right_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Right Occlusion">
+                    <div class="aspect-square bg-slate-900 rounded-md overflow-hidden cursor-pointer group relative border border-slate-200"
+                         onclick="openImageModal('{{ upload.right_occlusion_photo.url }}', 'Right Occlusion &bull; Check-in #{{ upload.week_number }}')">
+                        <img src="{{ upload.right_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="Right Occlusion">
                     </div>
                     {% endif %}
                     {% if upload.left_occlusion_photo %}
-                    <div class="aspect-square bg-slate-900 rounded-xl overflow-hidden cursor-pointer group relative border border-slate-200"
-                         onclick="openImageModal('{{ upload.left_occlusion_photo.url }}', 'Left Occlusion - Check-in #{{ upload.week_number }}')">
-                        <img src="{{ upload.left_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="Left Occlusion">
+                    <div class="aspect-square bg-slate-900 rounded-md overflow-hidden cursor-pointer group relative border border-slate-200"
+                         onclick="openImageModal('{{ upload.left_occlusion_photo.url }}', 'Left Occlusion &bull; Check-in #{{ upload.week_number }}')">
+                        <img src="{{ upload.left_occlusion_photo.url }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-200" alt="Left Occlusion">
                     </div>
                     {% endif %}
                 </div>
 
                 <!-- Doctor Feedback if available -->
                 {% if upload.doctor_feedback %}
-                <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs space-y-1">
+                <div class="p-3 bg-blue-50/70 border border-blue-200 rounded-lg text-xs space-y-1">
                     <div class="flex items-center justify-between">
-                        <span class="font-bold text-blue-950">{{ doctor.display_name }}'s Review:</span>
-                        <span class="text-amber-600 font-bold flex items-center gap-1">
+                        <span class="font-semibold text-blue-950">{{ doctor.display_name }}'s Review:</span>
+                        <span class="text-amber-700 font-semibold flex items-center gap-1">
                             <i class="fa-solid fa-star text-amber-500 text-xs"></i> {{ upload.doctor_rating }}/5
                         </span>
                     </div>
@@ -766,12 +703,12 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="p-8 text-center rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-400 space-y-2">
-            <i class="fa-solid fa-camera-retro text-2xl text-slate-300 block"></i>
-            <p>You haven't posted any {{ monitoring_frequency|lower }} progress photos yet.</p>
-            <div class="pt-2">
-                <a href="{% url 'patient:upload_photos' %}" class="btn-primary text-xs py-2 px-4 inline-flex items-center gap-1.5">
-                    <i class="fa-solid fa-camera"></i> Post Your First Progress Photos
+        <div class="p-8 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-400 space-y-2">
+            <i class="fa-solid fa-camera-retro text-xl text-slate-300 block mb-1"></i>
+            <p>You haven't posted any progress photos yet.</p>
+            <div class="pt-1">
+                <a href="{% url 'patient:upload_photos' %}" class="btn-primary text-xs">
+                    <i class="fa-solid fa-camera mr-1"></i> Post First Progress Photos
                 </a>
             </div>
         </div>
@@ -782,14 +719,14 @@
 
 <!-- High-Resolution Image Zoom Modal -->
 <div id="imageModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl space-y-3 p-4">
+    <div class="bg-white rounded-xl max-w-3xl w-full overflow-hidden shadow-xl space-y-3 p-4">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h4 id="modalImageTitle" class="text-sm font-black text-slate-900">Photograph Preview</h4>
-            <button type="button" onclick="closeImageModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">
+            <h4 id="modalImageTitle" class="text-xs font-semibold text-slate-800">Photograph Preview</h4>
+            <button type="button" onclick="closeImageModal()" class="w-7 h-7 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">
                 &times;
             </button>
         </div>
-        <div class="max-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl bg-slate-900">
+        <div class="max-h-[75vh] flex items-center justify-center overflow-hidden rounded-lg bg-slate-900">
             <img id="modalImageSrc" src="" class="max-h-[75vh] w-auto object-contain" alt="Zoomed Preview">
         </div>
     </div>

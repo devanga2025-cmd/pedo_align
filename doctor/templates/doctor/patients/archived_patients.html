@@ -8,22 +8,19 @@
 <div class="space-y-6">
 
     <!-- Header Banner -->
-    <div class="pa-card p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white relative overflow-hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold mb-2 text-slate-300">
-                    <i class="fa-solid fa-box-archive text-sky-400"></i> Clinical Archive System
-                </div>
-                <h1 class="text-2xl font-black tracking-tight text-white">Archived & Deactivated Patients</h1>
-                <p class="text-xs text-slate-300 mt-1 max-w-xl">
-                    Historical records preserved under medical record retention policy. Deactivated patient accounts cannot log into the patient portal, but all pre-op photos, radiographs, prescriptions, and clinical history remain accessible.
-                </p>
-            </div>
-            <div>
-                <a href="{% url 'doctor:patient_list' %}" class="px-4 py-2.5 rounded-xl bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 transition shadow-sm inline-flex items-center gap-2">
-                    <i class="fa-solid fa-users text-blue-600"></i> Active Patient List
-                </a>
-            </div>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-box-archive text-slate-500 text-sm"></i> Archived & Deactivated Patients
+            </h1>
+            <p class="text-xs text-slate-500 mt-1 max-w-xl">
+                Historical records preserved under medical retention policy. Deactivated accounts cannot log into the patient portal, but all pre-op photos, radiographs, prescriptions, and history remain accessible.
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'doctor:patient_list' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-arrow-left text-[11px] mr-1"></i> Active Patient List
+            </a>
         </div>
     </div>
 
@@ -42,8 +39,7 @@
     {% if archived_patients %}
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {% for pt in archived_patients %}
-        <div class="pa-card p-5 relative overflow-hidden group hover:border-blue-400 transition">
-            <div class="h-1 w-full bg-gradient-to-r from-slate-400 to-slate-600 absolute top-0 left-0"></div>
+        <div class="pa-card p-5 relative overflow-hidden group hover:border-blue-400 transition bg-white">
 
             <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">

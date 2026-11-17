@@ -157,7 +157,7 @@
                             </td>
                             <td class="py-3.5 px-4 text-right">
                                 <div class="flex items-center justify-end gap-1.5">
-                                    <a href="{% url 'doctor:patient_clinical_journey' plan.patient.id %}" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-xs flex items-center gap-1" title="Open Clinical Journey">
+                                    <a href="{% url 'doctor:patient_clinical_journey' plan.patient.id %}" class="btn-primary py-1 px-2.5 text-xs flex items-center gap-1" title="Open Clinical Journey">
                                         <i class="fa-solid fa-folder-open text-[10px]"></i> Open
                                     </a>
                                     {% if plan.current_aligner < plan.total_aligners %}
@@ -242,7 +242,7 @@
 
                 <!-- Action buttons -->
                 <div class="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <a href="{% url 'doctor:patient_clinical_journey' plan.patient.id %}" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center gap-1.5">
+                    <a href="{% url 'doctor:patient_clinical_journey' plan.patient.id %}" class="btn-primary py-1.5 px-3 text-xs flex items-center gap-1.5">
                         <i class="fa-solid fa-folder-open text-xs"></i> Open
                     </a>
 

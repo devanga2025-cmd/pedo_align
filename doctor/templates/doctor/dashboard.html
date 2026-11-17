@@ -5,154 +5,138 @@
 {% block breadcrumb %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="space-y-6 w-full max-w-full min-w-0 overflow-x-hidden">
+<div class="space-y-5 w-full max-w-full min-w-0 overflow-x-hidden">
 
-    <!-- Top Hero Banner with assent/hero_section.png -->
-    <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-blue-200/50 bg-[#011f55] min-h-[200px] sm:min-h-[240px] flex items-center w-full max-w-full">
-        <!-- Hero Background Image from assent/hero_section.png -->
-        <div class="absolute inset-0 w-full h-full">
-            <img src="{% static 'hero_section.png' %}" onerror="this.onerror=null; this.src='{% static 'doctor/images/hero_section.png' %}';" alt="PEDO ALIGN Dashboard Banner" class="w-full h-full object-cover object-right sm:object-center select-none">
-            <!-- Smooth gradient scrim on the left for contrast and typography clarity -->
-            <div class="absolute inset-0 bg-gradient-to-r from-[#011638]/95 via-[#012466]/75 to-transparent sm:w-3/5"></div>
+    <!-- Top Clinical Session Header -->
+    <div class="pa-card p-5 sm:p-6 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-medium mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Active Clinical Session</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight truncate">
+                Welcome back, Dr. {{ doctor.full_name }}
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
+                <strong class="font-medium text-slate-700">{{ doctor.clinic_name }}</strong> &bull; Monitoring <span class="font-semibold text-slate-900">{{ active_treatments }}</span> active aligner patient{{ active_treatments|pluralize }} &bull; <span class="font-semibold text-amber-700">{{ pending_approvals }}</span> joining request{{ pending_approvals|pluralize }} pending.
+            </p>
         </div>
 
-        <!-- Banner Content -->
-        <div class="relative z-10 p-5 sm:p-8 lg:p-10 max-w-2xl text-white w-full min-w-0">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-xs font-semibold mb-2.5 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="text-sky-200 tracking-wide font-medium">Active Clinical Session</span>
-            </div>
-
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white drop-shadow-sm truncate">
-                Good day, Dr. {{ doctor.full_name }}
-            </h1>
-
-            <p class="text-blue-100/90 text-xs sm:text-sm mt-2 leading-relaxed max-w-xl font-normal">
-                Welcome to <strong class="text-white">{{ doctor.clinic_name }}</strong>. You have <span class="font-bold text-white bg-blue-500/30 px-2 py-0.5 rounded-md border border-blue-400/30">{{ active_treatments }}</span> patients in active aligner movement and <span class="font-bold text-amber-200 bg-amber-500/30 px-2 py-0.5 rounded-md border border-amber-400/30">{{ pending_approvals }}</span> joining code requests pending your review.
-            </p>
-
-            <div class="mt-4 sm:mt-5 flex flex-wrap items-center gap-2.5 sm:gap-3">
-                <a href="{% url 'doctor:patient_create' %}" class="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-white text-blue-950 font-bold text-xs rounded-xl shadow-lg hover:shadow-xl hover:bg-blue-50 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus text-blue-600"></i> + Add Patient
-                </a>
-                <a href="{% url 'doctor:patient_requests' %}" class="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-blue-600/80 hover:bg-blue-600 text-white font-semibold text-xs rounded-xl backdrop-blur-md border border-blue-400/40 shadow-sm transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                    <i class="fa-solid fa-key text-sky-300"></i> Review Code Requests ({{ pending_approvals }})
-                </a>
-            </div>
+        <div class="flex items-center gap-2.5 flex-shrink-0">
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-user-plus text-xs"></i>
+                <span>Add Patient</span>
+            </a>
+            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-key text-xs text-blue-600"></i>
+                <span>Review Requests ({{ pending_approvals }})</span>
+            </a>
         </div>
     </div>
 
-    <!-- 6 KPI Stat Cards (Responsive, zero overflow) -->
+    <!-- 6 KPI Stat Cards -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 w-full min-w-0">
         
         <!-- 1. Total Patients -->
-        <a href="{% url 'doctor:patient_list' %}" class="pa-card p-3 sm:p-4 rounded-2xl pa-card-hover block relative overflow-hidden min-w-0 w-full group">
-            <div class="h-1 w-full bg-gradient-to-r from-blue-500 to-indigo-600 absolute top-0 left-0"></div>
-            <div class="flex items-center justify-between gap-1.5 mb-2">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+        <a href="{% url 'doctor:patient_list' %}" class="pa-card pa-card-hover p-4 block min-w-0 w-full group">
+            <div class="flex items-center justify-between gap-1 mb-2">
+                <span class="text-xs font-medium text-slate-500 truncate">Total Patients</span>
+                <div class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-users text-xs"></i>
                 </div>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Total</span>
             </div>
-            <div class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-none truncate">{{ total_patients }}</div>
-            <p class="text-[10px] sm:text-[11px] text-blue-600 font-semibold mt-1.5 sm:mt-2 truncate flex items-center gap-1">
-                <i class="fa-solid fa-circle-check text-[9px]"></i> Total Enrolled
-            </p>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight leading-none truncate">{{ total_patients }}</div>
+            <p class="text-[11px] text-slate-500 font-medium mt-2 truncate">Total Enrolled</p>
         </a>
 
         <!-- 2. Active Patients -->
-        <a href="{% url 'doctor:patient_list' %}?status=ACTIVE" class="pa-card p-3 sm:p-4 rounded-2xl pa-card-hover block relative overflow-hidden min-w-0 w-full group">
-            <div class="h-1 w-full bg-gradient-to-r from-emerald-500 to-teal-600 absolute top-0 left-0"></div>
-            <div class="flex items-center justify-between gap-1.5 mb-2">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+        <a href="{% url 'doctor:patient_list' %}?status=ACTIVE" class="pa-card pa-card-hover p-4 block min-w-0 w-full group">
+            <div class="flex items-center justify-between gap-1 mb-2">
+                <span class="text-xs font-medium text-slate-500 truncate">Active Care</span>
+                <div class="w-7 h-7 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-teeth-open text-xs"></i>
                 </div>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Active</span>
             </div>
-            <div class="text-xl sm:text-2xl font-extrabold text-emerald-700 tracking-tight leading-none truncate">{{ active_patients }}</div>
-            <p class="text-[10px] sm:text-[11px] text-emerald-600 font-semibold mt-1.5 sm:mt-2 truncate">In Active Care</p>
+            <div class="text-2xl font-bold text-emerald-700 tracking-tight leading-none truncate">{{ active_patients }}</div>
+            <p class="text-[11px] text-emerald-600 font-medium mt-2 truncate">In Treatment</p>
         </a>
 
         <!-- 3. Treatment Completed -->
-        <a href="{% url 'doctor:patient_list' %}?status=COMPLETED" class="pa-card p-3 sm:p-4 rounded-2xl pa-card-hover block relative overflow-hidden min-w-0 w-full group">
-            <div class="h-1 w-full bg-gradient-to-r from-sky-500 to-blue-600 absolute top-0 left-0"></div>
-            <div class="flex items-center justify-between gap-1.5 mb-2">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+        <a href="{% url 'doctor:patient_list' %}?status=COMPLETED" class="pa-card pa-card-hover p-4 block min-w-0 w-full group">
+            <div class="flex items-center justify-between gap-1 mb-2">
+                <span class="text-xs font-medium text-slate-500 truncate">Completed</span>
+                <div class="w-7 h-7 rounded-md bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-circle-check text-xs"></i>
                 </div>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Done</span>
             </div>
-            <div class="text-xl sm:text-2xl font-extrabold text-sky-800 tracking-tight leading-none truncate">{{ completed_treatments }}</div>
-            <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1.5 sm:mt-2 truncate">Finished / Retainer</p>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight leading-none truncate">{{ completed_treatments }}</div>
+            <p class="text-[11px] text-slate-500 font-medium mt-2 truncate">Finished / Retainer</p>
         </a>
 
         <!-- 4. Upcoming Appointments -->
-        <a href="{% url 'doctor:appointments' %}" class="pa-card p-3 sm:p-4 rounded-2xl pa-card-hover block relative overflow-hidden min-w-0 w-full group">
-            <div class="h-1 w-full bg-gradient-to-r from-purple-500 to-indigo-600 absolute top-0 left-0"></div>
-            <div class="flex items-center justify-between gap-1.5 mb-2">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+        <a href="{% url 'doctor:appointments' %}" class="pa-card pa-card-hover p-4 block min-w-0 w-full group">
+            <div class="flex items-center justify-between gap-1 mb-2">
+                <span class="text-xs font-medium text-slate-500 truncate">Appointments</span>
+                <div class="w-7 h-7 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-calendar text-xs"></i>
                 </div>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Visits</span>
             </div>
-            <div class="text-xl sm:text-2xl font-extrabold text-purple-900 tracking-tight leading-none truncate">{{ upcoming_appointments_count }}</div>
-            <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1.5 sm:mt-2 truncate">Upcoming Visits</p>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight leading-none truncate">{{ upcoming_appointments_count }}</div>
+            <p class="text-[11px] text-slate-500 font-medium mt-2 truncate">Upcoming Visits</p>
         </a>
 
         <!-- 5. Pending Photo Reviews -->
-        <a href="{% url 'doctor:photo_monitoring' %}" class="pa-card p-3 sm:p-4 rounded-2xl pa-card-hover block relative overflow-hidden min-w-0 w-full group {% if pending_photo_reviews > 0 %}ring-2 ring-amber-400 bg-amber-50/20{% endif %}">
-            <div class="h-1 w-full bg-gradient-to-r from-amber-500 to-orange-500 absolute top-0 left-0"></div>
-            <div class="flex items-center justify-between gap-1.5 mb-2">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+        <a href="{% url 'doctor:photo_monitoring' %}" class="pa-card pa-card-hover p-4 block min-w-0 w-full group {% if pending_photo_reviews > 0 %}border-amber-300 bg-amber-50/20{% endif %}">
+            <div class="flex items-center justify-between gap-1 mb-2">
+                <span class="text-xs font-medium text-slate-500 truncate">Photo Reviews</span>
+                <div class="w-7 h-7 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-camera text-xs"></i>
                 </div>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Photos</span>
             </div>
-            <div class="text-xl sm:text-2xl font-extrabold text-amber-700 tracking-tight leading-none truncate">{{ pending_photo_reviews }}</div>
-            <p class="text-[10px] sm:text-[11px] text-amber-700 font-bold mt-1.5 sm:mt-2 truncate">Pending Reviews</p>
+            <div class="text-2xl font-bold text-amber-800 tracking-tight leading-none truncate">{{ pending_photo_reviews }}</div>
+            <p class="text-[11px] text-amber-700 font-medium mt-2 truncate">Pending Review</p>
         </a>
 
         <!-- 6. Archived Patients -->
-        <a href="{% url 'doctor:archived_patients' %}" class="pa-card p-3 sm:p-4 rounded-2xl pa-card-hover block relative overflow-hidden min-w-0 w-full group">
-            <div class="h-1 w-full bg-gradient-to-r from-slate-500 to-slate-700 absolute top-0 left-0"></div>
-            <div class="flex items-center justify-between gap-1.5 mb-2">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-500/10 text-slate-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+        <a href="{% url 'doctor:archived_patients' %}" class="pa-card pa-card-hover p-4 block min-w-0 w-full group">
+            <div class="flex items-center justify-between gap-1 mb-2">
+                <span class="text-xs font-medium text-slate-500 truncate">Archived</span>
+                <div class="w-7 h-7 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-box-archive text-xs"></i>
                 </div>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">Archive</span>
             </div>
-            <div class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight leading-none truncate">{{ archived_patients_count }}</div>
-            <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1.5 sm:mt-2 truncate">Archived Records</p>
+            <div class="text-2xl font-bold text-slate-900 tracking-tight leading-none truncate">{{ archived_patients_count }}</div>
+            <p class="text-[11px] text-slate-500 font-medium mt-2 truncate">Historical Files</p>
         </a>
 
     </div>
 
     <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full min-w-0">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full min-w-0">
         
         <!-- Treatment Status Chart -->
-        <div class="pa-card p-4 sm:p-6 lg:col-span-2 w-full min-w-0 overflow-hidden">
+        <div class="pa-card p-5 lg:col-span-2 w-full min-w-0 overflow-hidden">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 gap-2">
                 <div class="min-w-0">
-                    <h3 class="text-sm font-bold text-slate-900 truncate">Patient Treatment Status Breakdown</h3>
-                    <p class="text-xs text-slate-500 truncate">Distribution across active, pending, and completed dental aligner therapy</p>
+                    <h3 class="text-sm font-semibold text-slate-900 truncate">Patient Treatment Breakdown</h3>
+                    <p class="text-xs text-slate-500 truncate">Therapy status distribution across enrolled patients</p>
                 </div>
-                <span class="text-xs font-semibold px-2.5 sm:px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 rounded-lg border border-blue-100 flex-shrink-0">Live Overview</span>
+                <span class="text-xs font-medium px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md border border-slate-200 flex-shrink-0">Clinical Overview</span>
             </div>
-            <div class="relative h-60 sm:h-64 w-full max-w-full overflow-hidden flex items-center justify-center">
+            <div class="relative h-60 w-full max-w-full overflow-hidden flex items-center justify-center">
                 <canvas id="statusChart"></canvas>
             </div>
         </div>
 
         <!-- Compliance & Wear Time Chart -->
-        <div class="pa-card p-4 sm:p-6 w-full min-w-0 overflow-hidden">
+        <div class="pa-card p-5 w-full min-w-0 overflow-hidden">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-900">Patient Compliance</h3>
+                    <h3 class="text-sm font-semibold text-slate-900">Patient Compliance</h3>
                     <p class="text-xs text-slate-500">Wear time and aligner switch fidelity</p>
                 </div>
             </div>
-            <div class="relative h-60 sm:h-64 w-full max-w-full overflow-hidden flex items-center justify-center">
+            <div class="relative h-60 w-full max-w-full overflow-hidden flex items-center justify-center">
                 <canvas id="complianceChart"></canvas>
             </div>
         </div>
@@ -160,48 +144,48 @@
     </div>
 
     <!-- Two-Column Feed: Recent Patients & Upcoming Appointments -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full min-w-0">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full min-w-0">
         
         <!-- Recently Added Patients -->
-        <div class="pa-card p-4 sm:p-6 w-full min-w-0 overflow-hidden">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-blue-100/80 text-blue-700 flex items-center justify-center text-xs shadow-sm flex-shrink-0">
+        <div class="pa-card p-5 w-full min-w-0 overflow-hidden">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-xs flex-shrink-0">
                         <i class="fa-solid fa-user-plus"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="text-sm font-bold text-slate-900 truncate">Recently Enrolled Patients</h3>
-                        <p class="text-[11px] text-slate-500 truncate">Latest patients added to your practice</p>
+                        <h3 class="text-sm font-semibold text-slate-900 truncate">Recently Enrolled Patients</h3>
+                        <p class="text-[11px] text-slate-500 truncate">Latest admissions to your clinical register</p>
                     </div>
                 </div>
-                <a href="{% url 'doctor:patient_list' %}" class="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline flex-shrink-0 ml-2">View All</a>
+                <a href="{% url 'doctor:patient_list' %}" class="text-xs font-medium text-blue-600 hover:text-blue-800 transition flex-shrink-0">View All</a>
             </div>
 
             {% if recent_patients %}
             <div class="divide-y divide-slate-100">
                 {% for pt in recent_patients %}
-                <div class="py-3 flex items-center justify-between gap-2 sm:gap-3 hover:bg-blue-50/30 rounded-xl px-2 transition min-w-0">
-                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-800 font-extrabold flex items-center justify-center text-xs flex-shrink-0 border border-blue-200">
+                <div class="py-2.5 flex items-center justify-between gap-3 hover:bg-slate-50 rounded-lg px-2 transition min-w-0">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-xs flex-shrink-0 border border-slate-200">
                             {{ pt.first_name|first }}{{ pt.last_name|first }}
                         </div>
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-1.5 flex-wrap">
-                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="text-xs font-bold text-slate-900 hover:text-blue-700 truncate block">
+                            <div class="flex items-center gap-1.5">
+                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="text-xs font-semibold text-slate-900 hover:text-blue-600 truncate block">
                                     {{ pt.full_name }}
                                 </a>
                                 {% if pt.patient_category == 'CHILD' %}
-                                <span class="px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-sky-100 text-sky-800 border border-sky-200">
-                                    <i class="fa-solid fa-child"></i> Child
+                                <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                                    Child
                                 </span>
                                 {% else %}
-                                <span class="px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-indigo-100 text-indigo-800 border border-indigo-200">
-                                    <i class="fa-solid fa-user"></i> Adult
+                                <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                                    Adult
                                 </span>
                                 {% endif %}
                             </div>
-                            <p class="text-[11px] text-slate-500 truncate">
-                                ID: <span class="font-mono text-slate-700">{{ pt.patient_id }}</span> • {{ pt.age }} yrs ({{ pt.gender }})
+                            <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                                {{ pt.patient_id }} &bull; {{ pt.age }} yrs ({{ pt.gender }})
                             </p>
                         </div>
                     </div>
@@ -213,8 +197,8 @@
                             {% else %}badge-hold{% endif %}">
                             {{ pt.get_treatment_status_display }}
                         </span>
-                        <a href="{% url 'doctor:patient_detail' pt.id %}" class="p-1.5 text-slate-400 hover:text-blue-700">
-                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        <a href="{% url 'doctor:patient_detail' pt.id %}" class="p-1 text-slate-400 hover:text-slate-600">
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
                         </a>
                     </div>
                 </div>
@@ -222,53 +206,50 @@
             </div>
             {% else %}
             <div class="py-8 text-center text-xs text-slate-400">
-                <i class="fa-solid fa-users text-2xl mb-2 text-slate-300 block"></i>
-                No patients enrolled yet. Click "+ Add Patient" above to get started.
+                <i class="fa-solid fa-users text-xl mb-1.5 text-slate-300 block"></i>
+                No patients enrolled yet.
             </div>
             {% endif %}
         </div>
 
         <!-- Upcoming Appointments -->
-        <div class="pa-card p-4 sm:p-6 w-full min-w-0 overflow-hidden">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-purple-100/80 text-purple-700 flex items-center justify-center text-xs shadow-sm flex-shrink-0">
+        <div class="pa-card p-5 w-full min-w-0 overflow-hidden">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-7 h-7 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-xs flex-shrink-0">
                         <i class="fa-solid fa-calendar-check"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="text-sm font-bold text-slate-900 truncate">Upcoming Appointments</h3>
+                        <h3 class="text-sm font-semibold text-slate-900 truncate">Upcoming Appointments</h3>
                         <p class="text-[11px] text-slate-500 truncate">Scheduled clinical evaluations & deliver sets</p>
                     </div>
                 </div>
-                <a href="{% url 'doctor:appointments' %}" class="text-xs font-bold text-purple-600 hover:text-purple-800 hover:underline flex-shrink-0 ml-2">Manage</a>
+                <a href="{% url 'doctor:appointments' %}" class="text-xs font-medium text-blue-600 hover:text-blue-800 transition flex-shrink-0">Manage</a>
             </div>
 
             {% if upcoming_appointments_list %}
             <div class="divide-y divide-slate-100">
                 {% for appt in upcoming_appointments_list %}
-                <div class="py-3 flex items-center justify-between gap-2 sm:gap-3 hover:bg-purple-50/20 rounded-xl px-2 transition min-w-0">
-                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 text-purple-700 flex flex-col items-center justify-center text-[10px] font-bold flex-shrink-0">
-                            <span class="text-[9px] uppercase font-semibold text-purple-500">{{ appt.scheduled_date|date:"M" }}</span>
-                            <span class="text-sm font-black leading-none">{{ appt.scheduled_date|date:"d" }}</span>
+                <div class="py-2.5 flex items-center justify-between gap-3 hover:bg-slate-50 rounded-lg px-2 transition min-w-0">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 flex flex-col items-center justify-center text-[9px] font-semibold flex-shrink-0">
+                            <span class="uppercase text-slate-500 text-[8px] leading-tight">{{ appt.scheduled_date|date:"M" }}</span>
+                            <span class="text-xs font-bold leading-none text-slate-900">{{ appt.scheduled_date|date:"d" }}</span>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="text-xs font-bold text-slate-900 hover:text-blue-700 truncate block">
+                            <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="text-xs font-semibold text-slate-900 hover:text-blue-600 truncate block">
                                 {{ appt.patient.full_name }}
                             </a>
-                            <p class="text-[11px] text-purple-800 font-medium truncate">
-                                {{ appt.get_appointment_type_display }}
+                            <p class="text-[11px] text-slate-600 truncate mt-0.5">
+                                {{ appt.get_appointment_type_display }} &bull; {{ appt.scheduled_time|time:"g:i A" }}
                             </p>
-                            <span class="text-[10px] text-slate-400">
-                                <i class="fa-regular fa-clock mr-1"></i>{{ appt.scheduled_time|time:"g:i A" }} ({{ appt.duration_minutes }} mins)
-                            </span>
                         </div>
                     </div>
                     <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}" class="flex-shrink-0">
                         {% csrf_token %}
                         <input type="hidden" name="status" value="COMPLETED">
-                        <button type="submit" class="text-xs px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold hover:bg-emerald-100 border border-emerald-200 transition" title="Mark as Completed">
-                            <i class="fa-solid fa-check mr-1"></i> Done
+                        <button type="submit" class="text-xs px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 font-medium hover:bg-emerald-100 border border-emerald-200 transition" title="Mark as Completed">
+                            <i class="fa-solid fa-check text-[10px] mr-1"></i> Completed
                         </button>
                     </form>
                 </div>
@@ -276,81 +257,80 @@
             </div>
             {% else %}
             <div class="py-8 text-center text-xs text-slate-400">
-                <i class="fa-regular fa-calendar-xmark text-2xl mb-2 text-slate-300 block"></i>
-                No upcoming appointments. Schedule one via Appointments page.
+                <i class="fa-regular fa-calendar-xmark text-xl mb-1.5 text-slate-300 block"></i>
+                No upcoming appointments.
             </div>
             {% endif %}
         </div>
 
     </div>
 
-    <!-- Middle Row 2: Pending Photo Reviews & Recent Activities (Section 13) -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full min-w-0">
+    <!-- Middle Row 2: Pending Photo Reviews & Recent Activities -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full min-w-0">
         
         <!-- Pending Patient Photo Reviews -->
-        <div class="pa-card p-4 sm:p-6 w-full min-w-0 overflow-hidden">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-amber-100/80 text-amber-700 flex items-center justify-center text-xs shadow-sm flex-shrink-0">
+        <div class="pa-card p-5 w-full min-w-0 overflow-hidden">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-7 h-7 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center text-xs flex-shrink-0">
                         <i class="fa-solid fa-camera"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="text-sm font-bold text-slate-900 truncate">Pending Patient Photo Reviews</h3>
-                        <p class="text-[11px] text-slate-500 truncate">Weekly 5-angle progress submissions requiring review</p>
+                        <h3 class="text-sm font-semibold text-slate-900 truncate">Pending Photo Reviews</h3>
+                        <p class="text-[11px] text-slate-500 truncate">Weekly alignment progress submissions</p>
                     </div>
                 </div>
-                <a href="{% url 'doctor:photo_monitoring' %}" class="text-xs font-bold text-amber-700 hover:underline flex-shrink-0 ml-2">View All</a>
+                <a href="{% url 'doctor:photo_monitoring' %}" class="text-xs font-medium text-amber-700 hover:underline flex-shrink-0">View All</a>
             </div>
 
             {% if pending_photos_list %}
-            <div class="space-y-3">
+            <div class="space-y-2.5">
                 {% for ph in pending_photos_list %}
-                <div class="p-3.5 rounded-2xl bg-amber-50/40 border border-amber-200/80 flex items-center justify-between gap-3 min-w-0">
+                <div class="p-3 rounded-lg bg-amber-50/50 border border-amber-200/80 flex items-center justify-between gap-3 min-w-0">
                     <div class="min-w-0 flex-1">
-                        <a href="{% url 'doctor:patient_detail' ph.patient.id %}?tab=photos" class="text-xs font-bold text-slate-900 hover:text-blue-700 truncate block">
+                        <a href="{% url 'doctor:patient_detail' ph.patient.id %}?tab=photos" class="text-xs font-semibold text-slate-900 hover:text-blue-600 truncate block">
                             {{ ph.patient.full_name }}
                         </a>
-                        <p class="text-[11px] text-amber-900 font-semibold mt-0.5 truncate">
-                            Week #{{ ph.week_number }} Upload • Aligner #{{ ph.aligner_stage }}
+                        <p class="text-[11px] text-amber-900 font-medium mt-0.5 truncate">
+                            Week #{{ ph.week_number }} &bull; Aligner #{{ ph.aligner_stage }} &bull; {{ ph.upload_date|date:"M d, Y" }}
                         </p>
-                        <span class="text-[10px] text-slate-400 block truncate">Uploaded on {{ ph.upload_date|date:"M d, Y" }}</span>
                     </div>
-                    <a href="{% url 'doctor:photo_review' ph.id %}" class="btn-primary text-xs py-1.5 px-3 bg-amber-600 hover:bg-amber-700 flex-shrink-0">
-                        <i class="fa-solid fa-clipboard-check mr-1"></i> Review
+                    <a href="{% url 'doctor:photo_review' ph.id %}" class="btn-primary text-xs py-1 px-2.5 bg-amber-600 hover:bg-amber-700 border-amber-600 flex-shrink-0">
+                        Review
                     </a>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
             <div class="py-8 text-center text-xs text-slate-400">
-                <i class="fa-solid fa-circle-check text-2xl mb-2 text-emerald-400 block"></i>
+                <i class="fa-solid fa-circle-check text-xl mb-1.5 text-emerald-500 block"></i>
                 All patient photos are reviewed and up to date.
             </div>
             {% endif %}
         </div>
 
         <!-- Recent Patient Activities Audit Trail -->
-        <div class="pa-card p-4 sm:p-6 w-full min-w-0 overflow-hidden">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-sky-100/80 text-sky-700 flex items-center justify-center text-xs shadow-sm flex-shrink-0">
+        <div class="pa-card p-5 w-full min-w-0 overflow-hidden">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center text-xs flex-shrink-0">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-slate-900">Recent Treatment Activities</h3>
-                        <p class="text-[11px] text-slate-500">Live clinical events and milestone updates</p>
+                        <h3 class="text-sm font-semibold text-slate-900">Recent Clinical Activities</h3>
+                        <p class="text-[11px] text-slate-500">Live treatment events and updates</p>
                     </div>
                 </div>
             </div>
 
             {% if recent_activities %}
-            <div class="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-blue-100 max-h-64 overflow-y-auto custom-scrollbar">
+            <div class="relative pl-5 space-y-3.5 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-slate-200 max-h-60 overflow-y-auto custom-scrollbar">
                 {% for act in recent_activities %}
-                <div class="relative group">
-                    <div class="absolute -left-[1.65rem] top-1 w-3.5 h-3.5 rounded-full bg-blue-600 ring-4 ring-blue-50"></div>
+                <div class="relative">
+                    <div class="absolute -left-[1.45rem] top-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-white"></div>
                     <div class="text-xs">
-                        <span class="font-bold text-slate-800">{{ act.activity_type }}</span>
-                        <span class="text-slate-400">• {{ act.created_at|timesince }} ago</span>
+                        <span class="font-medium text-slate-800">{{ act.activity_type }}</span>
+                        <span class="text-slate-400 text-[11px]">&bull; {{ act.created_at|timesince }} ago</span>
                         <p class="text-slate-600 mt-0.5 leading-relaxed">{{ act.description }}</p>
                     </div>
                 </div>
@@ -365,21 +345,22 @@
 
     </div>
 
-    <!-- Archived Patient Records Section (Section 13 Requirement) -->
-    <div class="pa-card p-4 sm:p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full min-w-0 overflow-hidden">
-        <div class="flex items-center gap-3.5 sm:gap-4 min-w-0">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-sky-300 flex items-center justify-center text-lg sm:text-xl flex-shrink-0">
+    <!-- Archived Patient Records Quick Access Banner -->
+    <div class="pa-card p-4 sm:p-5 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full min-w-0">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-sm flex-shrink-0">
                 <i class="fa-solid fa-box-archive"></i>
             </div>
             <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-extrabold text-white truncate">Archived & Historical Patient Records</h3>
-                <p class="text-xs text-slate-300 mt-0.5 line-clamp-2">
-                    Access complete pre-op photos, radiographs, prescriptions, and operations for {{ archived_patients_count }} archived/deactivated patient(s).
+                <h3 class="text-xs sm:text-sm font-semibold text-slate-900 truncate">Archived & Historical Patient Records</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5 truncate">
+                    Access complete pre-op photos, diagnostic radiographs, and clinical history for {{ archived_patients_count }} archived case(s).
                 </p>
             </div>
         </div>
-        <a href="{% url 'doctor:archived_patients' %}" class="px-4 py-2.5 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-100 transition shadow-sm flex items-center gap-2 whitespace-nowrap self-start sm:self-auto flex-shrink-0">
-            <i class="fa-solid fa-folder-open text-blue-600"></i> Open Archive Portal
+        <a href="{% url 'doctor:archived_patients' %}" class="btn-secondary text-xs flex items-center gap-1.5 flex-shrink-0">
+            <i class="fa-solid fa-folder-open text-slate-500"></i>
+            <span>View Archive</span>
         </a>
     </div>
 
@@ -388,7 +369,7 @@
 
 {% block extra_js %}
 <script>
-    // 1. Status Chart with refined medical gradients
+    // 1. Status Chart with refined clinical colors
     const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
     const statusEl = document.getElementById('statusChart');
     if (statusEl && typeof Chart !== 'undefined') {
@@ -401,13 +382,13 @@
                     label: 'Patients',
                     data: Object.values(statusData),
                     backgroundColor: [
-                        '#10b981', // Active
-                        '#f59e0b', // Pending
-                        '#64748b', // On Hold
-                        '#2563eb', // Completed
+                        '#059669', // Active Care (Emerald)
+                        '#d97706', // Pending (Amber)
+                        '#64748b', // On Hold (Slate)
+                        '#2563eb', // Completed (Blue)
                     ],
-                    borderRadius: 10,
-                    barThickness: 38,
+                    borderRadius: 4,
+                    barThickness: 32,
                 }]
             },
             options: {
@@ -420,10 +401,11 @@
                     y: {
                         beginAtZero: true,
                         grid: { color: 'rgba(226, 232, 240, 0.6)' },
-                        ticks: { precision: 0 }
+                        ticks: { precision: 0, font: { size: 11, family: 'Inter' } }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { display: false },
+                        ticks: { font: { size: 11, family: 'Inter' } }
                     }
                 }
             }
@@ -441,10 +423,10 @@
                 labels: Object.keys(complianceData),
                 datasets: [{
                     data: Object.values(complianceData),
-                    backgroundColor: ['#10b981', '#0ea5e9', '#f43f5e'],
-                    borderWidth: 3,
+                    backgroundColor: ['#059669', '#0284c7', '#e11d48'],
+                    borderWidth: 2,
                     borderColor: '#ffffff',
-                    hoverOffset: 6
+                    hoverOffset: 4
                 }]
             },
             options: {
@@ -453,10 +435,10 @@
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: { boxWidth: 12, font: { size: 11, family: 'Plus Jakarta Sans' }, padding: 16 }
+                        labels: { boxWidth: 10, font: { size: 11, family: 'Inter' }, padding: 12 }
                     }
                 },
-                cutout: '72%'
+                cutout: '74%'
             }
         });
     }

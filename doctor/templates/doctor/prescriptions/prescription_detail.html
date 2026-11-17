@@ -47,20 +47,20 @@ Prescription #{{ prescription.id }}
     </div>
 
     <!-- Professional Prescription Sheet -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden p-8 sm:p-12 relative" id="prescriptionSheet">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-6 sm:p-10 relative" id="prescriptionSheet">
         
         <!-- Header Banner / Clinic Letterhead -->
-        <div class="border-b-2 border-blue-600 pb-6 mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <div class="border-b-2 border-blue-600 pb-5 mb-5">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
                 <!-- Clinic & Doctor Branding -->
-                <div class="flex items-start gap-4">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white flex items-center justify-center font-black text-2xl shadow-md flex-shrink-0">
-                        <i class="fa-solid fa-tooth"></i>
+                <div class="flex items-start gap-3.5">
+                    <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-xs flex-shrink-0">
+                        <i class="fa-solid fa-tooth text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-900 tracking-tight">{{ doctor.clinic_name|default:"PEDO ALIGN DENTAL CLINIC" }}</h2>
-                        <h3 class="text-base font-bold text-blue-700">Dr. {{ doctor.full_name }}</h3>
-                        <p class="text-xs text-slate-600 font-semibold">{{ doctor.dental_qualification }} • {{ doctor.specialization }}</p>
+                        <h2 class="text-lg font-bold text-slate-900 tracking-tight">{{ doctor.clinic_name|default:"PEDO ALIGN DENTAL CLINIC" }}</h2>
+                        <h3 class="text-sm font-semibold text-blue-700">Dr. {{ doctor.full_name }}</h3>
+                        <p class="text-xs text-slate-600">{{ doctor.dental_qualification }} • {{ doctor.specialization }}</p>
                         {% if doctor.ksdc_registration_number %}
                         <p class="text-[11px] font-mono text-slate-500 mt-0.5">KSDC Reg: <strong>{{ doctor.ksdc_registration_number }}</strong></p>
                         {% elif doctor.license_number %}
@@ -70,33 +70,33 @@ Prescription #{{ prescription.id }}
                 </div>
 
                 <!-- Clinic Address & Contact -->
-                <div class="text-xs text-slate-500 sm:text-right space-y-1">
-                    <p class="font-bold text-slate-700">{{ doctor.clinic_address|linebreaksbr }}</p>
-                    <p><i class="fa-solid fa-phone text-blue-500 mr-1"></i> {{ doctor.phone_number }}</p>
-                    <p><i class="fa-solid fa-envelope text-blue-500 mr-1"></i> {{ doctor.email }}</p>
+                <div class="text-xs text-slate-500 sm:text-right space-y-0.5">
+                    <p class="font-semibold text-slate-700">{{ doctor.clinic_address|linebreaksbr }}</p>
+                    <p><i class="fa-solid fa-phone text-blue-500 mr-1 text-[11px]"></i> {{ doctor.phone_number }}</p>
+                    <p><i class="fa-solid fa-envelope text-blue-500 mr-1 text-[11px]"></i> {{ doctor.email }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Patient Demographics Bar -->
-        <div class="bg-blue-50/70 border border-blue-100 rounded-2xl p-4 mb-8 text-xs grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3.5 mb-6 text-xs grid grid-cols-2 sm:grid-cols-4 gap-3.5">
             <div>
-                <span class="text-slate-400 uppercase font-bold text-[10px] block">Patient Name</span>
-                <span class="font-extrabold text-slate-900 text-sm">{{ patient.full_name }}</span>
+                <span class="text-slate-400 uppercase font-semibold text-[10px] block">Patient Name</span>
+                <span class="font-bold text-slate-900 text-sm">{{ patient.full_name }}</span>
                 {% if patient.patient_category == 'CHILD' %}
-                <span class="inline-block mt-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800">Child</span>
+                <span class="inline-block mt-0.5 px-2 py-0.2 rounded text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-200">Child</span>
                 {% else %}
-                <span class="inline-block mt-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">Adult</span>
+                <span class="inline-block mt-0.5 px-2 py-0.2 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">Adult</span>
                 {% endif %}
             </div>
             <div>
-                <span class="text-slate-400 uppercase font-bold text-[10px] block">Patient ID / Age / Gender</span>
-                <span class="font-mono font-bold text-blue-800">{{ patient.patient_id }}</span>
+                <span class="text-slate-400 uppercase font-semibold text-[10px] block">Patient ID / Age / Gender</span>
+                <span class="font-mono font-bold text-blue-700">{{ patient.patient_id }}</span>
                 <span class="text-slate-600 block">{{ patient.age }} yrs • {{ patient.gender }}</span>
             </div>
             <div>
-                <span class="text-slate-400 uppercase font-bold text-[10px] block">Prescription Date</span>
-                <span class="font-bold text-slate-800 text-sm">{{ prescription.prescription_date|date:"F d, Y" }}</span>
+                <span class="text-slate-400 uppercase font-semibold text-[10px] block">Prescription Date</span>
+                <span class="font-semibold text-slate-800 text-xs">{{ prescription.prescription_date|date:"F d, Y" }}</span>
                 <span class="text-slate-400 block text-[10px]">RX-{{ prescription.id|stringformat:"05d" }}</span>
             </div>
             <div>

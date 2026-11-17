@@ -189,31 +189,31 @@
         {% endif %}
     </div>
 
-    <!-- NAVIGATION TABS (Simple, User-Friendly & Clean) -->
-    <div class="flex items-center gap-2 border-b border-slate-200/80 overflow-x-auto custom-scrollbar pb-1 text-xs font-bold">
+    <!-- NAVIGATION TABS -->
+    <div class="flex items-center gap-1.5 border-b border-slate-200 overflow-x-auto custom-scrollbar pb-1 text-xs font-semibold">
         <!-- 1. Overview -->
-        <a href="?tab=overview" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'overview' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-id-card-clip mr-1.5"></i> Overview
+        <a href="?tab=overview" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'overview' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
+            <i class="fa-solid fa-id-card-clip mr-1.5 text-xs"></i> Overview
         </a>
 
         <!-- 2. Clinical Intake -->
-        <a href="?tab=clinical" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'clinical' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-file-medical mr-1.5"></i> Clinical Intake
+        <a href="?tab=clinical" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'clinical' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
+            <i class="fa-solid fa-file-medical mr-1.5 text-xs"></i> Clinical Intake
         </a>
 
-        <!-- 3. Treatment (Renamed from Operations) -->
-        <a href="?tab=treatment" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'treatment' or active_tab == 'operations' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-tooth mr-1.5"></i> Treatment ({{ operation_records.count }})
+        <!-- 3. Treatment -->
+        <a href="?tab=treatment" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'treatment' or active_tab == 'operations' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
+            <i class="fa-solid fa-tooth mr-1.5 text-xs"></i> Treatment ({{ operation_records.count }})
         </a>
 
-        <!-- 4. Photos (Pre-Op & Weekly Monitoring Photos) -->
-        <a href="?tab=photos" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'photos' or active_tab == 'preop_photos' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-camera mr-1.5"></i> Photos ({{ preop_photos.count|add:photo_uploads.count }})
+        <!-- 4. Photos -->
+        <a href="?tab=photos" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'photos' or active_tab == 'preop_photos' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
+            <i class="fa-solid fa-camera mr-1.5 text-xs"></i> Photos ({{ preop_photos.count|add:photo_uploads.count }})
         </a>
 
-        <!-- 5. CarePath (Treatment, Duration & Next Appointment) -->
-        <a href="?tab=carepath" class="px-4 py-2.5 rounded-xl transition whitespace-nowrap {% if active_tab == 'carepath' or active_tab == 'appointments' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20{% else %}bg-white text-slate-600 hover:bg-blue-50/80 hover:text-blue-900 border border-slate-200/70{% endif %}">
-            <i class="fa-solid fa-route mr-1.5"></i> CarePath
+        <!-- 5. CarePath -->
+        <a href="?tab=carepath" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'carepath' or active_tab == 'appointments' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
+            <i class="fa-solid fa-route mr-1.5 text-xs"></i> CarePath
         </a>
     </div>
 
@@ -916,7 +916,7 @@
 
             <!-- Modal for Adding an Extra Preoperative Photo into Gallery -->
             <div id="addSinglePreopModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-                <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100 animate-in fade-in zoom-in duration-200">
+                <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg space-y-4 border border-slate-100 animate-in fade-in zoom-in duration-200">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
@@ -1209,57 +1209,51 @@
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-2.5 flex-wrap">
+                    <div class="flex items-center gap-2 flex-wrap">
                         {% if treatment_plan.current_aligner < treatment_plan.total_aligners %}
                         <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}" class="inline-block m-0">
                             {% csrf_token %}
                             <button type="submit" 
-                                    class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-600 hover:from-blue-700 hover:via-sky-700 hover:to-indigo-700 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer" 
+                                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold text-xs text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition active:scale-95 cursor-pointer" 
                                     title="Advance Patient to Next Stage (Tray #{{ treatment_plan.current_aligner|add:1 }})">
-                                <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-forward-step"></i>
-                                </span>
+                                <i class="fa-solid fa-forward-step text-xs"></i>
                                 <span>Stage +1</span>
-                                <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold bg-white/20 text-white rounded-md">Tray #{{ treatment_plan.current_aligner|add:1 }}</span>
+                                <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-medium bg-blue-700/70 text-blue-100 rounded">Tray #{{ treatment_plan.current_aligner|add:1 }}</span>
                             </button>
                         </form>
                         {% endif %}
 
                         <a href="{% url 'doctor:treatment_plan_edit' patient.id %}" 
-                           class="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-slate-700 bg-white hover:bg-blue-50/50 border-2 border-slate-200 hover:border-blue-400 shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0" 
+                           class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold text-xs text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 shadow-xs transition" 
                            title="Edit Aligner Plan & Prescription">
-                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </span>
+                            <i class="fa-solid fa-pen-to-square text-xs text-slate-500"></i>
                             <span>Edit Plan</span>
                         </a>
 
                         <a href="{% url 'doctor:step4_operation' patient.id %}" 
-                           class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-700 hover:via-purple-700 hover:to-indigo-700 shadow-md shadow-purple-500/25 hover:shadow-lg hover:shadow-purple-500/40 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0" 
+                           class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition" 
                            title="Launch Interactive 3D Aligner Simulation & Visual Protocol">
-                            <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs text-amber-300 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-play"></i>
-                            </span>
+                            <i class="fa-solid fa-play text-xs text-indigo-200"></i>
                             <span>Turn Quest / Visual Protocol</span>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 rounded-full shadow-xs flex items-center gap-1">
-                                <i class="fa-solid fa-cube text-[8px]"></i> 3D
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-indigo-800 text-indigo-100 rounded">
+                                3D Protocol
                             </span>
                         </a>
                     </div>
                 </div>
 
                 <!-- Stage Progress Bar & Metrics -->
-                <div class="bg-gradient-to-r from-blue-50/70 via-sky-50/50 to-indigo-50/60 p-5 rounded-2xl border border-blue-100/90 space-y-3">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Current Stage Progress</span>
-                            <div class="text-base font-black text-blue-950 mt-0.5 flex items-center gap-2">
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Current Stage Progress</span>
+                            <div class="text-sm font-bold text-slate-900 mt-0.5 flex items-center gap-2">
                                 <span>Tray #{{ treatment_plan.current_aligner }}</span>
-                                <span class="text-xs font-bold text-slate-400 font-normal">of {{ treatment_plan.total_aligners }} Trays</span>
+                                <span class="text-xs text-slate-400 font-normal">of {{ treatment_plan.total_aligners }} Trays</span>
                             </div>
                         </div>
                         <div class="text-left sm:text-right">
-                            <span class="text-sm font-black text-blue-700">{{ treatment_plan.progress_percentage }}% Complete</span>
+                            <span class="text-xs font-bold text-blue-600">{{ treatment_plan.progress_percentage }}% Complete</span>
                             <span class="text-[11px] text-slate-500 block">Pace: {{ treatment_plan.aligner_frequency_days }} days per tray</span>
                         </div>
                     </div>
@@ -2211,7 +2205,7 @@
 
 <!-- 1. Quick 20-Day Follow-Up Modal (Section 4) -->
 <div id="quickFollowupModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-calendar-check text-emerald-600"></i> Schedule 20-Day Follow-Up
@@ -2250,7 +2244,7 @@
 
 <!-- 2. Archive & Deactivate Patient Modal (Section 12) -->
 <div id="archiveModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-user-xmark text-rose-600"></i> Delete Patient Account / Treatment Completion
@@ -2290,7 +2284,7 @@
 
 <!-- 3. Preoperative Photo Upload Modal (Section 2) -->
 <div id="preopUploadModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-camera text-blue-600"></i> Upload Preoperative Photographs
@@ -2328,7 +2322,7 @@
 
 <!-- 4. Radiograph Upload Modal (Section 3) -->
 <div id="radiographUploadModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-x-ray text-blue-600"></i> Upload Radiograph Record
@@ -2376,7 +2370,7 @@
 
 <!-- 5. Treatment & Operation Record Modal (Section 5) -->
 <div id="operationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-xl max-w-xl w-full p-6 shadow-lg border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-tooth text-blue-600"></i> New Treatment Record
@@ -2437,7 +2431,7 @@
 
 <!-- 6. Digital Prescription Modal (Section 6) -->
 <div id="prescriptionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-xl max-w-xl w-full p-6 shadow-lg border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-prescription text-blue-600"></i> Generate Digital Prescription Sheet
@@ -2485,7 +2479,7 @@
 
 <!-- 7. Turn Quest Stage Modal (Section 8) -->
 <div id="turnModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-arrows-turn-to-dots text-blue-600"></i> Add Treatment Turn
@@ -2542,7 +2536,7 @@
 
 <!-- 8. Doctor Treatment Media Modal (Section 9) -->
 <div id="doctorMediaModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-video text-blue-600"></i> Upload Doctor Treatment Media
@@ -2584,7 +2578,7 @@
 
 <!-- 9. Monthly Note Modal (Section 7) -->
 <div id="monthlyNoteModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-notes-medical text-blue-600"></i> Add Monthly Progress Note

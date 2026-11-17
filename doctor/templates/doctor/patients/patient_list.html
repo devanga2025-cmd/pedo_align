@@ -5,31 +5,34 @@
 {% block breadcrumb %}Patients{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-5">
 
     <!-- Header & Action Bar -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-users text-blue-600"></i> Patient Management
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-users text-blue-600 text-sm"></i> Patient Management
             </h1>
             <p class="text-xs text-slate-500 mt-1">
-                Showing {{ patients.count }} of {{ total_count }} active patients &bull; <span class="font-extrabold text-blue-700">{{ lifetime_count }} Total Monitored in Career</span> ({{ archived_count }} Completed/Archived)
+                Showing {{ patients.count }} of {{ total_count }} active patients &bull; <span class="font-semibold text-slate-700">Total Monitored in Career: {{ lifetime_count }}</span> ({{ archived_count }} Completed/Archived)
             </p>
         </div>
 
         <div class="flex items-center gap-2">
-            <a href="{% url 'doctor:archived_patients' %}" class="btn-secondary text-xs bg-amber-50/70 border-amber-200 text-amber-900 hover:bg-amber-100/70 shadow-xs">
-                <i class="fa-solid fa-box-archive text-amber-600"></i> Archived Patients ({{ archived_count }})
+            <a href="{% url 'doctor:archived_patients' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-box-archive text-slate-500"></i> Archived ({{ archived_count }})
             </a>
             <a href="{% url 'doctor:export_patients_csv' %}" class="btn-secondary text-xs">
                 <i class="fa-solid fa-file-csv text-emerald-600"></i> Export CSV
+            </a>
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs">
+                <i class="fa-solid fa-user-plus text-xs"></i> Add Patient
             </a>
         </div>
     </div>
 
     <!-- Filters & Search Toolbar -->
-    <div class="pa-card p-4">
+    <div class="pa-card p-3.5">
         <form method="GET" class="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
             
             <!-- Search Input -->
@@ -37,34 +40,34 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </div>
-                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, patient ID, phone, or joining code..." class="form-input pl-9 text-xs w-full">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, ID, phone, or joining code..." class="form-input pl-9 text-xs w-full">
             </div>
 
             <!-- Status Filter Pills -->
             <div class="flex flex-wrap items-center gap-1.5 w-full xl:w-auto">
                 <a href="?status=ALL{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == 'ALL' %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                   class="px-2.5 py-1 rounded-md text-xs font-medium transition {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                     All ({{ total_count }})
                 </a>
                 {% for code, label in status_choices %}
                 <a href="?status={{ code }}{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == code %}bg-blue-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                   class="px-2.5 py-1 rounded-md text-xs font-medium transition {% if status_filter == code %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                     {{ label }}
                 </a>
                 {% endfor %}
                 <a href="?status=ARCHIVED{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if status_filter == 'ARCHIVED' %}bg-amber-600 text-white shadow-sm{% else %}bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200{% endif %}" title="View Completed and Archived Patient Accounts">
-                    <i class="fa-solid fa-box-archive text-[10px] mr-1"></i> Archived ({{ archived_count }})
+                   class="px-2.5 py-1 rounded-md text-xs font-medium transition {% if status_filter == 'ARCHIVED' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}" title="View Completed and Archived Patient Accounts">
+                    Archived ({{ archived_count }})
                 </a>
             </div>
 
             <!-- View Mode Switch -->
-            <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0">
-                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=grid" class="p-2 text-xs {% if view_mode == 'grid' %}bg-white text-blue-600 font-bold shadow-sm{% else %}text-slate-400 hover:text-slate-700{% endif %}" title="Grid Cards View">
-                    <i class="fa-solid fa-grid-2"></i> Cards
+            <div class="flex items-center border border-slate-200 rounded-md overflow-hidden bg-slate-50 flex-shrink-0">
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=grid" class="p-1.5 px-2.5 text-xs {% if view_mode == 'grid' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}" title="Grid Cards View">
+                    <i class="fa-solid fa-table-cells mr-1"></i> Cards
                 </a>
-                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=table" class="p-2 text-xs {% if view_mode == 'table' %}bg-white text-blue-600 font-bold shadow-sm{% else %}text-slate-400 hover:text-slate-700{% endif %}" title="Table View">
-                    <i class="fa-solid fa-table-list"></i> Table
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=table" class="p-1.5 px-2.5 text-xs {% if view_mode == 'table' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}" title="Table View">
+                    <i class="fa-solid fa-list mr-1"></i> Table
                 </a>
             </div>
 
@@ -80,7 +83,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
+                        <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[10px] tracking-wider">
                             <th class="py-3 px-4">Patient</th>
                             <th class="py-3 px-4">Patient ID</th>
                             <th class="py-3 px-4">Age / Gender</th>
@@ -93,38 +96,38 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for pt in patients %}
-                        <tr class="hover:bg-slate-50/70 transition">
+                        <tr class="hover:bg-slate-50/60 transition-colors">
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-xs flex-shrink-0">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-xs flex-shrink-0 border border-slate-200">
                                         {{ pt.first_name|first }}{{ pt.last_name|first }}
                                     </div>
                                     <div>
                                         <div class="flex items-center gap-1.5">
-                                            <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 hover:text-blue-700">
+                                            <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-semibold text-slate-900 hover:text-blue-600">
                                                 {{ pt.full_name }}
                                             </a>
                                             {% if pt.patient_category == 'CHILD' %}
-                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-sky-100 text-sky-800">
-                                                <i class="fa-solid fa-child"></i> Child
+                                            <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                                                Child
                                             </span>
                                             {% else %}
-                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-800">
-                                                <i class="fa-solid fa-user"></i> Adult
+                                            <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                                                Adult
                                             </span>
                                             {% endif %}
                                         </div>
                                         {% if pt.parent_guardian_name %}
-                                        <span class="text-[10px] text-slate-400 block">Guardian: {{ pt.parent_guardian_name }}{% if pt.parent_guardian_phone %} ({{ pt.parent_guardian_phone }}){% endif %}</span>
+                                        <span class="text-[11px] text-slate-400 block">Guardian: {{ pt.parent_guardian_name }}{% if pt.parent_guardian_phone %} ({{ pt.parent_guardian_phone }}){% endif %}</span>
                                         {% endif %}
                                     </div>
                                 </div>
                             </td>
                             <td class="py-3 px-4 font-mono font-medium text-slate-700">{{ pt.patient_id }}</td>
-                            <td class="py-3 px-4 text-slate-700">{{ pt.age }} yrs • {{ pt.gender }}</td>
+                            <td class="py-3 px-4 text-slate-700">{{ pt.age }} yrs &bull; {{ pt.gender }}</td>
                             <td class="py-3 px-4 text-slate-700">
                                 <div>{{ pt.phone }}</div>
-                                {% if pt.email %}<div class="text-[10px] text-slate-400">{{ pt.email }}</div>{% endif %}
+                                {% if pt.email %}<div class="text-[11px] text-slate-400">{{ pt.email }}</div>{% endif %}
                             </td>
                             <td class="py-3 px-4">
                                 <span class="badge 
@@ -137,8 +140,8 @@
                             </td>
                             <td class="py-3 px-4">
                                 {% if pt.treatment_plan %}
-                                <div class="w-28">
-                                    <div class="flex justify-between text-[10px] font-bold text-slate-700 mb-1">
+                                <div class="w-24">
+                                    <div class="flex justify-between text-[10px] font-medium text-slate-600 mb-1">
                                         <span>#{{ pt.treatment_plan.current_aligner }}</span>
                                         <span>of {{ pt.treatment_plan.total_aligners }}</span>
                                     </div>
@@ -147,12 +150,12 @@
                                     </div>
                                 </div>
                                 {% else %}
-                                <span class="text-slate-400">—</span>
+                                <span class="text-slate-400">&mdash;</span>
                                 {% endif %}
                             </td>
                             <td class="py-3 px-4">
                                 {% if pt.joining_code %}
-                                <span class="inline-flex items-center gap-1 font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                <span class="inline-flex items-center gap-1 font-mono font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-[11px]">
                                     {{ pt.joining_code.code }}
                                 </span>
                                 {% else %}
@@ -162,15 +165,15 @@
                             <td class="py-3 px-4 text-right">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-secondary py-1 px-2.5 text-xs" title="View Profile">
-                                        <i class="fa-solid fa-eye"></i> View
+                                        View
                                     </a>
-                                    <a href="{% url 'doctor:patient_edit' pt.id %}" class="p-1.5 text-slate-400 hover:text-slate-700 rounded" title="Edit Patient">
+                                    <a href="{% url 'doctor:patient_edit' pt.id %}" class="p-1 text-slate-400 hover:text-slate-700 rounded" title="Edit Patient">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <button type="button" 
                                             onclick="openDeleteAccountModal('{{ pt.id }}', '{{ pt.full_name|escapejs }}', '{{ pt.patient_id|escapejs }}')"
-                                            class="p-1.5 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 transition" 
-                                            title="Delete Patient Account (Treatment Completed)">
+                                            class="p-1 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 transition" 
+                                            title="Delete Patient Account">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </div>
@@ -185,14 +188,14 @@
         {% else %}
 
         <!-- GRID CARDS VIEW -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {% for pt in patients %}
-            <div class="pa-card p-5 pa-card-hover flex flex-col justify-between">
+            <div class="pa-card pa-card-hover p-4 sm:p-5 flex flex-col justify-between">
                 <div>
                     <!-- Top row: Avatar, Name, Status Badge -->
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-full bg-blue-100 text-blue-800 font-extrabold flex items-center justify-center text-sm shadow-inner flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-xs border border-slate-200 flex-shrink-0">
                                 {% if pt.profile_photo %}
                                     <img src="{{ pt.profile_photo.url }}" alt="{{ pt.full_name }}" class="w-full h-full object-cover rounded-full">
                                 {% else %}
@@ -200,7 +203,7 @@
                                 {% endif %}
                             </div>
                             <div>
-                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 text-sm hover:text-blue-700 transition">
+                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-semibold text-slate-900 text-sm hover:text-blue-600 transition">
                                     {{ pt.full_name }}
                                 </a>
                                 <p class="text-[11px] text-slate-500 font-mono">{{ pt.patient_id }}</p>
@@ -217,44 +220,44 @@
                     </div>
 
                     <!-- Meta Details -->
-                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 mb-3">
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-3">
                         <div>
-                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Demographics</span>
-                            <span class="font-semibold text-slate-800">{{ pt.age }} yrs</span> • {{ pt.gender }}
+                            <span class="text-slate-400 block text-[10px] uppercase font-medium">Demographics</span>
+                            <span class="font-medium text-slate-800">{{ pt.age }} yrs</span> &bull; {{ pt.gender }}
                         </div>
                         <div>
-                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Guardian</span>
+                            <span class="text-slate-400 block text-[10px] uppercase font-medium">Guardian</span>
                             <span class="truncate block font-medium">{{ pt.parent_guardian_name|default:"Self / Patient" }}</span>
                         </div>
                         <div class="col-span-2">
-                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Phone / WhatsApp</span>
+                            <span class="text-slate-400 block text-[10px] uppercase font-medium">Phone / WhatsApp</span>
                             <span class="font-medium text-slate-700"><i class="fa-solid fa-phone text-[10px] text-slate-400 mr-1"></i>{{ pt.phone }}</span>
                         </div>
                     </div>
 
                     <!-- Aligner Progress Bar -->
                     {% if pt.treatment_plan %}
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <div class="flex items-center justify-between text-xs mb-1">
                             <span class="text-slate-500 font-medium">Aligner Progress</span>
-                            <span class="font-bold text-blue-700">Stage {{ pt.treatment_plan.current_aligner }} of {{ pt.treatment_plan.total_aligners }} ({{ pt.treatment_plan.progress_percentage }}%)</span>
+                            <span class="font-semibold text-blue-700">Stage {{ pt.treatment_plan.current_aligner }} of {{ pt.treatment_plan.total_aligners }} ({{ pt.treatment_plan.progress_percentage }}%)</span>
                         </div>
-                        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                            <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
                         </div>
                     </div>
                     {% endif %}
 
                     <!-- Joining Code Pill -->
                     {% if pt.joining_code %}
-                    <div class="p-2.5 rounded-lg bg-blue-50/70 border border-blue-200/60 flex items-center justify-between text-xs mb-4">
+                    <div class="p-2 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-between text-xs mb-3">
                         <div class="flex items-center gap-1.5">
                             <i class="fa-solid fa-key text-blue-600 text-xs"></i>
-                            <span class="text-slate-500 font-medium">Code:</span>
-                            <span class="font-mono font-bold text-blue-900 tracking-wider">{{ pt.joining_code.code }}</span>
+                            <span class="text-slate-500">Code:</span>
+                            <span class="font-mono font-semibold text-slate-900">{{ pt.joining_code.code }}</span>
                         </div>
-                        <button type="button" onclick="copyToClipboard('{{ pt.joining_code.code }}', 'copyBtn{{ pt.id }}')" id="copyBtn{{ pt.id }}" class="text-[11px] font-bold text-blue-700 hover:text-blue-900">
-                            <i class="fa-regular fa-copy"></i> Copy
+                        <button type="button" onclick="copyToClipboard('{{ pt.joining_code.code }}', 'copyBtn{{ pt.id }}')" id="copyBtn{{ pt.id }}" class="text-[11px] font-medium text-blue-600 hover:text-blue-800">
+                            Copy
                         </button>
                     </div>
                     {% endif %}
@@ -262,19 +265,19 @@
 
                 <!-- Footer Actions -->
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2.5">
                         <a href="{% url 'doctor:patient_edit' pt.id %}" class="text-xs text-slate-500 hover:text-slate-800 font-medium flex items-center gap-1">
                             <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit
                         </a>
                         <button type="button" 
                                 onclick="openDeleteAccountModal('{{ pt.id }}', '{{ pt.full_name|escapejs }}', '{{ pt.patient_id|escapejs }}')"
-                                class="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 transition px-1.5 py-0.5 rounded hover:bg-rose-50"
-                                title="Delete Patient Account (Treatment Completed)">
+                                class="text-xs text-rose-600 hover:text-rose-800 font-medium flex items-center gap-1 transition px-1.5 py-0.5 rounded hover:bg-rose-50"
+                                title="Delete Patient Account">
                             <i class="fa-solid fa-trash-can text-[11px]"></i> Delete A/C
                         </button>
                     </div>
-                    <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-primary py-1.5 px-3 text-xs">
-                        <span>Open Profile</span>
+                    <a href="{% url 'doctor:patient_detail' pt.id %}" class="btn-primary py-1 px-2.5 text-xs">
+                        <span>Profile</span>
                         <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </a>
                 </div>
@@ -287,15 +290,15 @@
     {% else %}
         <!-- Empty State -->
         <div class="pa-card p-12 text-center max-w-md mx-auto">
-            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
-                <i class="fa-solid fa-user-xmark"></i>
+            <div class="w-12 h-12 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center mx-auto text-lg mb-3">
+                <i class="fa-solid fa-users"></i>
             </div>
-            <h3 class="text-base font-bold text-slate-800">No Patients Found</h3>
-            <p class="text-xs text-slate-500 mt-1 mb-5">
+            <h3 class="text-sm font-semibold text-slate-900">No Patients Found</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">
                 {% if query %}
-                    No patients match your search term "{{ query }}". Try clearing the search.
+                    No patients match your search term "{{ query }}".
                 {% else %}
-                    You have not added any patients yet. Click below to enroll your first aligner patient.
+                    You have not enrolled any patients yet. Click below to add your first patient.
                 {% endif %}
             </p>
             {% if query %}
@@ -310,53 +313,52 @@
 
     <!-- Modal for Deleting Patient Account after Treatment Completion -->
     <div id="deleteAccountModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-rose-100 animate-in fade-in zoom-in-95 duration-150">
+        <div class="bg-white rounded-xl max-w-md w-full p-5 shadow-xl space-y-4 border border-slate-200">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-sm shadow-xs">
-                        <i class="fa-solid fa-trash-can text-base"></i>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-trash-can"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-slate-900">Delete Patient Account (A/C)</h3>
+                        <h3 class="text-sm font-semibold text-slate-900">Delete Patient Account</h3>
                         <p class="text-[11px] text-slate-500">Treatment Completion & Access Revocation</p>
                     </div>
                 </div>
                 <button type="button" onclick="closeDeleteAccountModal()" class="text-slate-400 hover:text-slate-600 text-sm p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- Clarification Notice -->
-            <div class="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-950 space-y-2">
-                <div class="font-black flex items-center gap-1.5 text-amber-900">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> What happens when this A/C is deleted:
+            <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-900 space-y-1.5">
+                <div class="font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 text-xs"></i> Important Notice:
                 </div>
-                <ul class="list-disc pl-4 space-y-1 text-[11px] text-amber-900/90 leading-relaxed">
-                    <li><strong>Patient Login Blocked:</strong> The patient will be permanently prevented from logging in using their email, password, or joining code credentials.</li>
-                    <li><strong>Doctor History 100% Preserved:</strong> All pre-op photos, radiographs, prescriptions, and aligner progress remain completely intact in your <strong>Archived Patients</strong> records.</li>
-                    <li><strong>Career Statistics:</strong> This patient will still be counted in your total career monitored patient records.</li>
+                <ul class="list-disc pl-4 space-y-0.5 text-[11px] leading-relaxed">
+                    <li>The patient will be prevented from logging into the portal.</li>
+                    <li>All pre-op photos, radiographs, prescriptions, and aligner progress remain in your <strong>Archived Patients</strong> records.</li>
+                    <li>Historical data is preserved for clinic records and career statistics.</li>
                 </ul>
             </div>
 
-            <form method="POST" id="deleteAccountForm" action="" class="space-y-4">
+            <form method="POST" id="deleteAccountForm" action="" class="space-y-3">
                 {% csrf_token %}
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Patient</label>
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 flex items-center justify-between">
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Patient</label>
+                    <div class="p-2.5 bg-slate-50 rounded-md border border-slate-200 text-xs font-semibold text-slate-900 flex items-center justify-between">
                         <span id="deleteModalPatientName">Patient Name</span>
-                        <span id="deleteModalPatientId" class="font-mono text-blue-700 text-[11px]">PA-PT-0000</span>
+                        <span id="deleteModalPatientId" class="font-mono text-slate-600 text-[11px]">PA-PT-0000</span>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Completion Note / Reason</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Completion Note / Reason</label>
                     <input type="text" name="reason" value="Treatment completed successfully - patient discharged." class="form-input text-xs" placeholder="e.g. Treatment completed, aligner series finished...">
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                    <button type="button" onclick="closeDeleteAccountModal()" class="btn-secondary text-xs py-2 px-4">Cancel</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-trash-can"></i> Confirm Delete Patient A/C
+                    <button type="button" onclick="closeDeleteAccountModal()" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary bg-rose-600 hover:bg-rose-700 border-rose-600 text-xs">
+                        Confirm Deletion
                     </button>
                 </div>
             </form>

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#F4F9FF]">
+<html lang="en" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,15 +15,15 @@
 
     <!-- PWA Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2878F0">
+    <meta name="theme-color" content="#2563eb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PEDO ALIGN">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,16 +31,19 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        ptPrimary: '#2878F0',
-                        ptSecondary: '#FFFFFF',
-                        ptAccent: '#45C9E8',
-                        ptHighlight: '#FFB5D2',
-                        ptBg: '#F4F9FF',
-                        ptNavy: '#24344D',
-                    },
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                        heading: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
                     }
                 }
             }
@@ -55,40 +58,40 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full flex flex-col font-sans text-ptNavy bg-[#F4F9FF] antialiased selection:bg-blue-100 selection:text-blue-900 pb-16 lg:pb-0">
+<body class="h-full flex flex-col font-sans text-slate-700 bg-slate-50 antialiased selection:bg-blue-100 selection:text-blue-900 pb-16 lg:pb-0">
 
     <div class="flex h-screen overflow-hidden">
 
         <!-- DESKTOP SIDEBAR -->
-        <aside id="patientSidebar" class="hidden lg:flex lg:flex-col w-64 bg-white border-r border-blue-100/80 z-30 flex-shrink-0">
+        <aside id="patientSidebar" class="hidden lg:flex lg:flex-col w-64 bg-white border-r border-slate-200 z-30 flex-shrink-0">
             
-            <!-- Brand Banner with assent/bg.png & Logo -->
-            <div class="relative p-4 border-b border-blue-100/80 bg-cover bg-center" style="background-image: url('{% static 'bg.png' %}?v=2305');">
-                <a href="{% url 'patient:dashboard' %}" class="block text-center focus:outline-none transition-transform hover:scale-[1.02]">
+            <!-- Brand & Patient Identity Header -->
+            <div class="p-4 border-b border-slate-200 bg-white">
+                <a href="{% url 'patient:dashboard' %}" class="block focus:outline-none">
                     <img src="{% static 'sidebar_glowing_logo.png' %}" 
                          alt="PEDO ALIGN" 
                          onerror="this.onerror=null; this.src='/static/sidebar_glowing_logo.png';"
-                         class="max-w-[175px] max-h-14 mx-auto w-auto object-contain drop-shadow-sm">
+                         class="max-w-[160px] h-auto object-contain">
                 </a>
 
-                <!-- Patient Identity Card -->
+                <!-- Patient Identity Snippet -->
                 {% if current_patient %}
-                <div class="mt-3 bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-md shadow-blue-900/10 border border-white/90 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-sky-200 bg-sky-50 flex items-center justify-center text-blue-600 font-bold">
+                <div class="mt-3.5 p-2.5 rounded-lg border border-slate-200 bg-slate-50/70 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-slate-200 bg-white flex items-center justify-center text-slate-600 font-medium text-xs">
                         {% if current_patient.avatar %}
                             <img src="{{ current_patient.avatar.url }}" alt="{{ current_patient.full_name }}" class="w-full h-full object-cover">
                         {% else %}
-                            <i class="fa-solid fa-face-smile text-lg text-sky-500"></i>
+                            <i class="fa-solid fa-user text-slate-400 text-xs"></i>
                         {% endif %}
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h4 class="text-xs font-bold text-slate-900 truncate leading-tight">{{ current_patient.full_name }}</h4>
+                        <h4 class="text-xs font-semibold text-slate-900 truncate leading-tight">{{ current_patient.full_name }}</h4>
                         <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded tracking-wider">{{ current_patient.patient_id }}</span>
+                            <span class="text-[10px] font-mono text-slate-500 bg-slate-100 px-1 py-0.2 rounded">{{ current_patient.patient_id }}</span>
                             {% if current_patient.is_connected %}
-                            <span class="w-2 h-2 rounded-full bg-emerald-500" title="Connected to Dr. {{ current_patient.doctor.full_name }}"></span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" title="Connected to Dr. {{ current_patient.doctor.full_name }}"></span>
                             {% else %}
-                            <span class="w-2 h-2 rounded-full bg-amber-400" title="Not connected to doctor"></span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400" title="Not connected to doctor"></span>
                             {% endif %}
                         </div>
                     </div>
@@ -97,112 +100,112 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar text-sm font-medium">
+            <nav class="flex-1 px-3 py-3 space-y-1 overflow-y-auto custom-scrollbar text-xs">
                 
-                <!-- 1. Clinical Records & Journey (Home) -->
-                <a href="{% url 'patient:dashboard' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'dashboard' %}bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold shadow-md shadow-blue-500/20{% else %}text-slate-600 hover:bg-blue-50/80 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-house-medical w-5 text-center text-base"></i>
+                <!-- 1. Clinical Journey (Home) -->
+                <a href="{% url 'patient:dashboard' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <i class="fa-solid fa-house-medical w-4 text-center text-sm {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
                     <span>Clinical Journey & Records</span>
                 </a>
 
-                <!-- 2. Post Progress Photos (Step 4 Photo Cadence) -->
-                <a href="{% url 'patient:upload_photos' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'upload_photos' %}bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold shadow-md shadow-blue-500/20{% else %}text-slate-600 hover:bg-blue-50/80 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-camera-retro w-5 text-center text-base"></i>
+                <!-- 2. Post Progress Photos -->
+                <a href="{% url 'patient:upload_photos' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {% if request.resolver_match.url_name == 'upload_photos' %}bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <i class="fa-solid fa-camera-retro w-4 text-center text-sm {% if request.resolver_match.url_name == 'upload_photos' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
                     <span>Post Progress Photos</span>
                 </a>
 
                 <!-- 3. Appointments -->
-                <a href="{% url 'patient:appointments' %}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'appointments' or request.resolver_match.url_name == 'appointment_request' or request.resolver_match.url_name == 'appointment_reschedule' %}bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold shadow-md shadow-blue-500/20{% else %}text-slate-600 hover:bg-blue-50/80 hover:text-blue-900{% endif %}">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-calendar-check w-5 text-center text-base"></i>
-                        <span>Appointments</span>
-                    </div>
+                <a href="{% url 'patient:appointments' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {% if request.resolver_match.url_name == 'appointments' or request.resolver_match.url_name == 'appointment_request' or request.resolver_match.url_name == 'appointment_reschedule' %}bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <i class="fa-solid fa-calendar-check w-4 text-center text-sm {% if 'appointment' in request.resolver_match.url_name %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                    <span>Appointments</span>
                 </a>
 
                 <!-- 4. Help & Emergency -->
-                <a href="{% url 'patient:emergency' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'emergency' %}bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold shadow-md shadow-rose-500/20{% else %}text-rose-600 hover:bg-rose-50 hover:text-rose-700{% endif %}">
-                    <i class="fa-solid fa-triangle-exclamation w-5 text-center text-base"></i>
+                <a href="{% url 'patient:emergency' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {% if request.resolver_match.url_name == 'emergency' %}bg-rose-50 text-rose-700 font-semibold border-l-2 border-rose-600{% else %}text-rose-600 hover:bg-rose-50{% endif %}">
+                    <i class="fa-solid fa-triangle-exclamation w-4 text-center text-sm"></i>
                     <span>Help & Emergency</span>
                 </a>
 
-                <div class="pt-2 pb-1"><hr class="border-blue-50"></div>
+                <div class="pt-2 pb-1">
+                    <hr class="border-slate-200">
+                </div>
 
-                <!-- 8. My Profile -->
-                <a href="{% url 'patient:profile' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {% if request.resolver_match.url_name == 'profile' %}bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold shadow-md shadow-blue-500/20{% else %}text-slate-600 hover:bg-blue-50/80 hover:text-blue-900{% endif %}">
-                    <i class="fa-solid fa-user-circle w-5 text-center text-base"></i>
+                <!-- 5. My Profile -->
+                <a href="{% url 'patient:profile' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {% if request.resolver_match.url_name == 'profile' %}bg-blue-50 text-blue-700 font-semibold border-l-2 border-blue-600{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <i class="fa-solid fa-user-circle w-4 text-center text-sm text-slate-400"></i>
                     <span>My Profile</span>
                 </a>
 
-                <!-- Install Mobile App Button -->
-                <a href="{% url 'download_app_apk' %}" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sky-600 hover:bg-sky-50 hover:text-sky-700 transition text-left font-bold">
-                    <i class="fa-solid fa-download w-5 text-center text-base"></i>
-                    <span>Download Android App</span>
+                <!-- Download Mobile App -->
+                <a href="{% url 'download_app_apk' %}" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition text-left font-medium">
+                    <i class="fa-solid fa-download w-4 text-center text-sm text-slate-400"></i>
+                    <span>Download Mobile App</span>
                 </a>
 
-                <!-- 9. Logout -->
-                <a href="{% url 'patient:logout' %}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition">
-                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i>
-                    <span>Logout</span>
+                <!-- Logout -->
+                <a href="{% url 'patient:logout' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 transition font-medium">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center text-sm"></i>
+                    <span>Sign Out</span>
                 </a>
 
             </nav>
 
             <!-- Bottom Doctor Info Badge -->
             {% if current_patient and current_patient.is_connected %}
-            <div class="p-3 border-t border-blue-100/60 bg-blue-50/50 text-xs">
-                <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Assigned Doctor</p>
-                <p class="font-bold text-slate-800 truncate mt-0.5">Dr. {{ current_patient.doctor.full_name }}</p>
-                <p class="text-[11px] text-blue-600 truncate">{{ current_patient.doctor.clinic_name }}</p>
+            <div class="p-3 border-t border-slate-200 bg-slate-50 text-xs">
+                <p class="text-[10px] uppercase font-medium text-slate-400">Assigned Doctor</p>
+                <p class="font-semibold text-slate-900 truncate mt-0.5">Dr. {{ current_patient.doctor.full_name }}</p>
+                <p class="text-[11px] text-slate-500 truncate">{{ current_patient.doctor.clinic_name }}</p>
             </div>
             {% endif %}
 
         </aside>
 
         <!-- MAIN VIEWPORT -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#F4F9FF]">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
             
-            <!-- TOP NAVBAR (Both Mobile & Desktop) -->
-            <header class="h-16 w-full bg-white/95 backdrop-blur-md border-b border-blue-100/80 flex items-center justify-between px-4 sm:px-6 z-20 flex-shrink-0 shadow-xs">
+            <!-- TOP NAVBAR -->
+            <header class="h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-20 flex-shrink-0 shadow-xs">
                 
                 <div class="flex items-center gap-3">
                     <!-- Mobile Logo -->
                     <a href="{% url 'patient:dashboard' %}" class="lg:hidden flex items-center gap-2">
-                        <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" alt="PEDO ALIGN" class="h-8 w-auto object-contain">
+                        <img src="{% static 'sidebar_glowing_logo.png' %}?v=2305" alt="PEDO ALIGN" class="h-7 w-auto object-contain">
                     </a>
 
                     <!-- Breadcrumbs -->
-                    <div class="hidden sm:flex items-center gap-2 text-sm text-slate-500">
-                        <span class="font-bold text-blue-950">Patient Portal</span>
-                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
-                        <span class="text-blue-600 font-semibold">{% block breadcrumb %}Dashboard{% endblock %}</span>
+                    <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+                        <span class="font-medium text-slate-700">Patient Portal</span>
+                        <i class="fa-solid fa-chevron-right text-[9px] text-slate-400"></i>
+                        <span class="text-slate-900 font-semibold">{% block breadcrumb %}Dashboard{% endblock %}</span>
                     </div>
                 </div>
 
                 <!-- Top Right Actions -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5">
                     
                     {% if current_patient and not current_patient.is_connected %}
-                    <a href="{% url 'patient:connect_doctor' %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm shadow-amber-500/20 transition transform hover:-translate-y-0.5">
+                    <a href="{% url 'patient:connect_doctor' %}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-medium transition shadow-xs">
                         <i class="fa-solid fa-key text-[11px]"></i>
                         <span>Connect Doctor</span>
                     </a>
                     {% endif %}
 
-                    <!-- Install App Header Pill -->
+                    <!-- Install App Header Link -->
                     <a href="{% url 'download_app_apk' %}"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-bold transition shadow-2xs border border-blue-200/80" 
-                            title="Download PEDO ALIGN Android app">
-                        <i class="fa-solid fa-download text-xs text-sky-600"></i>
-                        <span class="hidden sm:inline">Download Android App</span>
+                       class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-xs" 
+                       title="Download PEDO ALIGN Android app">
+                        <i class="fa-solid fa-download text-xs text-slate-500"></i>
+                        <span>Android App</span>
                     </a>
 
-                    <!-- Notifications Bell Direct Link to Notifications Page -->
+                    <!-- Notifications Bell -->
                     <a href="{% url 'patient:notifications' %}" 
-                       class="relative p-2 rounded-xl text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all {% if 'notification' in request.resolver_match.url_name %}bg-blue-50 text-blue-600 font-bold{% endif %}" 
+                       class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors {% if 'notification' in request.resolver_match.url_name %}bg-slate-100 text-blue-600{% endif %}" 
                        title="View Notifications">
-                        <i class="fa-solid fa-bell text-lg"></i>
+                        <i class="fa-solid fa-bell text-base"></i>
                         {% if patient_unread_notifs > 0 %}
-                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs animate-pulse">
+                        <span class="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
                             {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
                         </span>
                         {% endif %}
@@ -214,37 +217,36 @@
                         <button type="button" 
                                 onclick="toggleUserDropdown()" 
                                 id="userMenuBtn"
-                                class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-2xl bg-blue-50/80 hover:bg-blue-100/70 border border-blue-200/60 transition shadow-2xs focus:outline-none">
-                            <div class="w-8 h-8 rounded-full overflow-hidden ring-2 ring-sky-300 bg-sky-100 flex items-center justify-center text-blue-600 font-bold text-xs flex-shrink-0">
+                                class="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition focus:outline-none">
+                            <div class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200 bg-slate-100 flex items-center justify-center text-slate-600 text-xs flex-shrink-0">
                                 {% if current_patient.avatar %}
                                     <img src="{{ current_patient.avatar.url }}" alt="{{ current_patient.full_name }}" class="w-full h-full object-cover">
                                 {% else %}
-                                    <i class="fa-solid fa-smile text-sky-500 text-sm"></i>
+                                    <i class="fa-solid fa-user text-slate-400 text-xs"></i>
                                 {% endif %}
                             </div>
-                            <span class="text-xs font-black text-slate-800 hidden sm:inline-block max-w-[120px] truncate">{{ current_patient.full_name }}</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                            <span class="text-xs font-medium text-slate-800 hidden sm:inline-block max-w-[120px] truncate">{{ current_patient.full_name }}</span>
+                            <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                         </button>
 
                         <!-- User Dropdown Menu -->
-                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-2xl bg-white shadow-xl shadow-blue-900/10 border border-blue-100 py-2 z-50">
-                            <div class="px-4 py-2.5 border-b border-slate-100">
-                                <p class="text-xs font-black text-slate-900 truncate">{{ current_patient.full_name }}</p>
-                                <p class="text-[11px] text-slate-400 font-medium truncate">{{ current_patient.user.email|default:current_patient.patient_id }}</p>
-                                <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700">{{ current_patient.patient_id }}</span>
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-lg bg-white shadow-lg border border-slate-200 py-1.5 z-50 text-xs">
+                            <div class="px-3.5 py-2.5 border-b border-slate-100">
+                                <p class="font-semibold text-slate-900 truncate">{{ current_patient.full_name }}</p>
+                                <span class="inline-block mt-1 px-1.5 py-0.2 rounded text-[10px] font-mono text-slate-600 bg-slate-100">{{ current_patient.patient_id }}</span>
                             </div>
                             <div class="py-1">
-                                <a href="{% url 'patient:profile' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition">
+                                <a href="{% url 'patient:profile' %}" class="flex items-center gap-2 px-3.5 py-2 text-slate-700 hover:bg-slate-50 transition">
                                     <i class="fa-solid fa-user-circle text-slate-400 w-4"></i>
                                     <span>My Profile</span>
                                 </a>
-                                <a href="{% url 'patient:emergency' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition">
+                                <a href="{% url 'patient:emergency' %}" class="flex items-center gap-2 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition">
                                     <i class="fa-solid fa-triangle-exclamation text-rose-500 w-4"></i>
                                     <span>Help & Emergency</span>
                                 </a>
                             </div>
                             <div class="pt-1 border-t border-slate-100">
-                                <a href="{% url 'patient:logout' %}" class="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-rose-700 hover:bg-rose-50 transition">
+                                <a href="{% url 'patient:logout' %}" class="flex items-center gap-2 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition">
                                     <i class="fa-solid fa-arrow-right-from-bracket text-rose-500 w-4"></i>
                                     <span>Log Out</span>
                                 </a>
@@ -258,19 +260,19 @@
 
             <!-- FLASH MESSAGES -->
             {% if messages %}
-            <div class="px-4 sm:px-6 pt-4 space-y-2">
+            <div class="px-4 sm:px-6 pt-3 space-y-2">
                 {% for message in messages %}
-                <div class="p-3.5 rounded-2xl border flex items-center justify-between text-xs sm:text-sm font-medium shadow-sm transition-all
+                <div class="p-3 rounded-lg border flex items-center justify-between text-xs font-medium shadow-xs transition-all
                     {% if message.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-800
                     {% elif message.tags == 'error' %}bg-rose-50 border-rose-200 text-rose-800
                     {% elif message.tags == 'warning' %}bg-amber-50 border-amber-200 text-amber-800
                     {% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %}">
-                    <div class="flex items-center gap-2.5">
-                        <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check text-emerald-600{% elif message.tags == 'error' %}fa-circle-xmark text-rose-600{% elif message.tags == 'warning' %}fa-triangle-exclamation text-amber-600{% else %}fa-circle-info text-blue-600{% endif %} text-base"></i>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check text-emerald-600{% elif message.tags == 'error' %}fa-circle-xmark text-rose-600{% elif message.tags == 'warning' %}fa-triangle-exclamation text-amber-600{% else %}fa-circle-info text-blue-600{% endif %} text-sm"></i>
                         <span>{{ message }}</span>
                     </div>
                     <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-700 ml-4">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
                 </div>
                 {% endfor %}
@@ -278,7 +280,7 @@
             {% endif %}
 
             <!-- MAIN BODY VIEWPORT -->
-            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 custom-scrollbar">
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-20 lg:pb-6 custom-scrollbar">
                 {% block content %}{% endblock %}
             </main>
 
@@ -287,39 +289,37 @@
     </div>
 
     <!-- MOBILE BOTTOM NAVIGATION BAR -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-blue-100 flex items-center justify-around py-2 z-40 shadow-lg">
-        <a href="{% url 'patient:dashboard' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white border-t border-slate-200 flex items-center justify-around z-40 shadow-xs">
+        <a href="{% url 'patient:dashboard' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-house-medical text-base"></i>
-            <span class="text-[10px]">Journey</span>
+            <span class="text-[10px] mt-0.5">Journey</span>
         </a>
-        <a href="{% url 'patient:upload_photos' %}" class="flex flex-col items-center -mt-5">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-sky-400 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 ring-4 ring-white">
-                <i class="fa-solid fa-camera text-base"></i>
-            </div>
-            <span class="text-[10px] text-blue-600 font-bold mt-0.5">Post Photos</span>
+        <a href="{% url 'patient:upload_photos' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'upload_photos' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-camera text-base"></i>
+            <span class="text-[10px] mt-0.5">Photos</span>
         </a>
-        <a href="{% url 'patient:appointments' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'appointments' or request.resolver_match.url_name == 'appointment_request' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+        <a href="{% url 'patient:appointments' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if 'appointment' in request.resolver_match.url_name %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-calendar-check text-base"></i>
-            <span class="text-[10px]">Visits</span>
+            <span class="text-[10px] mt-0.5">Visits</span>
         </a>
-        <a href="{% url 'patient:notifications' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+        <a href="{% url 'patient:notifications' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <div class="relative">
                 <i class="fa-solid fa-bell text-base"></i>
                 {% if patient_unread_notifs > 0 %}
-                <span class="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-black rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
+                <span class="absolute -top-1 -right-2 min-w-[14px] h-[14px] px-1 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
                     {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
                 </span>
                 {% endif %}
             </div>
-            <span class="text-[10px]">Alerts</span>
+            <span class="text-[10px] mt-0.5">Alerts</span>
         </a>
-        <a href="{% url 'patient:emergency' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'emergency' %}text-rose-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+        <a href="{% url 'patient:emergency' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'emergency' %}text-rose-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-triangle-exclamation text-base"></i>
-            <span class="text-[10px]">Help</span>
+            <span class="text-[10px] mt-0.5">Help</span>
         </a>
-        <a href="{% url 'patient:profile' %}" class="flex flex-col items-center gap-0.5 text-xs {% if request.resolver_match.url_name == 'profile' %}text-blue-600 font-bold{% else %}text-slate-400 hover:text-slate-700{% endif %}">
+        <a href="{% url 'patient:profile' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'profile' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-user-circle text-base"></i>
-            <span class="text-[10px]">Profile</span>
+            <span class="text-[10px] mt-0.5">Profile</span>
         </a>
     </nav>
 
@@ -390,4 +390,3 @@
     {% include 'doctor/includes/pwa_install_modal.html' %}
 </body>
 </html>
-

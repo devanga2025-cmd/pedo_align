@@ -44,9 +44,9 @@
     </div>
 
     <!-- Patient Demographics & Verified Intake Banner -->
-    <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-blue-50/80 via-white to-indigo-50/70 border-2 border-blue-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
+    <div class="p-5 sm:p-6 rounded-xl bg-gradient-to-r from-blue-50/80 via-white to-indigo-50/70 border border-slate-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center text-xl font-black shadow-md shadow-blue-500/20 flex-shrink-0">
+            <div class="w-14 h-14 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl font-black shadow-md shadow-blue-500/20 flex-shrink-0">
                 {{ patient.first_name|slice:":1" }}{{ patient.last_name|slice:":1" }}
             </div>
             <div>
@@ -89,7 +89,7 @@
 
     <!-- Active Prescribed Operation Overview (if existing) -->
     {% if current_media %}
-    <div class="p-6 rounded-3xl bg-indigo-50/60 border-2 border-indigo-200 shadow-sm space-y-4">
+    <div class="p-6 rounded-xl bg-indigo-50/60 border border-slate-200 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-indigo-100">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-sm">
@@ -121,7 +121,7 @@
         </div>
 
         {% if current_media.patient_problem %}
-        <div class="p-4 rounded-2xl bg-white border border-indigo-100 text-xs text-slate-700 space-y-1">
+        <div class="p-4 rounded-xl bg-white border border-indigo-100 text-xs text-slate-700 space-y-1">
             <span class="font-extrabold text-indigo-950 block">
                 <i class="fa-solid fa-stethoscope text-indigo-600 mr-1"></i> Patient's Diagnosed Condition / Problem:
             </span>
@@ -138,7 +138,7 @@
                     Reference / Appliance Photograph (v{{ current_media.version }})
                 </span>
                 {% if current_media.photo %}
-                <div class="aspect-video bg-white rounded-2xl overflow-hidden border border-indigo-200 shadow-xs relative group cursor-pointer"
+                <div class="aspect-video bg-white rounded-xl overflow-hidden border border-indigo-200 shadow-xs relative group cursor-pointer"
                      onclick="openImageModal('{{ current_media.photo.url }}', '{{ current_media.operation_name }} Reference Photo')">
                     <img src="{{ current_media.photo.url }}" class="w-full h-full object-cover group-hover:scale-105 transition" alt="{{ current_media.operation_name }}">
                     <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
@@ -147,7 +147,7 @@
                 </div>
                 <p class="text-[11px] text-slate-500 mt-1 font-medium">{{ current_media.photo_description|default:"Operation Reference Photograph" }}</p>
                 {% else %}
-                <div class="aspect-video bg-slate-100 rounded-2xl border border-slate-200 flex items-center justify-center text-xs text-slate-400">
+                <div class="aspect-video bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center text-xs text-slate-400">
                     No photo attached
                 </div>
                 {% endif %}
@@ -159,7 +159,7 @@
                     Demonstration Video (v{{ current_media.version }})
                 </span>
                 {% if current_media.video %}
-                <div class="aspect-video bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-xs flex items-center justify-center">
+                <div class="aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-xs flex items-center justify-center">
                     <video controls class="w-full h-full object-contain">
                         <source src="{{ current_media.video.url }}">
                         Your browser does not support the video tag.
@@ -167,7 +167,7 @@
                 </div>
                 <p class="text-[11px] text-slate-500 mt-1 font-medium">{{ current_media.video_description|default:"Demonstration Video" }}</p>
                 {% else %}
-                <div class="aspect-video bg-slate-100 rounded-2xl border border-slate-200 flex items-center justify-center text-xs text-slate-400">
+                <div class="aspect-video bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center text-xs text-slate-400">
                     No video uploaded
                 </div>
                 {% endif %}
@@ -186,7 +186,7 @@
     <!-- ======================================================== -->
     <!-- STEP 4 PRESCRIPTION FORM                                 -->
     <!-- ======================================================== -->
-    <div class="pa-card p-6 sm:p-8 bg-white border-2 border-blue-200 shadow-sm rounded-3xl space-y-6">
+    <div class="pa-card p-6 sm:p-8 bg-white border border-slate-200 shadow-sm rounded-xl space-y-6">
         
         <div class="pb-4 border-b border-slate-100">
             <h3 class="text-base font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
@@ -223,7 +223,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     
                     <!-- Option 1: Turn Quest -->
-                    <label class="relative p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 bg-white hover:border-blue-500 has-checked:border-blue-600 has-checked:bg-blue-50/60 has-checked:shadow-sm"
+                    <label class="relative p-4 rounded-xl border-2 cursor-pointer transition flex items-start gap-3 bg-white hover:border-blue-500 has-checked:border-blue-600 has-checked:bg-blue-50/60 has-checked:shadow-sm"
                            onclick="toggleOperationType('TURN_QUEST')">
                         <input type="radio" name="operation_type" value="TURN_QUEST" id="op_turn_quest"
                                {% if not current_media or current_media.operation_type == 'TURN_QUEST' %}checked{% endif %}
@@ -242,7 +242,7 @@
                     </label>
 
                     <!-- Option 2: Other Operation -->
-                    <label class="relative p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 bg-white hover:border-blue-500 has-checked:border-blue-600 has-checked:bg-blue-50/60 has-checked:shadow-sm"
+                    <label class="relative p-4 rounded-xl border-2 cursor-pointer transition flex items-start gap-3 bg-white hover:border-blue-500 has-checked:border-blue-600 has-checked:bg-blue-50/60 has-checked:shadow-sm"
                            onclick="toggleOperationType('OTHER')">
                         <input type="radio" name="operation_type" value="OTHER" id="op_other"
                                {% if current_media and current_media.operation_type == 'OTHER' %}checked{% endif %}
@@ -263,7 +263,7 @@
                 </div>
 
                 <!-- Custom Operation Name Input -->
-                <div id="customOpContainer" class="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 mt-2 {% if not current_media or current_media.operation_type != 'OTHER' %}hidden{% endif %}">
+                <div id="customOpContainer" class="p-4 rounded-xl bg-purple-50/70 border border-purple-200 mt-2 {% if not current_media or current_media.operation_type != 'OTHER' %}hidden{% endif %}">
                     <label class="block text-xs font-bold text-purple-950 uppercase tracking-wider mb-1">
                         Custom Operation Name <span class="text-rose-500">*</span>
                     </label>
@@ -287,7 +287,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     
                     <!-- Daily -->
-                    <label class="p-3.5 rounded-2xl border-2 cursor-pointer transition flex items-start gap-2.5 bg-white hover:border-blue-400 has-checked:border-blue-600 has-checked:bg-blue-50/70">
+                    <label class="p-3.5 rounded-xl border-2 cursor-pointer transition flex items-start gap-2.5 bg-white hover:border-blue-400 has-checked:border-blue-600 has-checked:bg-blue-50/70">
                         <input type="radio" name="update_frequency" value="DAILY" class="mt-0.5 text-blue-600 focus:ring-blue-500"
                                {% if patient.monitoring_frequency == 'DAILY' or current_media.update_frequency == 'DAILY' %}checked{% endif %}>
                         <div>
@@ -297,7 +297,7 @@
                     </label>
 
                     <!-- Weekly (Default) -->
-                    <label class="p-3.5 rounded-2xl border-2 cursor-pointer transition flex items-start gap-2.5 bg-white hover:border-blue-400 has-checked:border-blue-600 has-checked:bg-blue-50/70">
+                    <label class="p-3.5 rounded-xl border-2 cursor-pointer transition flex items-start gap-2.5 bg-white hover:border-blue-400 has-checked:border-blue-600 has-checked:bg-blue-50/70">
                         <input type="radio" name="update_frequency" value="WEEKLY" class="mt-0.5 text-blue-600 focus:ring-blue-500"
                                {% if not patient.monitoring_frequency or patient.monitoring_frequency == 'WEEKLY' or current_media.update_frequency == 'WEEKLY' %}checked{% endif %}>
                         <div>
@@ -310,7 +310,7 @@
                     </label>
 
                     <!-- Monthly -->
-                    <label class="p-3.5 rounded-2xl border-2 cursor-pointer transition flex items-start gap-2.5 bg-white hover:border-blue-400 has-checked:border-blue-600 has-checked:bg-blue-50/70">
+                    <label class="p-3.5 rounded-xl border-2 cursor-pointer transition flex items-start gap-2.5 bg-white hover:border-blue-400 has-checked:border-blue-600 has-checked:bg-blue-50/70">
                         <input type="radio" name="update_frequency" value="MONTHLY" class="mt-0.5 text-blue-600 focus:ring-blue-500"
                                {% if patient.monitoring_frequency == 'MONTHLY' or current_media.update_frequency == 'MONTHLY' %}checked{% endif %}>
                         <div>
@@ -336,7 +336,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
                     <!-- 1 PHOTO DROPZONE -->
-                    <div class="p-4 rounded-2xl bg-white border-2 border-dashed border-blue-300 hover:border-blue-500 transition space-y-3 relative"
+                    <div class="p-4 rounded-xl bg-white border-2 border-dashed border-blue-300 hover:border-blue-500 transition space-y-3 relative"
                          id="photoDropzone" tabindex="0">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -371,7 +371,7 @@
                     </div>
 
                     <!-- 1 SMALL VIDEO DROPZONE -->
-                    <div class="p-4 rounded-2xl bg-white border-2 border-dashed border-indigo-300 hover:border-indigo-500 transition space-y-3 relative"
+                    <div class="p-4 rounded-xl bg-white border-2 border-dashed border-indigo-300 hover:border-indigo-500 transition space-y-3 relative"
                          id="videoDropzone">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -445,7 +445,7 @@
                     <i class="fa-solid fa-arrow-left"></i> Cancel & Return to Table
                 </a>
                 <button type="submit"
-                        class="px-8 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center justify-center gap-2 order-1 sm:order-2">
+                        class="px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 transition flex items-center justify-center gap-2 order-1 sm:order-2">
                     <i class="fa-solid fa-floppy-disk"></i> Save Operation & Initiate Photo Monitoring
                 </button>
             </div>
@@ -458,14 +458,14 @@
 
 <!-- Image Zoom Modal -->
 <div id="imageModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl space-y-3 p-4">
+    <div class="bg-white rounded-xl max-w-3xl w-full overflow-hidden shadow-lg space-y-3 p-4">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <h4 id="modalImageTitle" class="text-sm font-black text-slate-900">Photograph Preview</h4>
             <button type="button" onclick="closeImageModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition">
                 &times;
             </button>
         </div>
-        <div class="max-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl bg-slate-900">
+        <div class="max-h-[75vh] flex items-center justify-center overflow-hidden rounded-xl bg-slate-900">
             <img id="modalImageSrc" src="" class="max-h-[75vh] w-auto object-contain" alt="Zoomed Preview">
         </div>
     </div>

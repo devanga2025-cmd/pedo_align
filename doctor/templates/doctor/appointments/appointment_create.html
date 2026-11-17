@@ -5,62 +5,73 @@
 {% block breadcrumb %}<a href="{% url 'doctor:appointments' %}" class="hover:underline">Appointments</a> / Schedule{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto space-y-6">
+<div class="max-w-2xl mx-auto space-y-5">
 
-    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-calendar-plus text-blue-600"></i> Schedule Clinic Appointment
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-calendar-plus text-blue-600 text-sm"></i> Schedule Clinic Appointment
             </h1>
             <p class="text-xs text-slate-500 mt-1">Book an in-office dental checkup or aligner set delivery</p>
         </div>
         <a href="{% url 'doctor:appointments' %}" class="btn-secondary text-xs">
-            <i class="fa-solid fa-arrow-left"></i> Cancel
+            <i class="fa-solid fa-arrow-left text-[11px] mr-1"></i> Cancel
         </a>
     </div>
 
-    <form method="POST" class="pa-card p-6 sm:p-8 space-y-4">
+    <form method="POST" class="pa-card p-5 sm:p-6 space-y-4 bg-white">
         {% csrf_token %}
 
+        {% if form.errors %}
+        <div class="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
+            <p class="font-semibold flex items-center gap-1.5"><i class="fa-solid fa-circle-exclamation"></i> Please review form errors:</p>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p class="pl-4">&bull; <strong>{{ field.label }}:</strong> {{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Select Patient *</label>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Select Patient *</label>
             {{ form.patient }}
         </div>
 
         <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Appointment Type *</label>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Appointment Type *</label>
             {{ form.appointment_type }}
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Date *</label>
+                <label class="block text-xs font-medium text-slate-700 mb-1">Date *</label>
                 {{ form.scheduled_date }}
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Time *</label>
+                <label class="block text-xs font-medium text-slate-700 mb-1">Time *</label>
                 {{ form.scheduled_time }}
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Duration (Mins)</label>
+                <label class="block text-xs font-medium text-slate-700 mb-1">Duration (Mins)</label>
                 {{ form.duration_minutes }}
             </div>
         </div>
 
         <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Status</label>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Status</label>
             {{ form.status }}
         </div>
 
         <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Clinical Notes / Agenda</label>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Clinical Notes / Agenda</label>
             {{ form.notes }}
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
             <a href="{% url 'doctor:appointments' %}" class="btn-secondary text-xs">Cancel</a>
-            <button type="submit" class="btn-primary text-xs shadow-md">
-                <i class="fa-solid fa-check mr-1"></i> Confirm Appointment
+            <button type="submit" class="btn-primary text-xs">
+                <i class="fa-solid fa-check text-xs mr-1"></i> Confirm Appointment
             </button>
         </div>
 

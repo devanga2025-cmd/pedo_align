@@ -6,58 +6,53 @@
 {% block breadcrumb %}Notifications{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-5">
 
-    <!-- Top Banner -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 p-6 md:p-8 text-white shadow-xl shadow-blue-500/15">
-        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white mb-2">
-                    <i class="fa-solid fa-bell"></i> Patient Alert Feed
-                </span>
-                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Notification Center</h1>
-                <p class="mt-1 text-sm text-blue-50">
-                    Stay up-to-date with aligner change reminders, clinic appointments, and doctor remarks.
-                </p>
-            </div>
-
-            <div class="flex items-center gap-2 self-start sm:self-center">
-                {% if unread_count > 0 %}
-                <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-white text-blue-700 shadow-md">
-                    {{ unread_count }} Unread Alert{{ unread_count|pluralize }}
-                </span>
-                <a href="{% url 'patient:mark_all_notifications_read' %}" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-check-double"></i> Mark all read
-                </a>
-                {% endif %}
-            </div>
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-bell text-blue-600 text-sm"></i> Notifications & Reminders
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                Aligner change reminders, clinic appointment updates, and doctor remarks.
+            </p>
         </div>
-        <i class="fa-solid fa-bell-ring absolute -right-6 -bottom-8 text-8xl md:text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+
+        <div class="flex items-center gap-2">
+            {% if unread_count > 0 %}
+            <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                {{ unread_count }} unread
+            </span>
+            <a href="{% url 'patient:mark_all_notifications_read' %}" class="btn-secondary text-xs">
+                <i class="fa-solid fa-check-double text-[11px] mr-1"></i> Mark all read
+            </a>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Notifications List Card -->
-    <div class="bg-white rounded-3xl p-6 md:p-8 border border-blue-100/80 shadow-sm">
+    <div class="pa-card p-5 sm:p-6 bg-white space-y-3">
         
         {% if notifications %}
         <div class="divide-y divide-slate-100">
             {% for notif in notifications %}
-            <div class="py-4.5 flex items-start gap-4 transition-colors rounded-2xl p-3 
-                        {% if not notif.is_read %}bg-blue-50/50 border border-blue-100/80{% else %}hover:bg-slate-50/60{% endif %}">
+            <div class="py-3 flex items-start gap-3 rounded-lg p-2.5 transition-colors
+                        {% if not notif.is_read %}bg-blue-50/40 border border-blue-100{% else %}hover:bg-slate-50{% endif %}">
                 
                 <!-- Type Icon -->
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg flex-shrink-0 shadow-sm
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs flex-shrink-0 mt-0.5
                     {% if notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
-                        bg-blue-100 text-blue-600
+                        bg-blue-50 text-blue-600
                     {% elif notif.notification_type == 'PHOTO_REMINDER' or notif.notification_type == 'PHOTO_SUBMISSION' %}
-                        bg-pink-100 text-pink-600
+                        bg-sky-50 text-sky-600
                     {% elif notif.notification_type == 'DOCTOR_FEEDBACK' or notif.notification_type == 'DOCTOR_INSTRUCTION' %}
-                        bg-purple-100 text-purple-600
+                        bg-indigo-50 text-indigo-600
                     {% elif notif.notification_type == 'APPOINTMENT' or notif.notification_type == 'APPOINTMENT_REMINDER' %}
-                        bg-amber-100 text-amber-600
+                        bg-amber-50 text-amber-600
                     {% elif notif.notification_type == 'EMERGENCY_RESPONSE' %}
-                        bg-rose-100 text-rose-600
+                        bg-rose-50 text-rose-600
                     {% else %}
-                        bg-sky-100 text-sky-600
+                        bg-slate-100 text-slate-600
                     {% endif %}">
                     {% if notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
                         <i class="fa-solid fa-teeth-open"></i>
@@ -77,35 +72,35 @@
                 <!-- Content -->
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
-                            <h4 class="text-sm font-bold text-slate-900 leading-tight">{{ notif.title }}</h4>
+                        <div class="flex items-center gap-1.5">
+                            <h4 class="text-xs font-semibold text-slate-900 leading-tight">{{ notif.title }}</h4>
                             {% if not notif.is_read %}
-                                <span class="w-2 h-2 rounded-full bg-blue-600" title="Unread"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600" title="Unread"></span>
                             {% endif %}
                         </div>
-                        <span class="text-[11px] font-medium text-slate-400 whitespace-nowrap">
+                        <span class="text-[10px] text-slate-400 whitespace-nowrap">
                             {{ notif.created_at|date:"M d, h:i A" }}
                         </span>
                     </div>
 
-                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                    <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
                         {{ notif.message }}
                     </p>
 
-                    <div class="mt-2.5 flex items-center gap-3">
+                    <div class="mt-2 flex items-center gap-3 text-[11px]">
                         {% if not notif.is_read %}
-                        <a href="{% url 'patient:mark_notification_read' notif.id %}" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 transition">
-                            <i class="fa-solid fa-check"></i> Mark as read
+                        <a href="{% url 'patient:mark_notification_read' notif.id %}" class="font-medium text-blue-600 hover:text-blue-800 transition flex items-center gap-1">
+                            <i class="fa-solid fa-check text-[10px]"></i> Mark as read
                         </a>
                         {% else %}
-                        <span class="text-[11px] text-slate-400 flex items-center gap-1">
-                            <i class="fa-solid fa-circle-check text-slate-400"></i> Read
+                        <span class="text-slate-400 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-check text-slate-400 text-[10px]"></i> Read
                         </span>
                         {% endif %}
 
                         {% if notif.link_url %}
-                        <a href="{{ notif.link_url }}" class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:underline">
-                            View details <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                        <a href="{{ notif.link_url }}" class="font-medium text-blue-600 hover:underline flex items-center gap-1">
+                            View details <i class="fa-solid fa-chevron-right text-[8px]"></i>
                         </a>
                         {% endif %}
                     </div>
@@ -115,12 +110,12 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="py-12 text-center text-slate-400">
-            <div class="w-16 h-16 rounded-full bg-blue-50 text-blue-400 flex items-center justify-center text-2xl mx-auto mb-3">
+        <div class="py-10 text-center text-slate-400">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-lg mx-auto mb-2">
                 <i class="fa-regular fa-bell"></i>
             </div>
-            <h4 class="text-sm font-bold text-slate-800">You're all caught up!</h4>
-            <p class="text-xs text-slate-500 mt-1">There are no new notifications or reminders at this time.</p>
+            <h4 class="text-xs font-semibold text-slate-800">You're all caught up</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">There are no new notifications at this time.</p>
         </div>
         {% endif %}
 
@@ -128,4 +123,3 @@
 
 </div>
 {% endblock %}
-
