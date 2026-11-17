@@ -10,7 +10,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <i class="fa-solid fa-file-chart-pie text-blue-600"></i> Clinical Practice Analytics & Reports
             </h1>
             <p class="text-xs text-slate-500 mt-1">
@@ -33,25 +33,25 @@
         
         <div class="pa-card p-5">
             <span class="text-[10px] font-bold uppercase text-slate-400 block">Total Patients</span>
-            <div class="text-2xl font-black text-slate-900 mt-1">{{ total_patients }}</div>
+            <div class="text-2xl font-bold text-slate-900 mt-1">{{ total_patients }}</div>
             <p class="text-[11px] text-slate-500 mt-1">Practicing under your account</p>
         </div>
 
         <div class="pa-card p-5">
             <span class="text-[10px] font-bold uppercase text-slate-400 block">Active Treatments</span>
-            <div class="text-2xl font-black text-blue-700 mt-1">{{ active_count }}</div>
+            <div class="text-2xl font-bold text-blue-700 mt-1">{{ active_count }}</div>
             <p class="text-[11px] text-blue-600 mt-1">Wearing active aligners</p>
         </div>
 
         <div class="pa-card p-5">
             <span class="text-[10px] font-bold uppercase text-slate-400 block">Completed Cases</span>
-            <div class="text-2xl font-black text-emerald-700 mt-1">{{ completed_count }}</div>
+            <div class="text-2xl font-bold text-emerald-700 mt-1">{{ completed_count }}</div>
             <p class="text-[11px] text-emerald-600 mt-1">In retention or discharged</p>
         </div>
 
         <div class="pa-card p-5">
             <span class="text-[10px] font-bold uppercase text-slate-400 block">Emergency Resolution</span>
-            <div class="text-2xl font-black text-purple-900 mt-1">{{ emergency_resolution_rate }}%</div>
+            <div class="text-2xl font-bold text-purple-900 mt-1">{{ emergency_resolution_rate }}%</div>
             <p class="text-[11px] text-purple-700 mt-1">Issues addressed promptly</p>
         </div>
 
@@ -113,17 +113,17 @@
             <div class="grid grid-cols-2 gap-4 text-xs">
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <span class="text-slate-400 block uppercase font-bold text-[10px]">Active Treatments</span>
-                    <span class="text-xl font-black text-blue-700 mt-1 block">{{ active_count }}</span>
+                    <span class="text-xl font-bold text-blue-700 mt-1 block">{{ active_count }}</span>
                     <span class="text-slate-500">Currently changing aligners</span>
                 </div>
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <span class="text-slate-400 block uppercase font-bold text-[10px]">Pending Connection</span>
-                    <span class="text-xl font-black text-amber-700 mt-1 block">{{ pending_count }}</span>
+                    <span class="text-xl font-bold text-amber-700 mt-1 block">{{ pending_count }}</span>
                     <span class="text-slate-500">Codes awaiting claim/approval</span>
                 </div>
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <span class="text-slate-400 block uppercase font-bold text-[10px]">Completed Treatments</span>
-                    <span class="text-xl font-black text-emerald-700 mt-1 block">{{ completed_count }}</span>
+                    <span class="text-xl font-bold text-emerald-700 mt-1 block">{{ completed_count }}</span>
                     <span class="text-slate-500">Retainer monitoring phase</span>
                 </div>
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">

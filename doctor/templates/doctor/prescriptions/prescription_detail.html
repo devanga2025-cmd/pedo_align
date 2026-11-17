@@ -16,7 +16,7 @@ Prescription #{{ prescription.id }}
 <div class="max-w-4xl mx-auto space-y-6">
 
     <!-- Action Bar -->
-    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs print:hidden">
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs print:hidden">
         {% if request.user.patient_profile %}
         <a href="{% url 'patient:my_treatment' %}" class="btn-secondary text-xs flex items-center gap-2">
             <i class="fa-solid fa-arrow-left"></i> Back to My Treatment
@@ -102,7 +102,7 @@ Prescription #{{ prescription.id }}
             <div>
                 <span class="text-slate-400 uppercase font-bold text-[10px] block">Next Follow-Up</span>
                 {% if prescription.next_followup_date %}
-                <span class="font-extrabold text-emerald-700 text-sm">{{ prescription.next_followup_date|date:"F d, Y" }}</span>
+                <span class="font-bold text-emerald-700 text-sm">{{ prescription.next_followup_date|date:"F d, Y" }}</span>
                 <span class="text-emerald-600 block text-[10px]">Doctor Prescribed Date</span>
                 {% else %}
                 <span class="text-slate-400 font-medium">As advised</span>
@@ -115,7 +115,7 @@ Prescription #{{ prescription.id }}
             <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <i class="fa-solid fa-stethoscope text-blue-600"></i> Diagnosis / Clinical Findings
             </h4>
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-sm text-slate-800 font-medium leading-relaxed">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-sm text-slate-800 font-medium leading-relaxed">
                 {{ prescription.diagnosis|linebreaksbr }}
             </div>
         </div>
@@ -123,11 +123,11 @@ Prescription #{{ prescription.id }}
         <!-- Rx Symbol & Prescribed Medicines -->
         <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
-                <span class="font-serif italic font-black text-3xl text-blue-600">℞</span>
+                <span class="font-serif italic font-bold text-3xl text-blue-600">℞</span>
                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Prescribed Medicines & Therapy</h4>
             </div>
 
-            <div class="rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="rounded-xl border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50/80 px-4 py-3 border-b border-slate-200 text-xs font-bold text-slate-600">
                     Medication, Dosage, Frequency & Duration Directions
                 </div>
@@ -143,7 +143,7 @@ Prescription #{{ prescription.id }}
             <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <i class="fa-solid fa-circle-info text-amber-500"></i> Special Instructions & Clinical Guidance
             </h4>
-            <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-200 text-xs text-amber-950 font-medium leading-relaxed">
+            <div class="p-4 rounded-xl bg-amber-50/50 border border-amber-200 text-xs text-amber-950 font-medium leading-relaxed">
                 {{ prescription.special_instructions|linebreaksbr }}
             </div>
         </div>

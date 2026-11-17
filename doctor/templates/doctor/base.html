@@ -284,40 +284,44 @@
     </div>
 
     <!-- MOBILE BOTTOM NAVIGATION BAR -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white border-t border-slate-200 flex items-center justify-around z-40 shadow-xs">
-        <a href="{% url 'doctor:dashboard' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-chart-pie text-base"></i>
-            <span class="text-[10px] mt-0.5">Dashboard</span>
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white border-t border-slate-200 flex items-center justify-around z-40 shadow-xs mobile-bottom-nav">
+        <a href="{% url 'doctor:dashboard' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-chart-pie text-sm sm:text-base"></i>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Dashboard</span>
         </a>
-        <a href="{% url 'doctor:patient_list' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_create' and request.resolver_match.url_name != 'patient_requests' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-users text-base"></i>
-            <span class="text-[10px] mt-0.5">Patients</span>
+        <a href="{% url 'doctor:patient_list' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_create' and request.resolver_match.url_name != 'patient_requests' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-users text-sm sm:text-base"></i>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Patients</span>
         </a>
-        <a href="{% url 'doctor:patient_create' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'patient_create' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'doctor:patient_create' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'patient_create' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
                 <i class="fa-solid fa-user-plus text-xs"></i>
             </div>
-            <span class="text-[10px] mt-0.5 text-blue-600 font-medium">Add</span>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 text-blue-600 font-medium truncate">Add</span>
         </a>
-        <a href="{% url 'doctor:patient_requests' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'patient_requests' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'doctor:patient_requests' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'patient_requests' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <div class="relative">
-                <i class="fa-solid fa-key text-base"></i>
+                <i class="fa-solid fa-key text-sm sm:text-base"></i>
                 {% if pending_requests_count > 0 %}
-                <span class="absolute -top-1 -right-2 min-w-[14px] h-[14px] px-1 bg-amber-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
+                <span class="absolute -top-1 -right-1.5 min-w-[13px] h-[13px] px-0.5 bg-amber-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
                     {{ pending_requests_count }}
                 </span>
                 {% endif %}
             </div>
-            <span class="text-[10px] mt-0.5">Requests</span>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Requests</span>
         </a>
-        <a href="{% url 'doctor:notifications' %}" class="flex flex-col items-center justify-center flex-1 h-full {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'doctor:notifications' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <div class="relative">
-                <i class="fa-solid fa-bell text-base"></i>
+                <i class="fa-solid fa-bell text-sm sm:text-base"></i>
                 {% if unread_notifications_count > 0 %}
-                <span class="absolute -top-1 -right-2 min-w-[14px] h-[14px] px-1 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
+                <span class="absolute -top-1 -right-1.5 min-w-[13px] h-[13px] px-0.5 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
                     {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
                 </span>
                 {% endif %}
+            </div>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Alerts</span>
+        </a>
+    </nav>
             </div>
             <span class="text-[10px] mt-0.5">Alerts</span>
         </a>

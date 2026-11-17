@@ -11,14 +11,14 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 text-[11px] font-extrabold uppercase tracking-wider">
+                <span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 text-[11px] font-bold uppercase tracking-wider">
                     <i class="fa-solid fa-camera mr-1"></i> Clinical Monitoring Hub
                 </span>
-                <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-800 text-[11px] font-extrabold uppercase tracking-wider">
+                <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-800 text-[11px] font-bold uppercase tracking-wider">
                     Step 4 Operation Protocol
                 </span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1 flex items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-1 flex items-center gap-2">
                 Dental Photo Monitoring
             </h1>
             <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl">
@@ -30,11 +30,11 @@
         <div class="flex items-center gap-2.5 flex-wrap">
             <div class="px-3.5 py-2 rounded-xl bg-white border border-blue-100 shadow-xs text-center">
                 <span class="text-[10px] font-bold text-slate-400 uppercase block">Completed Intake</span>
-                <span class="text-lg font-black text-blue-700">{{ eligible_patients|length }}</span>
+                <span class="text-lg font-bold text-blue-700">{{ eligible_patients|length }}</span>
             </div>
             <div class="px-3.5 py-2 rounded-xl bg-white border border-indigo-100 shadow-xs text-center">
                 <span class="text-[10px] font-bold text-slate-400 uppercase block">Active Operations</span>
-                <span class="text-lg font-black text-indigo-700">{{ active_operations.count }}</span>
+                <span class="text-lg font-bold text-indigo-700">{{ active_operations.count }}</span>
             </div>
         </div>
     </div>
@@ -51,10 +51,10 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                             Completed Intake Patients (Step 4 Operation Ready)
                         </h2>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 uppercase">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 uppercase">
                             {{ eligible_patients|length }} Eligible
                         </span>
                     </div>
@@ -78,7 +78,7 @@
         {% if eligible_patients %}
         <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-200">
             <table class="w-full text-left text-xs" id="eligiblePatientsTable">
-                <thead class="bg-slate-50/80 text-[10px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                <thead class="bg-slate-50/80 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                     <tr>
                         <th class="py-3 px-4">Patient Profile</th>
                         <th class="py-3 px-4">Guardian / Contact</th>
@@ -93,7 +93,7 @@
                         <!-- Profile Column -->
                         <td class="py-3.5 px-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-black text-xs shadow-2xs flex-shrink-0">
+                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shadow-2xs flex-shrink-0">
                                     {{ p.first_name|slice:":1" }}{{ p.last_name|slice:":1" }}
                                 </div>
                                 <div>
@@ -129,13 +129,13 @@
                         <!-- Completed Intake Verification Column -->
                         <td class="py-3.5 px-4">
                             <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                                     <i class="fa-solid fa-check text-emerald-600"></i> Step 1: {{ p.preoperative_photos.count }} Photos
                                 </span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                                     <i class="fa-solid fa-check text-emerald-600"></i> Step 2: {{ p.radiographs.count }} X-rays
                                 </span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                                     <i class="fa-solid fa-check text-emerald-600"></i> Step 3: Visit Scheduled
                                 </span>
                             </div>
@@ -144,9 +144,9 @@
                         <!-- Operation Status Column -->
                         <td class="py-3.5 px-4">
                             {% if p.treatment_media.exists %}
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
                                 <i class="fa-solid fa-bullseye text-indigo-600"></i> {{ p.current_operation|default:'Turn Quest' }}
-                                <span class="text-[9px] font-extrabold bg-white text-indigo-700 px-1.5 py-0.2 rounded border border-indigo-200">
+                                <span class="text-[9px] font-bold bg-white text-indigo-700 px-1.5 py-0.2 rounded border border-indigo-200">
                                     {{ p.get_monitoring_frequency_display }}
                                 </span>
                             </span>
@@ -160,7 +160,7 @@
                         <!-- Action Open Button -->
                         <td class="py-3.5 px-4 text-right">
                             <a href="{% url 'doctor:step4_operation' p.id %}"
-                               class="btn-primary py-1.5 px-4 text-xs font-black inline-flex items-center gap-1.5 shadow-sm hover:scale-[1.02] transition whitespace-nowrap">
+                               class="btn-primary py-1.5 px-4 text-xs font-bold inline-flex items-center gap-1.5 shadow-sm hover:scale-[1.02] transition whitespace-nowrap">
                                 <i class="fa-solid fa-folder-open"></i> Open
                             </a>
                         </td>
@@ -175,7 +175,7 @@
             <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 mx-auto flex items-center justify-center text-xl">
                 <i class="fa-solid fa-user-clock"></i>
             </div>
-            <h3 class="text-sm font-extrabold text-slate-800">No Patients Waiting for Step 4 Operation Diagnosis</h3>
+            <h3 class="text-sm font-bold text-slate-800">No Patients Waiting for Step 4 Operation Diagnosis</h3>
             <p class="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
                 Only patients who have completed all initial 3 intake steps (Step 1: 3 Pre-op Photos, Step 2: Radiographs, and Step 3: Hospital Appointment) appear in this table.
             </p>

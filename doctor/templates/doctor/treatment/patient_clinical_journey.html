@@ -12,24 +12,24 @@ Clinical Visit Journey
 <div class="space-y-6 max-w-6xl mx-auto">
 
     <!-- Top Patient Identity Card -->
-    <div class="pa-card p-6 border-blue-200/80 bg-gradient-to-r from-white via-blue-50/30 to-sky-50/40 shadow-sm">
+    <div class="pa-card p-6 border-blue-200/80 bg-white shadow-sm">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div class="flex items-start sm:items-center gap-4 min-w-0">
-                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-2xl flex items-center justify-center shadow-md flex-shrink-0">
+                <div class="w-16 h-16 rounded-xl bg-blue-600 text-white font-bold text-2xl flex items-center justify-center shadow-md flex-shrink-0">
                     {{ patient.first_name|first }}{{ patient.last_name|first }}
                 </div>
                 <div class="min-w-0 space-y-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">{{ patient.full_name }}</h1>
+                        <h1 class="text-xl font-bold text-slate-900 tracking-tight">{{ patient.full_name }}</h1>
                         <span class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">
                             {{ patient.patient_id }}
                         </span>
                         {% if patient.patient_category == 'CHILD' %}
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-100 text-sky-800 border border-sky-200">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
                             <i class="fa-solid fa-child mr-0.5"></i> Child Patient
                         </span>
                         {% else %}
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
                             <i class="fa-solid fa-user mr-0.5"></i> Adult Patient
                         </span>
                         {% endif %}
@@ -60,7 +60,7 @@ Clinical Visit Journey
     <div class="pa-card p-4 sm:p-5 bg-white border-blue-200 shadow-sm">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
             <div>
-                <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-timeline text-blue-600"></i> Guided Clinical Intake & Follow-Up Steps
                 </h2>
                 <p class="text-xs text-slate-500">Step 1: 3 Compulsory Pre-op Photos &rarr; Step 2: Radiographs (OPG & Lateral Cephalograph) &rarr; Step 3: Next Hospital Visit</p>
@@ -73,17 +73,17 @@ Clinical Visit Journey
             <button type="button" onclick="switchStep('1')" id="stepBtn1" 
                     class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '1' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '1' %}bg-white text-blue-700{% elif has_3_preop %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if active_step == '1' %}bg-white text-blue-700{% elif has_3_preop %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {% if has_3_preop %}<i class="fa-solid fa-check"></i>{% else %}1{% endif %}
                     </div>
                     <div>
-                        <div class="text-xs font-extrabold">Step 1: Pre-op Photos</div>
+                        <div class="text-xs font-bold">Step 1: Pre-op Photos</div>
                         <div class="text-[10px] {% if active_step == '1' %}text-blue-100{% else %}text-slate-500{% endif %}">
                             3 Photos Compulsory
                         </div>
                     </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_3_preop %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-amber-100 text-amber-800{% endif %}">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if has_3_preop %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-amber-100 text-amber-800{% endif %}">
                     {% if preop_count >= 3 %}{{ preop_count }} Saved{% else %}{{ preop_count }}/3 Saved{% endif %}
                 </span>
             </button>
@@ -92,17 +92,17 @@ Clinical Visit Journey
             <button type="button" onclick="switchStep('2')" id="stepBtn2"
                     class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '2' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '2' %}bg-white text-blue-700{% elif has_radiograph %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if active_step == '2' %}bg-white text-blue-700{% elif has_radiograph %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {% if has_radiograph %}<i class="fa-solid fa-check"></i>{% else %}2{% endif %}
                     </div>
                     <div>
-                        <div class="text-xs font-extrabold">Step 2: Radiographs</div>
+                        <div class="text-xs font-bold">Step 2: Radiographs</div>
                         <div class="text-[10px] {% if active_step == '2' %}text-blue-100{% else %}text-slate-500{% endif %}">
                             OPG & Lateral Cephalograph
                         </div>
                     </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_radiograph %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-slate-200 text-slate-700{% endif %}">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if has_radiograph %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-slate-200 text-slate-700{% endif %}">
                     {{ radiographs.count }} Files
                 </span>
             </button>
@@ -111,36 +111,36 @@ Clinical Visit Journey
             <button type="button" onclick="switchStep('3')" id="stepBtn3"
                     class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '3' %}bg-white text-blue-700{% elif has_next_appt %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if active_step == '3' %}bg-white text-blue-700{% elif has_next_appt %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {% if has_next_appt %}<i class="fa-solid fa-check"></i>{% else %}3{% endif %}
                     </div>
                     <div>
-                        <div class="text-xs font-extrabold">Step 3: Next Visit</div>
+                        <div class="text-xs font-bold">Step 3: Next Visit</div>
                         <div class="text-[10px] {% if active_step == '3' %}text-blue-100{% else %}text-slate-500{% endif %}">
                             Hospital Appointment
                         </div>
                     </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_next_appt %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-purple-100 text-purple-800{% endif %}">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if has_next_appt %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-purple-100 text-purple-800{% endif %}">
                     {% if has_next_appt %}Scheduled{% else %}Pending{% endif %}
                 </span>
             </button>
 
             <!-- Step 4 Link / Status Tab Button -->
             <a href="{% url 'doctor:step4_operation' patient.id %}" id="stepBtn4"
-               class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if has_3_preop and has_radiograph and has_next_appt %}bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-indigo-300 text-indigo-950 font-bold{% else %}bg-slate-50 border-slate-200 text-slate-400 pointer-events-none opacity-60{% endif %}">
+               class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if has_3_preop and has_radiograph and has_next_appt %}bg-blue-600 hover:from-indigo-100 hover:to-blue-100 border-indigo-300 text-indigo-950 font-bold{% else %}bg-slate-50 border-slate-200 text-slate-400 pointer-events-none opacity-60{% endif %}">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-600 text-white shadow-xs{% else %}bg-slate-200 text-slate-500{% endif %}">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-600 text-white shadow-xs{% else %}bg-slate-200 text-slate-500{% endif %}">
                         {% if patient.treatment_media.exists %}<i class="fa-solid fa-check"></i>{% else %}4{% endif %}
                     </div>
                     <div>
-                        <div class="text-xs font-extrabold">Step 4: Operation</div>
+                        <div class="text-xs font-bold">Step 4: Operation</div>
                         <div class="text-[10px] {% if has_3_preop and has_radiograph and has_next_appt %}text-indigo-700{% else %}text-slate-400{% endif %}">
                             Turn Quest / Protocol
                         </div>
                     </div>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if has_3_preop and has_radiograph and has_next_appt %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
                     {% if patient.treatment_media.exists %}Active{% elif has_3_preop and has_radiograph and has_next_appt %}Ready &rarr;{% else %}Locked{% endif %}
                 </span>
             </a>
@@ -162,16 +162,16 @@ Clinical Visit Journey
                         <i class="fa-solid fa-camera"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-black text-slate-900">Step 1: Preoperative Photographs</h2>
+                        <h2 class="text-base font-bold text-slate-900">Step 1: Preoperative Photographs</h2>
                         <p class="text-xs text-slate-500">First-visit clinical documentation. Exactly 3 photographs are compulsory. Click <strong>+</strong> to add more angles.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-50 text-amber-800 border border-amber-200 shadow-xs">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-xs">
                         <i class="fa-solid fa-circle-exclamation text-amber-600"></i> 3 Photos Compulsory
                     </div>
                     <button type="button" onclick="addExtraPhotoSlot()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-600 hover:text-white transition cursor-pointer shadow-xs">
-                        <i class="fa-solid fa-plus font-black"></i> Add More Photos (+)
+                        <i class="fa-solid fa-plus font-bold"></i> Add More Photos (+)
                     </button>
                 </div>
             </div>
@@ -187,7 +187,7 @@ Clinical Visit Journey
                     <!-- Slot 1: Frontal View -->
                     <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone1">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">1</span>
                                 Photo 1: Frontal View *
                             </span>
@@ -217,7 +217,7 @@ Clinical Visit Journey
                     <!-- Slot 2: Upper Arch View -->
                     <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone2">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">2</span>
                                 Photo 2: Upper Arch View *
                             </span>
@@ -247,7 +247,7 @@ Clinical Visit Journey
                     <!-- Slot 3: Lower Arch / Lateral View -->
                     <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                                 <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">3</span>
                                 Photo 3: Lower Arch / Lateral *
                             </span>
@@ -278,10 +278,10 @@ Clinical Visit Journey
 
                     <!-- Dedicated "+" Symbol Card to Add More Photo Slots -->
                     <div id="addSlotCard" class="p-5 rounded-xl border-2 border-dashed border-sky-300 hover:border-blue-500 bg-sky-50/40 hover:bg-sky-50/80 transition flex flex-col items-center justify-center text-center cursor-pointer group min-h-[290px]" onclick="addExtraPhotoSlot()" title="Click to add another preoperative photo angle">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center text-2xl font-black shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
+                        <div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-plus"></i>
                         </div>
-                        <div class="mt-3 text-sm font-black text-slate-800 group-hover:text-blue-700 transition">
+                        <div class="mt-3 text-sm font-bold text-slate-800 group-hover:text-blue-700 transition">
                             Add More Photos (+)
                         </div>
                         <p class="text-[11px] text-slate-500 mt-1 max-w-[210px] leading-snug">
@@ -356,7 +356,7 @@ Clinical Visit Journey
                     <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-sm group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-plus"></i>
                     </div>
-                    <span class="mt-2 text-xs font-extrabold text-blue-900 group-hover:text-blue-700">Add Another Photo (+)</span>
+                    <span class="mt-2 text-xs font-bold text-blue-900 group-hover:text-blue-700">Add Another Photo (+)</span>
                     <span class="text-[10px] text-slate-500 mt-0.5">Upload or paste additional view</span>
                 </div>
             </div>
@@ -425,15 +425,15 @@ Clinical Visit Journey
                         <i class="fa-solid fa-x-ray"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-black text-slate-900">Step 2: Radiograph Records (X-Rays)</h2>
+                        <h2 class="text-base font-bold text-slate-900">Step 2: Radiograph Records (X-Rays)</h2>
                         <p class="text-xs text-slate-500">Diagnostic X-ray evaluation. Upload or paste radiographs with the 2 options: OPG and LATERAL CEPHALOGRAPH.</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-blue-50 text-blue-800 border border-blue-200">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
                         OPG: {{ opg_radiographs.count }} on file
                     </span>
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-cyan-50 text-cyan-800 border border-cyan-200">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200">
                         Lateral Ceph: {{ ceph_radiographs.count }} on file
                     </span>
                 </div>
@@ -456,7 +456,7 @@ Clinical Visit Journey
                                 <label class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:text-blue-950 border-slate-200">
                                     <input type="radio" name="radiograph_type" value="OPG" checked class="text-blue-600 focus:ring-blue-500">
                                     <div>
-                                        <div class="text-xs font-black">OPG</div>
+                                        <div class="text-xs font-bold">OPG</div>
                                         <div class="text-[10px] text-slate-500">Orthopantomogram / Panoramic</div>
                                     </div>
                                 </label>
@@ -464,7 +464,7 @@ Clinical Visit Journey
                                 <label class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-cyan-50/50 has-[:checked]:border-cyan-600 has-[:checked]:bg-cyan-50/70 has-[:checked]:text-cyan-950 border-slate-200">
                                     <input type="radio" name="radiograph_type" value="LATERAL_CEPHALOGRAPH" class="text-cyan-600 focus:ring-cyan-500">
                                     <div>
-                                        <div class="text-xs font-black">LATERAL CEPHALOGRAPH</div>
+                                        <div class="text-xs font-bold">LATERAL CEPHALOGRAPH</div>
                                         <div class="text-[10px] text-slate-500">Lateral Cephalometric View</div>
                                     </div>
                                 </label>
@@ -541,7 +541,7 @@ Clinical Visit Journey
                 <!-- OPG Column -->
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-black text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-tooth text-blue-600"></i> OPG (Panoramic) Records ({{ opg_radiographs.count }})
                         </span>
                     </div>
@@ -555,7 +555,7 @@ Clinical Visit Journey
                                 <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
                                     <i class="fa-solid fa-expand mr-1"></i> Full View
                                 </a>
-                                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-600 text-white">
+                                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-600 text-white">
                                     v{{ r.version }}
                                 </span>
                             </div>
@@ -587,7 +587,7 @@ Clinical Visit Journey
                 <!-- Lateral Cephalograph Column -->
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-black text-cyan-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-cyan-900 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-skull text-cyan-600"></i> Lateral Cephalograph Records ({{ ceph_radiographs.count }})
                         </span>
                     </div>
@@ -601,7 +601,7 @@ Clinical Visit Journey
                                 <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
                                     <i class="fa-solid fa-expand mr-1"></i> Full View
                                 </a>
-                                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-cyan-600 text-white">
+                                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-cyan-600 text-white">
                                     v{{ r.version }}
                                 </span>
                             </div>
@@ -650,11 +650,11 @@ Clinical Visit Journey
                         <i class="fa-solid fa-calendar-check"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-black text-slate-900">Step 3: Schedule Next Hospital Visit</h2>
+                        <h2 class="text-base font-bold text-slate-900">Step 3: Schedule Next Hospital Visit</h2>
                         <p class="text-xs text-slate-500">Select when the patient should return to the clinic/hospital. Configurable with 20-day follow-up interval preset.</p>
                     </div>
                 </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-800 border border-purple-200">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
                     <i class="fa-solid fa-bell text-purple-600"></i> Auto-notifies Patient Portal
                 </span>
             </div>
@@ -670,7 +670,7 @@ Clinical Visit Journey
                         Quick Follow-Up Presets:
                     </label>
                     <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" onclick="setApptDate(20)" class="px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-extrabold text-xs transition border border-purple-300 shadow-xs">
+                        <button type="button" onclick="setApptDate(20)" class="px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold text-xs transition border border-purple-300 shadow-xs">
                             <i class="fa-solid fa-clock-rotate-left mr-1"></i> In 20 Days (Recommended Clinical Follow-Up)
                         </button>
                         <button type="button" onclick="setApptDate(15)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-200">
@@ -743,8 +743,8 @@ Clinical Visit Journey
                 <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-extrabold text-purple-950">{{ appt.get_appointment_type_display }}</span>
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-purple-200 text-purple-900">
+                            <span class="text-xs font-bold text-purple-950">{{ appt.get_appointment_type_display }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase bg-purple-200 text-purple-900">
                                 {{ appt.status }}
                             </span>
                         </div>
@@ -768,23 +768,23 @@ Clinical Visit Journey
 
         <!-- STEP 4 UNLOCKED BANNER (All 3 Intake Steps Completed) -->
         {% if has_3_preop and has_radiograph and has_next_appt %}
-        <div class="p-6 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="p-6 rounded-xl bg-blue-600 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white uppercase tracking-wider backdrop-blur-xs">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white uppercase tracking-wider backdrop-blur-xs">
                         All 3 Intake Steps Completed!
                     </span>
                     <span class="text-xs font-bold text-cyan-200">
                         <i class="fa-solid fa-check-double mr-1"></i> Patient is Eligible for Step 4
                     </span>
                 </div>
-                <h3 class="text-lg font-black tracking-tight">Proceed to Step 4 in Photo Monitoring</h3>
+                <h3 class="text-lg font-bold tracking-tight">Proceed to Step 4 in Photo Monitoring</h3>
                 <p class="text-xs text-blue-100 max-w-2xl leading-relaxed">
                     Patient has completed Step 1 (3 Pre-op Photos), Step 2 (Radiographs), and Step 3 (Hospital Appointment). In Photo Monitoring, diagnose the patient's clinical problem, prescribe <strong>Turn Quest</strong> (or custom operation), select monitoring frequency (Daily/Weekly/Monthly), and upload guidance photo and video.
                 </p>
             </div>
             <a href="{% url 'doctor:step4_operation' patient.id %}"
-               class="px-6 py-3 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-black text-xs shadow-lg transition flex items-center justify-center gap-2 whitespace-nowrap self-start md:self-auto">
+               class="px-6 py-3 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 whitespace-nowrap self-start md:self-auto">
                 <i class="fa-solid fa-bullseye text-blue-600"></i> Open Step 4 Operation & Diagnosis &rarr;
             </a>
         </div>
@@ -867,7 +867,7 @@ Clinical Visit Journey
         slotDiv.className = 'p-4 rounded-xl border-2 border-dashed border-sky-300 hover:border-sky-400 bg-sky-50/20 transition space-y-3 relative group animate-in fade-in zoom-in-95 duration-150';
         slotDiv.innerHTML = `
             <div class="flex items-center justify-between">
-                <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                     <span class="w-5 h-5 rounded-full bg-cyan-600 text-white text-[10px] flex items-center justify-center font-bold">${currentSlotNum}</span>
                     Photo ${currentSlotNum}: Additional View
                 </span>

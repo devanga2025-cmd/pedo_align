@@ -10,7 +10,7 @@
     <!-- Header & Action Bar -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <i class="fa-solid fa-clipboard-list text-blue-600"></i> Aligner Treatment Plans
             </h1>
             <p class="text-xs text-slate-500 mt-1">
@@ -138,7 +138,7 @@
                                         <span class="text-blue-700">{{ plan.progress_percentage }}%</span>
                                     </div>
                                     <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                                        <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-1.5 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
+                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
                                     </div>
                                     <span class="text-[10px] text-slate-400 mt-0.5 block">{{ plan.aligner_frequency_days }} days/tray</span>
                                 </div>
@@ -208,10 +208,10 @@
                     <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl my-3">
                         <div class="flex items-center justify-between text-xs mb-1.5">
                             <span class="font-bold text-blue-950">Aligner Stage</span>
-                            <span class="font-black text-blue-700">Tray #{{ plan.current_aligner }} of {{ plan.total_aligners }}</span>
+                            <span class="font-bold text-blue-700">Tray #{{ plan.current_aligner }} of {{ plan.total_aligners }}</span>
                         </div>
                         <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                            <div class="bg-gradient-to-r from-blue-600 to-sky-500 h-2 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: {{ plan.progress_percentage }}%"></div>
                         </div>
                         <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2">
                             <span>Pace: {{ plan.aligner_frequency_days }} days/tray</span>

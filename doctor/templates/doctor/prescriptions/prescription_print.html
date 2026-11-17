@@ -34,12 +34,12 @@
     </div>
 
     <!-- Printable Paper Sheet -->
-    <div class="max-w-3xl mx-auto bg-white p-10 sm:p-14 shadow-lg rounded-2xl border border-slate-200">
+    <div class="max-w-3xl mx-auto bg-white p-10 sm:p-14 shadow-lg rounded-xl border border-slate-200">
         
         <!-- Letterhead Header -->
         <div class="border-b-2 border-blue-600 pb-6 mb-6 flex items-start justify-between gap-6">
             <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{{ doctor.clinic_name|default:"PEDO ALIGN DENTAL CLINIC" }}</h1>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ doctor.clinic_name|default:"PEDO ALIGN DENTAL CLINIC" }}</h1>
                 <h2 class="text-base font-bold text-blue-700">Dr. {{ doctor.full_name }}</h2>
                 <p class="text-xs text-slate-600 font-semibold">{{ doctor.dental_qualification }} • {{ doctor.specialization }}</p>
                 {% if doctor.ksdc_registration_number %}
@@ -59,7 +59,7 @@
         <div class="bg-blue-50/60 border border-blue-100 rounded-xl p-4 mb-6 text-xs grid grid-cols-4 gap-4">
             <div>
                 <span class="text-slate-400 font-bold uppercase text-[9px] block">Patient Name</span>
-                <span class="font-extrabold text-slate-900 text-sm">{{ patient.full_name }}</span>
+                <span class="font-bold text-slate-900 text-sm">{{ patient.full_name }}</span>
                 <span class="text-[10px] text-slate-500 block">({{ patient.get_patient_category_display }})</span>
             </div>
             <div>
@@ -93,7 +93,7 @@
         <!-- Prescribed Medicines -->
         <div class="mb-6">
             <div class="flex items-center gap-2 mb-2">
-                <span class="font-serif italic font-black text-2xl text-blue-700">℞</span>
+                <span class="font-serif italic font-bold text-2xl text-blue-700">℞</span>
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Prescribed Medicines & Therapy</h3>
             </div>
             <div class="rounded-xl border border-slate-200 overflow-hidden">

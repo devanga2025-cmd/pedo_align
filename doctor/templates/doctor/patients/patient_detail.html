@@ -9,13 +9,13 @@
 
     <!-- ARCHIVE STATUS BANNER (If Archived/Deactivated) -->
     {% if patient.is_archived or patient.is_deactivated %}
-    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+    <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div class="flex items-center gap-3.5">
             <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
                 <i class="fa-solid fa-box-archive"></i>
             </div>
             <div>
-                <h4 class="text-xs font-extrabold text-amber-900 uppercase tracking-wider">Archived / Deactivated Record</h4>
+                <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Archived / Deactivated Record</h4>
                 <p class="text-xs text-amber-800">
                     {% if patient.is_deactivated %}
                     Account deactivated on {{ patient.deactivated_at|date:"F d, Y" }}. Patient portal login access is disabled.
@@ -43,7 +43,7 @@
             
             <!-- Left Info: Avatar, Name, IDs -->
             <div class="flex items-start sm:items-center gap-4">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-blue-100 text-blue-900 font-black text-2xl flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0 border-2 border-blue-200">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-blue-100 text-blue-900 font-bold text-2xl flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0 border-2 border-blue-200">
                     {% if patient.profile_photo %}
                         <img src="{{ patient.profile_photo.url }}" alt="{{ patient.full_name }}" class="w-full h-full object-cover">
                     {% else %}
@@ -53,7 +53,7 @@
 
                 <div>
                     <div class="flex flex-wrap items-center gap-2 mb-1">
-                        <h1 class="text-xl sm:text-2xl font-black text-slate-900">{{ patient.full_name }}</h1>
+                        <h1 class="text-xl sm:text-2xl font-bold text-slate-900">{{ patient.full_name }}</h1>
                         {% if patient.patient_category == 'CHILD' %}
                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800">
                             <i class="fa-solid fa-child"></i> Child Patient
@@ -95,7 +95,7 @@
                     {% if joining_code %}
                     <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs">
                         <span class="text-blue-900 font-semibold"><i class="fa-solid fa-key text-blue-600 mr-1"></i> Joining Code:</span>
-                        <span class="font-mono font-black text-blue-800 tracking-wider text-sm">{{ joining_code.code }}</span>
+                        <span class="font-mono font-bold text-blue-800 tracking-wider text-sm">{{ joining_code.code }}</span>
                         <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'joiningCodeCopyBtn')" id="joiningCodeCopyBtn" class="text-blue-600 hover:text-blue-900 ml-1 font-bold" title="Copy code">
                             <i class="fa-regular fa-copy"></i>
                         </button>
@@ -159,23 +159,23 @@
         <div class="mt-6 pt-5 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
             <div>
                 <span class="text-slate-400 block uppercase font-bold text-[10px]">Current Stage</span>
-                <span class="text-sm font-extrabold text-blue-900">Aligner #{{ treatment_plan.current_aligner }}</span>
+                <span class="text-sm font-bold text-blue-900">Aligner #{{ treatment_plan.current_aligner }}</span>
                 <span class="text-slate-500"> / {{ treatment_plan.total_aligners }} sets</span>
             </div>
             <div>
                 <span class="text-slate-400 block uppercase font-bold text-[10px]">Compliance Rating</span>
-                <span class="text-sm font-extrabold {% if treatment_plan.compliance_score >= 85 %}text-emerald-700{% elif treatment_plan.compliance_score >= 70 %}text-amber-700{% else %}text-rose-700{% endif %}">
+                <span class="text-sm font-bold {% if treatment_plan.compliance_score >= 85 %}text-emerald-700{% elif treatment_plan.compliance_score >= 70 %}text-amber-700{% else %}text-rose-700{% endif %}">
                     {{ treatment_plan.compliance_score }}%
                 </span>
                 <span class="text-slate-500">({{ treatment_plan.daily_wear_hours }} hrs/day)</span>
             </div>
             <div>
                 <span class="text-slate-400 block uppercase font-bold text-[10px]">Tray Change Pace</span>
-                <span class="text-sm font-extrabold text-slate-800">Every {{ treatment_plan.aligner_frequency_days }} days</span>
+                <span class="text-sm font-bold text-slate-800">Every {{ treatment_plan.aligner_frequency_days }} days</span>
             </div>
             <div>
                 <span class="text-slate-400 block uppercase font-bold text-[10px]">Next Review</span>
-                <span class="text-sm font-extrabold text-slate-800">
+                <span class="text-sm font-bold text-slate-800">
                     {{ treatment_plan.next_review_date|default:"Not Scheduled" }}
                 </span>
             </div>
@@ -183,7 +183,7 @@
 
         <div class="mt-3">
             <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 via-sky-500 to-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: {{ treatment_plan.progress_percentage }}%"></div>
+                <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: {{ treatment_plan.progress_percentage }}%"></div>
             </div>
         </div>
         {% endif %}
@@ -286,9 +286,9 @@
 
         <!-- Right: Doctor Info & Quick Highlights -->
         <div class="space-y-6">
-            <div class="pa-card p-6 bg-gradient-to-br from-blue-900 to-indigo-950 text-white">
+            <div class="pa-card p-6 bg-slate-900 text-white">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-sky-300 block mb-1">Prescribing Clinician</span>
-                <h3 class="text-base font-extrabold text-white">Dr. {{ doctor.full_name }}</h3>
+                <h3 class="text-base font-bold text-white">Dr. {{ doctor.full_name }}</h3>
                 <p class="text-xs text-blue-200 mt-0.5">{{ doctor.dental_qualification }} • {{ doctor.specialization }}</p>
                 <div class="mt-4 pt-3 border-t border-white/10 text-xs text-blue-100 space-y-1">
                     <p><strong class="text-white">Clinic:</strong> {{ doctor.clinic_name }}</p>
@@ -337,7 +337,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
             <!-- Medical History -->
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <span class="font-bold text-slate-900 text-sm block flex items-center gap-2">
                     <i class="fa-solid fa-heart-pulse text-rose-500"></i> Medical History
                 </span>
@@ -345,7 +345,7 @@
             </div>
 
             <!-- Dental History -->
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <span class="font-bold text-slate-900 text-sm block flex items-center gap-2">
                     <i class="fa-solid fa-tooth text-blue-500"></i> Dental History
                 </span>
@@ -434,7 +434,7 @@
                 </div>
 
                 <!-- Stage Card -->
-                <div class="p-4 rounded-2xl border transition
+                <div class="p-4 rounded-xl border transition
                     {% if st.is_completed %}
                     bg-white border-slate-200 hover:border-emerald-300
                     {% elif st.is_current %}
@@ -542,7 +542,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <!-- Type 1: First Radiograph -->
-            <div class="p-5 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-4">
+            <div class="p-5 rounded-xl bg-slate-50/70 border border-slate-200 space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-2">
                     <div class="flex items-center gap-2">
                         <span class="w-6 h-6 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center">1</span>
@@ -586,7 +586,7 @@
             </div>
 
             <!-- Type 2: Second Radiograph -->
-            <div class="p-5 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-4">
+            <div class="p-5 rounded-xl bg-slate-50/70 border border-slate-200 space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-2">
                     <div class="flex items-center gap-2">
                         <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">2</span>
@@ -638,10 +638,10 @@
     <div class="space-y-6">
 
         <!-- 3-STEP CLINICAL STEPPER RAIL -->
-        <div class="pa-card p-4 sm:p-5 bg-white border-blue-200 shadow-sm rounded-2xl">
+        <div class="pa-card p-4 sm:p-5 bg-white border-blue-200 shadow-sm rounded-xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                 <div>
-                    <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-timeline text-blue-600"></i> Guided Clinical Intake & Follow-Up Steps
                     </h2>
                     <p class="text-xs text-slate-500">Step 1: 3 Compulsory Pre-op Photos &rarr; Step 2: Radiographs (OPG & Lateral Cephalograph) &rarr; Step 3: Operation / Treatment Plan</p>
@@ -652,57 +652,57 @@
                 
                 <!-- Step 1 Tab Button -->
                 <button type="button" onclick="switchStep('1')" id="stepBtn1" 
-                        class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '1' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                        class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '1' %}bg-blue-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '1' %}bg-white text-blue-700{% elif has_3_preop %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if active_step == '1' %}bg-white text-blue-700{% elif has_3_preop %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                             {% if has_3_preop %}<i class="fa-solid fa-check"></i>{% else %}1{% endif %}
                         </div>
                         <div>
-                            <div class="text-xs font-extrabold">Step 1: Pre-op Photos</div>
+                            <div class="text-xs font-bold">Step 1: Pre-op Photos</div>
                             <div class="text-[10px] {% if active_step == '1' %}text-blue-100{% else %}text-slate-500{% endif %}">
                                 3 Photos Compulsory
                             </div>
                         </div>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_3_preop %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-amber-100 text-amber-800{% endif %}">
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if has_3_preop %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-amber-100 text-amber-800{% endif %}">
                         {% if preop_count >= 3 %}{{ preop_count }} Saved{% else %}{{ preop_count }}/3 Saved{% endif %}
                     </span>
                 </button>
 
                 <!-- Step 2 Tab Button -->
                 <button type="button" onclick="switchStep('2')" id="stepBtn2"
-                        class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '2' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                        class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '2' %}bg-blue-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '2' %}bg-white text-blue-700{% elif has_radiograph %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if active_step == '2' %}bg-white text-blue-700{% elif has_radiograph %}bg-emerald-500 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                             {% if has_radiograph %}<i class="fa-solid fa-check"></i>{% else %}2{% endif %}
                         </div>
                         <div>
-                            <div class="text-xs font-extrabold">Step 2: Radiographs</div>
+                            <div class="text-xs font-bold">Step 2: Radiographs</div>
                             <div class="text-[10px] {% if active_step == '2' %}text-blue-100{% else %}text-slate-500{% endif %}">
                                 OPG & Lateral Cephalograph
                             </div>
                         </div>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if has_radiograph %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-slate-200 text-slate-700{% endif %}">
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if has_radiograph %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-slate-200 text-slate-700{% endif %}">
                         {{ radiographs.count }} Files
                     </span>
                 </button>
 
                 <!-- Step 3 Tab Button (Operation / Treatment Plan) -->
                 <button type="button" onclick="switchStep('3')" id="stepBtn3"
-                        class="p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
+                        class="p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 {% if active_step == '3' %}bg-blue-600 text-white shadow-md ring-2 ring-blue-300 font-bold{% else %}bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700{% endif %}">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black {% if active_step == '3' %}bg-white text-blue-700{% elif treatment_plan %}bg-indigo-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold {% if active_step == '3' %}bg-white text-blue-700{% elif treatment_plan %}bg-indigo-600 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
                             {% if treatment_plan.current_aligner > 0 %}<i class="fa-solid fa-check"></i>{% else %}3{% endif %}
                         </div>
                         <div>
-                            <div class="text-xs font-extrabold">Step 3: Operation</div>
+                            <div class="text-xs font-bold">Step 3: Operation</div>
                             <div class="text-[10px] {% if active_step == '3' %}text-blue-100{% else %}text-slate-500{% endif %}">
                                 Treatment Plan & Protocol
                             </div>
                         </div>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {% if active_step == '3' %}bg-white/20 text-white{% elif treatment_plan %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase {% if active_step == '3' %}bg-white/20 text-white{% elif treatment_plan %}bg-indigo-100 text-indigo-800 border border-indigo-200{% else %}bg-slate-200 text-slate-600{% endif %}">
                         {% if treatment_plan %}Active{% else %}Ready{% endif %}
                     </span>
                 </button>
@@ -714,24 +714,24 @@
         <!-- STEP 1: PREOPERATIVE PHOTOGRAPHS (3 COMPULSORY)                       -->
         <!-- ===================================================================== -->
         <div id="stepSection1" class="{% if active_step != '1' %}hidden{% endif %} space-y-6">
-            <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200 rounded-2xl bg-white shadow-sm">
+            <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200 rounded-xl bg-white shadow-sm">
                 <!-- Header Banner -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
                             <i class="fa-solid fa-camera"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-black text-slate-900">Step 1: Preoperative Photographs</h2>
+                            <h2 class="text-base font-bold text-slate-900">Step 1: Preoperative Photographs</h2>
                             <p class="text-xs text-slate-500">First-visit clinical documentation. Exactly 3 photographs are compulsory. Click <strong>+</strong> to add more angles.</p>
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-50 text-amber-800 border border-amber-200 shadow-xs">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-xs">
                             <i class="fa-solid fa-circle-exclamation text-amber-600"></i> 3 Photos Compulsory
                         </div>
                         <button type="button" onclick="addExtraPhotoSlot()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-600 hover:text-white transition cursor-pointer shadow-xs">
-                            <i class="fa-solid fa-plus font-black"></i> Add More Photos (+)
+                            <i class="fa-solid fa-plus font-bold"></i> Add More Photos (+)
                         </button>
                     </div>
                 </div>
@@ -746,9 +746,9 @@
                     <div id="preopSlotsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
                         
                         <!-- Slot 1: Frontal View -->
-                        <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone1">
+                        <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone1">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                                <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                                     <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">1</span>
                                     Photo 1: Frontal View *
                                 </span>
@@ -773,9 +773,9 @@
                         </div>
 
                         <!-- Slot 2: Upper Arch View -->
-                        <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone2">
+                        <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone2">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                                <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                                     <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">2</span>
                                     Photo 2: Upper Arch View *
                                 </span>
@@ -800,9 +800,9 @@
                         </div>
 
                         <!-- Slot 3: Lower Arch / Lateral View -->
-                        <div class="p-4 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone3">
+                        <div class="p-4 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/20 transition space-y-3 relative group" id="dropZone3">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                                <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                                     <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center">3</span>
                                     Photo 3: Lower Arch / Lateral *
                                 </span>
@@ -827,11 +827,11 @@
                         </div>
 
                         <!-- Dedicated "+" Symbol Card to Add More Photo Slots -->
-                        <div id="addSlotCard" class="p-5 rounded-2xl border-2 border-dashed border-sky-300 hover:border-blue-500 bg-sky-50/40 hover:bg-sky-50/80 transition flex flex-col items-center justify-center text-center cursor-pointer group min-h-[290px]" onclick="addExtraPhotoSlot()" title="Click to add another preoperative photo angle">
-                            <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center text-2xl font-black shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
+                        <div id="addSlotCard" class="p-5 rounded-xl border-2 border-dashed border-sky-300 hover:border-blue-500 bg-sky-50/40 hover:bg-sky-50/80 transition flex flex-col items-center justify-center text-center cursor-pointer group min-h-[290px]" onclick="addExtraPhotoSlot()" title="Click to add another preoperative photo angle">
+                            <div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
                                 <i class="fa-solid fa-plus"></i>
                             </div>
-                            <div class="mt-3 text-sm font-black text-slate-800 group-hover:text-blue-700 transition">
+                            <div class="mt-3 text-sm font-bold text-slate-800 group-hover:text-blue-700 transition">
                                 Add More Photos (+)
                             </div>
                             <p class="text-[11px] text-slate-500 mt-1 max-w-[210px] leading-snug">
@@ -858,7 +858,7 @@
 
             <!-- Previously Uploaded Preoperative Photos Gallery -->
             {% if preop_photos %}
-            <div class="pa-card p-6 space-y-4 rounded-2xl bg-white border border-slate-200">
+            <div class="pa-card p-6 space-y-4 rounded-xl bg-white border border-slate-200">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-images text-blue-600"></i>
@@ -876,7 +876,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {% for p in preop_photos %}
-                    <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                         <div class="h-44 w-full rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center relative group">
                             <img src="{{ p.photo.url }}" alt="{{ p.title }}" class="w-full h-full object-contain">
                             <a href="{{ p.photo.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/70 hover:bg-black text-white text-[10px] font-bold transition">
@@ -903,11 +903,11 @@
                     {% endfor %}
 
                     <!-- Add Extra Photo in Gallery Card -->
-                    <div class="p-4 bg-sky-50/40 hover:bg-sky-50 rounded-2xl border-2 border-dashed border-sky-300 hover:border-blue-500 flex flex-col items-center justify-center text-center transition group cursor-pointer min-h-[220px]" onclick="openAddSinglePreopModal()">
+                    <div class="p-4 bg-sky-50/40 hover:bg-sky-50 rounded-xl border-2 border-dashed border-sky-300 hover:border-blue-500 flex flex-col items-center justify-center text-center transition group cursor-pointer min-h-[220px]" onclick="openAddSinglePreopModal()">
                         <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-sm group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-plus"></i>
                         </div>
-                        <span class="mt-2 text-xs font-extrabold text-blue-900 group-hover:text-blue-700">Add Another Photo (+)</span>
+                        <span class="mt-2 text-xs font-bold text-blue-900 group-hover:text-blue-700">Add Another Photo (+)</span>
                         <span class="text-[10px] text-slate-500 mt-0.5">Upload or paste additional view</span>
                     </div>
                 </div>
@@ -966,23 +966,23 @@
         <!-- STEP 2: RADIOGRAPH RECORDS (OPG & LATERAL CEPHALOGRAPH)              -->
         <!-- ===================================================================== -->
         <div id="stepSection2" class="{% if active_step != '2' %}hidden{% endif %} space-y-6">
-            <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200 rounded-2xl bg-white shadow-sm">
+            <div class="pa-card p-6 sm:p-8 space-y-6 border-blue-200 rounded-xl bg-white shadow-sm">
                 <!-- Header Banner -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-sm">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-black text-slate-900">Step 2: Radiograph Records (X-Rays)</h2>
+                            <h2 class="text-base font-bold text-slate-900">Step 2: Radiograph Records (X-Rays)</h2>
                             <p class="text-xs text-slate-500">Diagnostic X-ray evaluation. Upload or paste radiographs with the 2 options: OPG and LATERAL CEPHALOGRAPH.</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-blue-50 text-blue-800 border border-blue-200">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
                             OPG: {{ opg_radiographs.count }} on file
                         </span>
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-cyan-50 text-cyan-800 border border-cyan-200">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200">
                             Lateral Ceph: {{ ceph_radiographs.count }} on file
                         </span>
                     </div>
@@ -1002,18 +1002,18 @@
                                     Select Radiograph Type *
                                 </label>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <label class="p-4 rounded-2xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:text-blue-950 border-slate-200">
+                                    <label class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-blue-50/50 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/70 has-[:checked]:text-blue-950 border-slate-200">
                                         <input type="radio" name="radiograph_type" value="OPG" checked class="text-blue-600 focus:ring-blue-500">
                                         <div>
-                                            <div class="text-xs font-black">OPG</div>
+                                            <div class="text-xs font-bold">OPG</div>
                                             <div class="text-[10px] text-slate-500">Panoramic View</div>
                                         </div>
                                     </label>
 
-                                    <label class="p-4 rounded-2xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-cyan-50/50 has-[:checked]:border-cyan-600 has-[:checked]:bg-cyan-50/70 has-[:checked]:text-cyan-950 border-slate-200">
+                                    <label class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center gap-3 hover:bg-cyan-50/50 has-[:checked]:border-cyan-600 has-[:checked]:bg-cyan-50/70 has-[:checked]:text-cyan-950 border-slate-200">
                                         <input type="radio" name="radiograph_type" value="LATERAL_CEPHALOGRAPH" class="text-cyan-600 focus:ring-cyan-500">
                                         <div>
-                                            <div class="text-xs font-black">LATERAL CEPHALOGRAPH</div>
+                                            <div class="text-xs font-bold">LATERAL CEPHALOGRAPH</div>
                                             <div class="text-[10px] text-slate-500">Lateral Cephalometric View</div>
                                         </div>
                                     </label>
@@ -1021,7 +1021,7 @@
                             </div>
 
                             <!-- Image File & Paste Zone -->
-                            <div class="p-4 rounded-2xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2 cursor-pointer" onclick="document.getElementById('radio_file_input').click()">
+                            <div class="p-4 rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2 cursor-pointer" onclick="document.getElementById('radio_file_input').click()">
                                 <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-600"></i>
                                 <p class="text-xs font-bold text-slate-800">Upload or Paste X-Ray Image *</p>
                                 <p class="text-[11px] text-slate-500">Click to browse or press <strong>Ctrl+V</strong> to paste from clipboard</p>
@@ -1038,7 +1038,7 @@
                         <!-- Right: Preview & Clinical Description -->
                         <div class="space-y-4">
                             <!-- Preview Box -->
-                            <div class="h-56 w-full rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden relative shadow-inner">
+                            <div class="h-56 w-full rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden relative shadow-inner">
                                 <img id="radio_preview" class="hidden w-full h-full object-contain p-2">
                                 <div id="radio_placeholder" class="text-center p-4 text-slate-500">
                                     <i class="fa-solid fa-x-ray text-4xl mb-2 text-slate-700"></i>
@@ -1073,7 +1073,7 @@
 
             <!-- Radiographs Inspection Gallery (OPG & Lateral Cephalograph) -->
             {% if radiographs %}
-            <div class="pa-card p-6 space-y-5 rounded-2xl bg-white border border-slate-200">
+            <div class="pa-card p-6 space-y-5 rounded-xl bg-white border border-slate-200">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-film text-cyan-600"></i>
@@ -1088,7 +1088,7 @@
                     <!-- OPG Column -->
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
                                 <i class="fa-solid fa-tooth text-blue-600"></i> OPG (Panoramic) Records ({{ opg_radiographs.count }})
                             </span>
                         </div>
@@ -1096,13 +1096,13 @@
                         {% if opg_radiographs %}
                         <div class="space-y-3">
                             {% for r in opg_radiographs %}
-                            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                                 <div class="h-44 w-full rounded-xl overflow-hidden bg-black flex items-center justify-center relative group">
                                     <img src="{{ r.image.url }}" alt="OPG" class="w-full h-full object-contain">
                                     <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
                                         <i class="fa-solid fa-expand mr-1"></i> Full View
                                     </a>
-                                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-600 text-white">
+                                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-600 text-white">
                                         v{{ r.version }}
                                     </span>
                                 </div>
@@ -1126,7 +1126,7 @@
                             {% endfor %}
                         </div>
                         {% else %}
-                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                        <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
                             No OPG panoramic radiograph uploaded yet.
                         </div>
                         {% endif %}
@@ -1135,7 +1135,7 @@
                     <!-- Lateral Cephalograph Column -->
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-cyan-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-cyan-900 uppercase tracking-wider flex items-center gap-1.5">
                                 <i class="fa-solid fa-skull text-cyan-600"></i> Lateral Cephalograph Records ({{ ceph_radiographs.count }})
                             </span>
                         </div>
@@ -1143,13 +1143,13 @@
                         {% if ceph_radiographs %}
                         <div class="space-y-3">
                             {% for r in ceph_radiographs %}
-                            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                                 <div class="h-44 w-full rounded-xl overflow-hidden bg-black flex items-center justify-center relative group">
                                     <img src="{{ r.image.url }}" alt="Lateral Cephalograph" class="w-full h-full object-contain">
                                     <a href="{{ r.image.url }}" target="_blank" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-black text-white text-[10px] font-bold transition">
                                         <i class="fa-solid fa-expand mr-1"></i> Full View
                                     </a>
-                                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-cyan-600 text-white">
+                                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-cyan-600 text-white">
                                         v{{ r.version }}
                                     </span>
                                 </div>
@@ -1173,7 +1173,7 @@
                             {% endfor %}
                         </div>
                         {% else %}
-                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                        <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
                             No Lateral Cephalograph radiograph uploaded yet.
                         </div>
                         {% endif %}
@@ -1189,7 +1189,7 @@
         <div id="stepSection3" class="{% if active_step != '3' %}hidden{% endif %} space-y-6">
 
             <!-- A. ACTIVE TREATMENT PLAN MASTER CARD (All content from Treatment Plans page) -->
-            <div class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-2xl">
+            <div class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-xl">
                 <!-- Header with Title, Status & Actions -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                     <div class="space-y-1">
@@ -1197,7 +1197,7 @@
                             <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
                                 <i class="fa-solid fa-clipboard-list text-blue-600"></i>
                             </div>
-                            <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                                 Step 3: Aligner Treatment Plan & Operation
                             </h3>
                             <span class="badge {% if treatment_plan.status == 'Completed' %}badge-active{% elif treatment_plan.status == 'Paused / Under Review' %}badge-emergency-high{% else %}badge-pending{% endif %}">
@@ -1260,7 +1260,7 @@
 
                     <!-- Progress Bar -->
                     <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden shadow-inner">
-                        <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ treatment_plan.progress_percentage }}%"></div>
+                        <div class="bg-blue-600 h-3 rounded-full transition-all duration-500 shadow-sm" style="width: {{ treatment_plan.progress_percentage }}%"></div>
                     </div>
                 </div>
 
@@ -1268,31 +1268,31 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Estimated Duration</span>
-                        <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.estimated_duration_months }} Months</span>
+                        <span class="text-xs font-bold text-slate-800 mt-1 block">{{ treatment_plan.estimated_duration_months }} Months</span>
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Daily Wear Time</span>
-                        <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.daily_wear_hours }} hrs / day</span>
+                        <span class="text-xs font-bold text-slate-800 mt-1 block">{{ treatment_plan.daily_wear_hours }} hrs / day</span>
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Compliance</span>
-                        <span class="text-xs font-black {% if treatment_plan.compliance_score >= 85 %}text-emerald-700{% else %}text-amber-700{% endif %} mt-1 block">
+                        <span class="text-xs font-bold {% if treatment_plan.compliance_score >= 85 %}text-emerald-700{% else %}text-amber-700{% endif %} mt-1 block">
                             {{ treatment_plan.compliance_score }}%
                         </span>
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Next Tray Switch</span>
-                        <span class="text-xs font-black text-blue-700 mt-1 block truncate" title="{{ treatment_plan.computed_next_change_date|date:'M d, Y'|default:'As Prescribed' }}">
+                        <span class="text-xs font-bold text-blue-700 mt-1 block truncate" title="{{ treatment_plan.computed_next_change_date|date:'M d, Y'|default:'As Prescribed' }}">
                             {{ treatment_plan.computed_next_change_date|date:"M d, Y"|default:"As Prescribed" }}
                         </span>
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Start Date</span>
-                        <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.start_date|date:"M d, Y"|default:"Active" }}</span>
+                        <span class="text-xs font-bold text-slate-800 mt-1 block">{{ treatment_plan.start_date|date:"M d, Y"|default:"Active" }}</span>
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Expected End</span>
-                        <span class="text-xs font-black text-slate-800 mt-1 block">{{ treatment_plan.expected_completion_date|date:"M d, Y"|default:"On Track" }}</span>
+                        <span class="text-xs font-bold text-slate-800 mt-1 block">{{ treatment_plan.expected_completion_date|date:"M d, Y"|default:"On Track" }}</span>
                     </div>
                 </div>
 
@@ -1312,7 +1312,7 @@
             <!-- B. UPPER & LOWER ARCH MONITORING SECTION -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Upper Arch -->
-                <div class="pa-card p-6 space-y-4 rounded-2xl bg-white border border-slate-200">
+                <div class="pa-card p-6 space-y-4 rounded-xl bg-white border border-slate-200">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-tooth text-blue-600"></i> Upper Arch Status
@@ -1328,7 +1328,7 @@
                 </div>
 
                 <!-- Lower Arch -->
-                <div class="pa-card p-6 space-y-4 rounded-2xl bg-white border border-slate-200">
+                <div class="pa-card p-6 space-y-4 rounded-xl bg-white border border-slate-200">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-tooth text-cyan-600"></i> Lower Arch Status
@@ -1345,7 +1345,7 @@
             </div>
 
             <!-- C. TREATMENT RECORDS & PROCEDURES LOG -->
-            <div class="pa-card p-6 sm:p-8 space-y-6 rounded-2xl bg-white border border-slate-200">
+            <div class="pa-card p-6 sm:p-8 space-y-6 rounded-xl bg-white border border-slate-200">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                     <div>
                         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -1361,14 +1361,14 @@
                 {% if operation_records %}
                 <div class="space-y-4">
                     {% for op in operation_records %}
-                    <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+                    <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-xs space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
                             <div class="flex items-center gap-2">
                                 <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
                                     <i class="fa-solid fa-tooth"></i>
                                 </span>
                                 <div>
-                                    <h4 class="font-extrabold text-slate-900 text-sm">{{ op.operation_performed }}</h4>
+                                    <h4 class="font-bold text-slate-900 text-sm">{{ op.operation_performed }}</h4>
                                     <span class="text-[11px] text-slate-400">Dr. {{ op.doctor.full_name }} • {{ op.record_date|date:"F d, Y h:i A" }}</span>
                                 </div>
                             </div>
@@ -1447,7 +1447,7 @@
         {% if prescriptions %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {% for presc in prescriptions %}
-            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-xs space-y-3">
                 <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-2">
                     <div>
                         <span class="font-mono text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">RX-{{ presc.id|stringformat:"05d" }}</span>
@@ -1536,7 +1536,7 @@
                 <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-100 space-y-1">
                     <div class="flex items-center justify-between text-[11px]">
                         <span class="text-slate-500 font-medium">Current Month:</span>
-                        <span class="font-extrabold text-blue-900">Month #{{ patient.calculate_current_treatment_month }}</span>
+                        <span class="font-bold text-blue-900">Month #{{ patient.calculate_current_treatment_month }}</span>
                     </div>
                     {% if treatment_plan.expected_completion_date %}
                     <div class="flex items-center justify-between text-[11px]">
@@ -1607,7 +1607,7 @@
         {% if treatment_turns %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {% for t in treatment_turns %}
-            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3 relative overflow-hidden">
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-xs space-y-3 relative overflow-hidden">
                 <div class="h-1 w-full absolute top-0 left-0
                     {% if t.status == 'COMPLETED' %}bg-emerald-500
                     {% elif t.status == 'IN_PROGRESS' %}bg-blue-600
@@ -1688,11 +1688,11 @@
         </div>
 
         {% if current_media %}
-        <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <div class="p-6 rounded-xl bg-white border border-slate-200 shadow-sm space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Current Treatment Media (Version {{ current_media.version }})</span>
-                    <h4 class="font-extrabold text-slate-900 text-sm">{{ current_media.treatment_stage }}</h4>
+                    <h4 class="font-bold text-slate-900 text-sm">{{ current_media.treatment_stage }}</h4>
                     <span class="text-[11px] text-slate-400">Published on {{ current_media.upload_date|date:"F d, Y" }}</span>
                 </div>
                 <span class="badge badge-active">Live on Timeline</span>
@@ -1763,7 +1763,7 @@
         {% if photo_uploads %}
         <div class="space-y-6">
             {% for upload in photo_uploads %}
-            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-xs space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div>
                         <span class="font-bold text-slate-900 text-sm">Week #{{ upload.week_number }} Upload (Aligner #{{ upload.aligner_stage }})</span>
@@ -1847,12 +1847,12 @@
     <div class="space-y-6">
 
         <!-- Top Header Banner -->
-        <div class="pa-card p-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white rounded-2xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="pa-card p-6 bg-blue-600 text-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="space-y-1">
                 <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/20 backdrop-blur-sm text-white">
                     <i class="fa-solid fa-route"></i> CarePath Roadmap
                 </div>
-                <h3 class="text-xl font-black tracking-tight text-white">CarePath Plan & Schedule</h3>
+                <h3 class="text-xl font-bold tracking-tight text-white">CarePath Plan & Schedule</h3>
                 <p class="text-xs text-blue-100 max-w-xl">
                     Configure active treatment procedure, planned duration, and schedule the next in-office follow-up for {{ patient.full_name }}. Updates automatically notify the patient.
                 </p>
@@ -1870,14 +1870,14 @@
             <div class="pa-card p-5 border-l-4 border-l-blue-500 flex items-center justify-between">
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Current Treatment</span>
-                    <h4 class="text-base font-black text-slate-900 mt-0.5 truncate max-w-[200px]" title="{{ patient.current_operation|default:'Aligner Therapy' }}">
+                    <h4 class="text-base font-bold text-slate-900 mt-0.5 truncate max-w-[200px]" title="{{ patient.current_operation|default:'Aligner Therapy' }}">
                         {{ patient.current_operation|default:"Aligner Therapy" }}
                     </h4>
                     <span class="text-[11px] font-semibold text-blue-600 mt-1 inline-flex items-center gap-1">
                         <i class="fa-solid fa-circle text-[7px]"></i> In Progress
                     </span>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-tooth"></i>
                 </div>
             </div>
@@ -1886,14 +1886,14 @@
             <div class="pa-card p-5 border-l-4 border-l-indigo-500 flex items-center justify-between">
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Planned Duration</span>
-                    <h4 class="text-base font-black text-slate-900 mt-0.5">
+                    <h4 class="text-base font-bold text-slate-900 mt-0.5">
                         {{ patient.treatment_duration_months|default:"12" }} <span class="text-xs font-bold text-slate-500">Months</span>
                     </h4>
                     <span class="text-[11px] font-semibold text-indigo-600 mt-1 inline-flex items-center gap-1">
                         <i class="fa-solid fa-hourglass-half text-[9px]"></i> Total Timeline
                     </span>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg flex-shrink-0">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-clock"></i>
                 </div>
             </div>
@@ -1902,7 +1902,7 @@
             <div class="pa-card p-5 border-l-4 {% if next_appointment %}border-l-emerald-500{% else %}border-l-amber-500{% endif %} flex items-center justify-between">
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Next Appointment</span>
-                    <h4 class="text-base font-black text-slate-900 mt-0.5">
+                    <h4 class="text-base font-bold text-slate-900 mt-0.5">
                         {% if next_appointment %}
                             {{ next_appointment.scheduled_date|date:"M d, Y" }}
                         {% else %}
@@ -1917,17 +1917,17 @@
                         {% endif %}
                     </span>
                 </div>
-                <div class="w-12 h-12 rounded-2xl {% if next_appointment %}bg-emerald-50 text-emerald-600{% else %}bg-amber-50 text-amber-600{% endif %} flex items-center justify-center text-lg flex-shrink-0">
+                <div class="w-12 h-12 rounded-xl {% if next_appointment %}bg-emerald-50 text-emerald-600{% else %}bg-amber-50 text-amber-600{% endif %} flex items-center justify-center text-lg flex-shrink-0">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
             </div>
         </div>
 
         <!-- The 3-Question CarePath Update Form Card -->
-        <div id="carepathFormContainer" class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-2xl">
+        <div id="carepathFormContainer" class="pa-card p-6 sm:p-8 space-y-6 border border-blue-200/90 shadow-sm bg-white rounded-xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div>
-                    <h4 class="text-base font-black text-slate-900 flex items-center gap-2">
+                    <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
                         <i class="fa-solid fa-sliders text-blue-600"></i> CarePath Quick Update Form
                     </h4>
                     <p class="text-xs text-slate-500 mt-0.5">Set the treatment step, duration in months, and date for next appointment in one simple step.</p>
@@ -1941,8 +1941,8 @@
                 {% csrf_token %}
 
                 <!-- Question 1: What is the Treatment? -->
-                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
-                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200/80 space-y-3">
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider">
                         1. What is the Treatment? <span class="text-rose-500">*</span>
                     </label>
                     <input type="text" 
@@ -1975,8 +1975,8 @@
                 </div>
 
                 <!-- Question 2: What is the Duration? -->
-                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
-                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200/80 space-y-3">
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider">
                         2. What is the Duration? <span class="text-rose-500">*</span>
                     </label>
                     <div class="flex items-center gap-3">
@@ -1988,7 +1988,7 @@
                                max="60" 
                                required 
                                class="w-32 text-xs font-bold py-2.5 px-3.5 rounded-xl border border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white">
-                        <span class="text-xs font-black text-slate-700 uppercase">Months</span>
+                        <span class="text-xs font-bold text-slate-700 uppercase">Months</span>
                     </div>
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">Preset Duration:</span>
@@ -2016,8 +2016,8 @@
                 </div>
 
                 <!-- Question 3: When is the Next Appointment? -->
-                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
-                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200/80 space-y-3">
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider">
                         3. When is the Next Appointment? <span class="text-rose-500">*</span>
                     </label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2072,7 +2072,7 @@
                     <p class="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
                         <i class="fa-solid fa-bell text-blue-500"></i> Saves CarePath, schedules the visit, and dispatches a notification to {{ patient.full_name }}.
                     </p>
-                    <button type="submit" class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 shadow-md shadow-blue-500/25 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-blue-600 hover:from-blue-700 hover:to-indigo-800 shadow-md shadow-blue-500/25 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Save CarePath & Notify Patient
                     </button>
                 </div>
@@ -2102,7 +2102,7 @@
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl {% if appt.status == 'COMPLETED' %}bg-emerald-50 border border-emerald-100 text-emerald-700{% elif appt.status == 'UPCOMING' %}bg-purple-50 border border-purple-100 text-purple-700{% else %}bg-rose-50 border border-rose-100 text-rose-700{% endif %} flex flex-col items-center justify-center font-bold text-xs flex-shrink-0">
                             <span class="text-[9px] uppercase font-semibold">{{ appt.scheduled_date|date:"M" }}</span>
-                            <span class="text-base font-black leading-none">{{ appt.scheduled_date|date:"d" }}</span>
+                            <span class="text-base font-bold leading-none">{{ appt.scheduled_date|date:"d" }}</span>
                         </div>
                         <div>
                             <h4 class="text-sm font-bold text-slate-900">{{ appt.get_appointment_type_display }}</h4>
@@ -2207,7 +2207,7 @@
 <div id="quickFollowupModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-calendar-check text-emerald-600"></i> Schedule 20-Day Follow-Up
             </h3>
             <button type="button" onclick="document.getElementById('quickFollowupModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2246,7 +2246,7 @@
 <div id="archiveModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-user-xmark text-rose-600"></i> Delete Patient Account / Treatment Completion
             </h3>
             <button type="button" onclick="document.getElementById('archiveModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2286,7 +2286,7 @@
 <div id="preopUploadModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-camera text-blue-600"></i> Upload Preoperative Photographs
             </h3>
             <button type="button" onclick="document.getElementById('preopUploadModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2324,7 +2324,7 @@
 <div id="radiographUploadModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-x-ray text-blue-600"></i> Upload Radiograph Record
             </h3>
             <button type="button" onclick="document.getElementById('radiographUploadModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2372,7 +2372,7 @@
 <div id="operationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-xl w-full p-6 shadow-lg border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-tooth text-blue-600"></i> New Treatment Record
             </h3>
             <button type="button" onclick="document.getElementById('operationModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2433,7 +2433,7 @@
 <div id="prescriptionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-xl w-full p-6 shadow-lg border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-prescription text-blue-600"></i> Generate Digital Prescription Sheet
             </h3>
             <button type="button" onclick="document.getElementById('prescriptionModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2481,7 +2481,7 @@
 <div id="turnModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-arrows-turn-to-dots text-blue-600"></i> Add Treatment Turn
             </h3>
             <button type="button" onclick="document.getElementById('turnModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2538,7 +2538,7 @@
 <div id="doctorMediaModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-video text-blue-600"></i> Upload Doctor Treatment Media
             </h3>
             <button type="button" onclick="document.getElementById('doctorMediaModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2580,7 +2580,7 @@
 <div id="monthlyNoteModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-notes-medical text-blue-600"></i> Add Monthly Progress Note
             </h3>
             <button type="button" onclick="document.getElementById('monthlyNoteModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-sm">✕</button>
@@ -2677,9 +2677,9 @@
             }
             if (btn) {
                 if (i.toString() === step.toString()) {
-                    btn.className = "p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md ring-2 ring-blue-300 font-bold";
+                    btn.className = "p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 bg-blue-600 text-white shadow-md ring-2 ring-blue-300 font-bold";
                 } else {
-                    btn.className = "p-4 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700";
+                    btn.className = "p-4 rounded-xl border text-left transition-all flex items-center justify-between gap-3 bg-slate-50 hover:bg-blue-50/50 border-slate-200 text-slate-700";
                 }
             }
         }
@@ -2734,10 +2734,10 @@
 
         const slotDiv = document.createElement('div');
         slotDiv.id = `slot_extra_${currentSlotNum}`;
-        slotDiv.className = 'p-4 rounded-2xl border-2 border-dashed border-sky-300 hover:border-sky-400 bg-sky-50/20 transition space-y-3 relative group animate-in fade-in zoom-in-95 duration-150';
+        slotDiv.className = 'p-4 rounded-xl border-2 border-dashed border-sky-300 hover:border-sky-400 bg-sky-50/20 transition space-y-3 relative group animate-in fade-in zoom-in-95 duration-150';
         slotDiv.innerHTML = `
             <div class="flex items-center justify-between">
-                <span class="text-xs font-black text-blue-900 flex items-center gap-1.5">
+                <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                     <span class="w-5 h-5 rounded-full bg-cyan-600 text-white text-[10px] flex items-center justify-center font-bold">${currentSlotNum}</span>
                     Photo ${currentSlotNum}: Additional View
                 </span>
