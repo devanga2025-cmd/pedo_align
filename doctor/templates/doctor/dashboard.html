@@ -8,26 +8,40 @@
 <div class="space-y-5 w-full max-w-full min-w-0 overflow-x-hidden">
 
     <!-- Top Clinical Session Header -->
-    <div class="pa-card p-5 sm:p-6 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="min-w-0">
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-medium mb-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+    <div class="pa-card p-4 sm:p-6 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex-1 min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] font-semibold mb-2 shadow-2xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>Active Clinical Session</span>
             </div>
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight truncate">
-                Welcome back, Dr. {{ doctor.full_name }}
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold font-heading text-slate-900 tracking-tight leading-snug break-words">
+                Welcome back, {{ doctor.display_name }}
             </h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
-                <strong class="font-medium text-slate-700">{{ doctor.clinic_name }}</strong> &bull; Monitoring <span class="font-semibold text-slate-900">{{ active_treatments }}</span> active aligner patient{{ active_treatments|pluralize }} &bull; <span class="font-semibold text-amber-700">{{ pending_approvals }}</span> joining request{{ pending_approvals|pluralize }} pending.
-            </p>
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 mt-2 leading-relaxed">
+                <span class="inline-flex items-center gap-1.5 font-medium text-slate-800 capitalize">
+                    <i class="fa-solid fa-hospital text-blue-600 text-xs"></i>
+                    <span>{{ doctor.clinic_name|default:"Pediatric Ortho Clinic" }}</span>
+                </span>
+                <span class="text-slate-300">&bull;</span>
+                <span class="inline-flex items-center gap-1 text-slate-600">
+                    <span>Monitoring</span>
+                    <strong class="font-bold text-slate-900">{{ active_treatments }}</strong>
+                    <span>active aligner patient{{ active_treatments|pluralize }}</span>
+                </span>
+                <span class="text-slate-300">&bull;</span>
+                <span class="inline-flex items-center gap-1 {% if pending_approvals > 0 %}text-amber-800 font-medium{% else %}text-slate-500{% endif %}">
+                    <strong class="font-bold {% if pending_approvals > 0 %}text-amber-700{% else %}text-slate-900{% endif %}">{{ pending_approvals }}</strong>
+                    <span>joining request{{ pending_approvals|pluralize }} pending</span>
+                </span>
+            </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs flex-1 sm:flex-initial justify-center">
+        <div class="flex items-center gap-2.5 w-full sm:w-auto flex-shrink-0 pt-1 sm:pt-0">
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary py-2.5 px-4 text-xs font-semibold flex-1 sm:flex-initial justify-center shadow-xs inline-flex items-center gap-1.5">
                 <i class="fa-solid fa-user-plus text-xs"></i>
                 <span>Add Patient</span>
             </a>
-            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center">
+            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary py-2.5 px-4 text-xs font-semibold flex-1 sm:flex-initial justify-center shadow-xs inline-flex items-center gap-1.5">
                 <i class="fa-solid fa-key text-xs text-blue-600"></i>
                 <span>Review Requests ({{ pending_approvals }})</span>
             </a>
