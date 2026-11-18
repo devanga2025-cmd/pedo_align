@@ -774,17 +774,28 @@
                                 <span class="text-[10px] font-bold text-rose-600 uppercase">Required</span>
                             </div>
 
-                            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('preop_file_1').click()">
+                            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="openLiveCamera('preop_file_1', 'preview_1', 'placeholder_1', 'Photo 1: Frontal View')">
                                 <img id="preview_1" class="hidden w-full h-full object-contain p-1">
                                 <div id="placeholder_1" class="text-center p-3 text-slate-400">
                                     <i class="fa-solid fa-tooth text-3xl mb-1 text-blue-300"></i>
                                     <p class="text-xs font-bold text-slate-700">Front Teeth in Occlusion</p>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Click for Live Camera or Gallery</p>
                                 </div>
                             </div>
 
                             <input type="file" name="photo_1" id="preop_file_1" accept="image/*" required class="hidden" onchange="previewImage(this, 'preview_1', 'placeholder_1')">
                             
+                            <div class="grid grid-cols-2 gap-2 pt-1">
+                                <button type="button" onclick="openLiveCamera('preop_file_1', 'preview_1', 'placeholder_1', 'Photo 1: Frontal View')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-camera text-xs"></i>
+                                    <span>Take Photo</span>
+                                </button>
+                                <button type="button" onclick="openGallery('preop_file_1')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                                    <span>Gallery</span>
+                                </button>
+                            </div>
+
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description *</label>
                                 <input type="text" name="description_1" value="Frontal View - Teeth in Centric Occlusion" required class="form-input text-xs" placeholder="e.g. Frontal smile view">
@@ -801,17 +812,28 @@
                                 <span class="text-[10px] font-bold text-rose-600 uppercase">Required</span>
                             </div>
 
-                            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('preop_file_2').click()">
+                            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="openLiveCamera('preop_file_2', 'preview_2', 'placeholder_2', 'Photo 2: Upper Arch View')">
                                 <img id="preview_2" class="hidden w-full h-full object-contain p-1">
                                 <div id="placeholder_2" class="text-center p-3 text-slate-400">
                                     <i class="fa-solid fa-arrow-up text-3xl mb-1 text-sky-300"></i>
                                     <p class="text-xs font-bold text-slate-700">Upper (Maxillary) Arch</p>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Click for Live Camera or Gallery</p>
                                 </div>
                             </div>
 
                             <input type="file" name="photo_2" id="preop_file_2" accept="image/*" required class="hidden" onchange="previewImage(this, 'preview_2', 'placeholder_2')">
                             
+                            <div class="grid grid-cols-2 gap-2 pt-1">
+                                <button type="button" onclick="openLiveCamera('preop_file_2', 'preview_2', 'placeholder_2', 'Photo 2: Upper Arch View')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-camera text-xs"></i>
+                                    <span>Take Photo</span>
+                                </button>
+                                <button type="button" onclick="openGallery('preop_file_2')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                                    <span>Gallery</span>
+                                </button>
+                            </div>
+
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description *</label>
                                 <input type="text" name="description_2" value="Upper Arch (Maxillary) Occlusal View" required class="form-input text-xs" placeholder="e.g. Upper occlusal mirror view">
@@ -828,17 +850,28 @@
                                 <span class="text-[10px] font-bold text-rose-600 uppercase">Required</span>
                             </div>
 
-                            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="document.getElementById('preop_file_3').click()">
+                            <div class="h-44 w-full rounded-xl bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative shadow-inner cursor-pointer" onclick="openLiveCamera('preop_file_3', 'preview_3', 'placeholder_3', 'Photo 3: Lower Arch / Lateral')">
                                 <img id="preview_3" class="hidden w-full h-full object-contain p-1">
                                 <div id="placeholder_3" class="text-center p-3 text-slate-400">
                                     <i class="fa-solid fa-arrow-down text-3xl mb-1 text-cyan-300"></i>
                                     <p class="text-xs font-bold text-slate-700">Lower Arch or Lateral View</p>
-                                    <p class="text-[10px] text-slate-400 mt-0.5">Click to browse or paste (Ctrl+V)</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Click for Live Camera or Gallery</p>
                                 </div>
                             </div>
 
                             <input type="file" name="photo_3" id="preop_file_3" accept="image/*" required class="hidden" onchange="previewImage(this, 'preview_3', 'placeholder_3')">
                             
+                            <div class="grid grid-cols-2 gap-2 pt-1">
+                                <button type="button" onclick="openLiveCamera('preop_file_3', 'preview_3', 'placeholder_3', 'Photo 3: Lower Arch / Lateral')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-camera text-xs"></i>
+                                    <span>Take Photo</span>
+                                </button>
+                                <button type="button" onclick="openGallery('preop_file_3')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                                    <span>Gallery</span>
+                                </button>
+                            </div>
+
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description *</label>
                                 <input type="text" name="description_3" value="Lower Arch (Mandibular) / Lateral View" required class="form-input text-xs" placeholder="e.g. Mandibular occlusal or side view">
@@ -957,14 +990,24 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Photograph File *</label>
-                            <div class="h-36 w-full rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 hover:border-blue-400 flex flex-col items-center justify-center relative cursor-pointer" onclick="document.getElementById('modal_preop_file').click()">
+                            <div class="h-36 w-full rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 hover:border-blue-400 flex flex-col items-center justify-center relative cursor-pointer" onclick="openLiveCamera('modal_preop_file', 'modal_preop_preview', 'modal_preop_placeholder', 'Preoperative Photo')">
                                 <img id="modal_preop_preview" class="hidden w-full h-full object-contain p-1">
                                 <div id="modal_preop_placeholder" class="text-center p-3 text-slate-400">
-                                    <i class="fa-solid fa-image text-3xl mb-1 text-blue-300"></i>
-                                    <p class="text-xs font-bold text-slate-700">Click to choose image or paste (Ctrl+V)</p>
+                                    <i class="fa-solid fa-camera text-3xl mb-1 text-blue-300"></i>
+                                    <p class="text-xs font-bold text-slate-700">Click for Live Camera or Gallery</p>
                                 </div>
                             </div>
                             <input type="file" name="photo" id="modal_preop_file" accept="image/*" required class="hidden" onchange="previewImage(this, 'modal_preop_preview', 'modal_preop_placeholder')">
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <button type="button" onclick="openLiveCamera('modal_preop_file', 'modal_preop_preview', 'modal_preop_placeholder', 'Preoperative Photo')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-camera text-xs"></i>
+                                    <span>Take Photo</span>
+                                </button>
+                                <button type="button" onclick="openGallery('modal_preop_file')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                                    <span>Gallery</span>
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Clinical Description</label>
@@ -1040,11 +1083,21 @@
                             </div>
 
                             <!-- Image File & Paste Zone -->
-                            <div class="p-4 rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2 cursor-pointer" onclick="document.getElementById('radio_file_input').click()">
+                            <div class="p-4 rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50/20 text-center space-y-2">
                                 <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-600"></i>
-                                <p class="text-xs font-bold text-slate-800">Upload or Paste X-Ray Image *</p>
-                                <p class="text-[11px] text-slate-500">Click to browse or press <strong>Ctrl+V</strong> to paste from clipboard</p>
+                                <p class="text-xs font-bold text-slate-800">Upload or Capture X-Ray Image *</p>
+                                <p class="text-[11px] text-slate-500">Take live photo or select radiograph from gallery</p>
                                 <input type="file" name="image" id="radio_file_input" accept="image/*" required class="hidden" onchange="previewImage(this, 'radio_preview', 'radio_placeholder')">
+                                <div class="grid grid-cols-2 gap-2 pt-1 max-w-xs mx-auto">
+                                    <button type="button" onclick="openLiveCamera('radio_file_input', 'radio_preview', 'radio_placeholder', 'Radiograph X-Ray Capture')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                                        <i class="fa-solid fa-camera text-xs"></i>
+                                        <span>Take Photo</span>
+                                    </button>
+                                    <button type="button" onclick="openGallery('radio_file_input')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                                        <span>Gallery</span>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Examination Date -->
@@ -2314,9 +2367,19 @@
         <form method="POST" action="{% url 'doctor:preop_photo_upload' patient.id %}" enctype="multipart/form-data" class="space-y-4 text-xs">
             {% csrf_token %}
             <div>
-                <label class="block font-bold text-slate-700 mb-1">Select Photographs (Gallery or Camera Capture)</label>
-                <input type="file" name="photos" id="preopPhotosInput" multiple accept="image/*" capture="environment" required class="form-input text-xs" onchange="previewPreopPhotos(this)">
-                <span class="text-[10px] text-slate-400 mt-1 block">You can select multiple photos at once.</span>
+                <label class="block font-bold text-slate-700 mb-1">Select Photographs</label>
+                <input type="file" name="photos" id="preopPhotosInput" multiple accept="image/*" required class="hidden" onchange="previewPreopPhotos(this)">
+                <div class="grid grid-cols-2 gap-2 mt-1">
+                    <button type="button" onclick="openLiveCamera('preopPhotosInput', '', '', 'Preoperative Photos')" class="btn-primary py-2 px-3 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-camera text-xs"></i>
+                        <span>Take Photo</span>
+                    </button>
+                    <button type="button" onclick="openGallery('preopPhotosInput')" class="btn-secondary py-2 px-3 text-xs flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-image text-xs text-slate-500"></i>
+                        <span>From Gallery</span>
+                    </button>
+                </div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Live rear camera capture or select images from gallery.</span>
             </div>
 
             <div id="preopPreviewContainer" class="hidden grid grid-cols-3 gap-2 p-2 bg-slate-50 rounded-xl max-h-36 overflow-y-auto"></div>
@@ -2578,8 +2641,18 @@
 
             <div>
                 <label class="block font-bold text-slate-700 mb-1">Treatment Photograph</label>
-                <input type="file" name="photo" accept="image/*" class="form-input text-xs">
-                <input type="text" name="photo_description" placeholder="Photo description (e.g. Attachment placement view)" class="form-input text-xs mt-1">
+                <input type="file" name="photo" id="doctorMediaPhotoInput" accept="image/*" class="form-input text-xs">
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <button type="button" onclick="openLiveCamera('doctorMediaPhotoInput', '', '', 'Treatment Photograph')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-camera text-[10px]"></i>
+                        <span>Take Photo</span>
+                    </button>
+                    <button type="button" onclick="openGallery('doctorMediaPhotoInput')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                        <span>From Gallery</span>
+                    </button>
+                </div>
+                <input type="text" name="photo_description" placeholder="Photo description (e.g. Attachment placement view)" class="form-input text-xs mt-2">
             </div>
 
             <div>
@@ -2781,6 +2854,18 @@
             <!-- File Input -->
             <input type="file" name="extra_photos" id="extra_file_${currentSlotNum}" accept="image/*" class="hidden" onchange="previewImage(this, 'preview_extra_${currentSlotNum}', 'placeholder_extra_${currentSlotNum}')">
             
+            <!-- Dual Action Buttons: Live Camera & Gallery -->
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button type="button" onclick="openLiveCamera('extra_file_${currentSlotNum}', 'preview_extra_${currentSlotNum}', 'placeholder_extra_${currentSlotNum}', 'Photo #${currentSlotNum}: Additional View')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                    <i class="fa-solid fa-camera text-xs"></i>
+                    <span>Take Photo</span>
+                </button>
+                <button type="button" onclick="openGallery('extra_file_${currentSlotNum}')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                    <span>Gallery</span>
+                </button>
+            </div>
+
             <!-- Description Input -->
             <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Photo Description</label>

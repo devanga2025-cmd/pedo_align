@@ -360,6 +360,17 @@
                         <input type="file" name="photo" id="opPhotoInput" accept="image/*" class="hidden"
                                onchange="previewPhotoFile(this)">
 
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="openLiveCamera('opPhotoInput', 'photoPreviewImg', 'photoPlaceholder', 'Clinical Operation Photograph')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                                <i class="fa-solid fa-camera text-xs"></i>
+                                <span>Take Photo</span>
+                            </button>
+                            <button type="button" onclick="openGallery('opPhotoInput')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                                <span>Gallery</span>
+                            </button>
+                        </div>
+
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                                 Photo Description / Notes

@@ -1,0 +1,192 @@
+{% load static %}
+<!-- ========================================================================= -->
+<!-- PEDO ALIGN - LIVE CLINICAL CAMERA & GALLERY CAPTURE MODAL                 -->
+<!-- ========================================================================= -->
+<div id="liveCameraModal" 
+     class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-950/90 backdrop-blur-md p-2 sm:p-4 transition-all"
+     role="dialog" 
+     aria-modal="true" 
+     aria-labelledby="cameraModalTitle">
+    
+    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[96vh]" 
+         onclick="event.stopPropagation()">
+        
+        <!-- MODAL HEADER -->
+        <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-2 min-w-0">
+                <div class="w-8 h-8 rounded-lg bg-blue-600/30 text-blue-400 border border-blue-500/40 flex items-center justify-center text-sm flex-shrink-0">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+                <div class="min-w-0">
+                    <h3 id="cameraModalTitle" class="text-sm font-bold text-white truncate">Live Clinical Camera</h3>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span id="cameraFacingBadge" class="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                            Rear Camera (Clinical View)
+                        </span>
+                        <span class="text-[9px] text-slate-400 hidden xs:inline">&bull; HD Capture</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <!-- Flip Camera Button (Quick in header) -->
+                <button type="button" 
+                        onclick="flipCamera()" 
+                        id="headerFlipBtn"
+                        class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition text-xs" 
+                        title="Flip Camera (Front/Rear)">
+                    <i class="fa-solid fa-camera-rotate"></i>
+                </button>
+                <!-- Close Button -->
+                <button type="button" 
+                        onclick="closeLiveCamera()" 
+                        class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition text-sm" 
+                        aria-label="Close camera">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CAMERA VIEWPORT / PREVIEW CONTAINER -->
+        <div class="relative flex-1 bg-black min-h-[320px] sm:min-h-[400px] flex items-center justify-center overflow-hidden">
+            
+            <!-- LIVE VIDEO FEED -->
+            <video id="cameraStreamVideo" 
+                   autoplay 
+                   playsinline 
+                   muted 
+                   class="w-full h-full object-cover">
+            </video>
+
+            <!-- CLINICAL FRAMING GUIDE / VIEWFINDER (Overlay over video) -->
+            <div id="cameraViewfinderOverlay" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-4">
+                <div class="relative w-4/5 h-4/5 border-2 border-white/50 rounded-2xl flex items-center justify-center shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
+                    <!-- Corner Brackets -->
+                    <div class="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-blue-400 rounded-tl"></div>
+                    <div class="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-blue-400 rounded-tr"></div>
+                    <div class="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-blue-400 rounded-bl"></div>
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-blue-400 rounded-br"></div>
+                    
+                    <!-- Center Crosshairs for Teeth/Arch Framing -->
+                    <div class="w-8 h-0.5 bg-white/40"></div>
+                    <div class="h-8 w-0.5 bg-white/40 absolute"></div>
+
+                    <!-- Alignment Hint -->
+                    <span class="absolute bottom-2 text-[10px] font-medium text-white/80 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-xs">
+                        Center teeth or arch within frame
+                    </span>
+                </div>
+            </div>
+
+            <!-- REVIEW / FROZEN SNAPSHOT CONTAINER (Visible after photo capture) -->
+            <div id="cameraReviewContainer" class="absolute inset-0 bg-black hidden flex-col items-center justify-center p-2">
+                <img id="cameraReviewImg" 
+                     src="" 
+                     alt="Captured Photo Preview" 
+                     class="w-full h-full object-contain rounded-lg">
+            </div>
+
+            <!-- PERMISSION DENIED OR CAMERA ERROR STATE -->
+            <div id="cameraErrorBox" class="absolute inset-0 bg-slate-900/95 p-6 hidden flex-col items-center justify-center text-center space-y-3 z-20">
+                <div class="w-14 h-14 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-video-slash"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white">Camera Access Unavailable</h4>
+                    <p id="cameraErrorMessage" class="text-xs text-slate-400 mt-1 max-w-sm">
+                        Camera permissions are blocked or your device camera is currently in use.
+                    </p>
+                </div>
+                <div class="pt-2 flex flex-col sm:flex-row items-center gap-2 w-full max-w-xs">
+                    <button type="button" 
+                            onclick="triggerCurrentGalleryFallback()" 
+                            class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-sm transition">
+                        <i class="fa-solid fa-images"></i>
+                        <span>Choose from Gallery</span>
+                    </button>
+                    <button type="button" 
+                            onclick="closeLiveCamera()" 
+                            class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- LOADING SPINNER -->
+            <div id="cameraLoadingSpinner" class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center text-white space-y-2 z-10 hidden">
+                <i class="fa-solid fa-circle-notch fa-spin text-2xl text-blue-500"></i>
+                <span class="text-xs text-slate-300">Starting Camera...</span>
+            </div>
+
+            <!-- HIDDEN CANVAS FOR CAPTURE PROCESSING -->
+            <canvas id="cameraCapturedCanvas" class="hidden"></canvas>
+        </div>
+
+        <!-- MODAL FOOTER CONTROLS -->
+        <div class="px-4 py-3.5 bg-slate-900 border-t border-slate-800 flex-shrink-0">
+            
+            <!-- 1. LIVE STREAMING CONTROLS (Active while camera is streaming) -->
+            <div id="cameraLiveControls" class="flex items-center justify-between gap-3">
+                
+                <!-- Choose from Gallery Button -->
+                <button type="button" 
+                        onclick="triggerCurrentGalleryFallback()" 
+                        class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 border border-slate-700 transition"
+                        title="Upload existing image from device storage">
+                    <i class="fa-solid fa-images text-xs text-blue-400"></i>
+                    <span>Gallery</span>
+                </button>
+
+                <!-- Big Circular Shutter Button -->
+                <button type="button" 
+                        id="shutterCaptureBtn"
+                        onclick="captureLivePhoto()" 
+                        class="w-14 h-14 rounded-full border-4 border-white bg-blue-600 hover:bg-blue-500 active:scale-95 text-white flex items-center justify-center text-xl shadow-lg transition-transform flex-shrink-0"
+                        title="Take Snapshot">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+
+                <!-- Flip Camera Button -->
+                <button type="button" 
+                        onclick="flipCamera()" 
+                        class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 border border-slate-700 transition"
+                        title="Switch between front and rear cameras">
+                    <i class="fa-solid fa-camera-rotate text-xs text-blue-400"></i>
+                    <span id="flipBtnText">Flip</span>
+                </button>
+            </div>
+
+            <!-- 2. REVIEW & CROP CONTROLS (Active after snapping a photo) -->
+            <div id="cameraReviewControls" class="hidden flex items-center justify-between gap-2.5">
+                
+                <!-- Retake Button -->
+                <button type="button" 
+                        onclick="retakeLivePhoto()" 
+                        class="py-2.5 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 border border-slate-700 transition">
+                    <i class="fa-solid fa-arrow-rotate-left text-xs text-amber-400"></i>
+                    <span>Retake</span>
+                </button>
+
+                <!-- Rotate 90° Clockwise -->
+                <button type="button" 
+                        onclick="rotateLivePhoto()" 
+                        class="py-2.5 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 border border-slate-700 transition"
+                        title="Rotate photo 90 degrees">
+                    <i class="fa-solid fa-rotate-right text-xs text-blue-400"></i>
+                    <span>Rotate</span>
+                </button>
+
+                <!-- Confirm & Use Photo Button -->
+                <button type="button" 
+                        onclick="confirmLivePhoto()" 
+                        class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md transition">
+                    <i class="fa-solid fa-check text-xs"></i>
+                    <span>Use Photo</span>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

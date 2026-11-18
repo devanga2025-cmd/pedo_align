@@ -193,6 +193,16 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-700 mb-1">Profile Photo (Optional)</label>
                     {{ form.profile_photo }}
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <button type="button" onclick="openLiveCamera('id_profile_photo', '', '', 'Patient Profile Photo')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-camera text-[10px]"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" onclick="openGallery('id_profile_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                            <span>From Gallery</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 

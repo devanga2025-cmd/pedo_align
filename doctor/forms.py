@@ -727,7 +727,7 @@ class PreoperativePhotoForm(forms.ModelForm):
         model = PreoperativePhoto
         fields = ['photo', 'title', 'description']
         widgets = {
-            'photo': forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'capture': 'environment'}),
+            'photo': forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*'}),
             'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Frontal smile view, Upper occlusal'}),
             'description': forms.Textarea(attrs={'class': 'form-input', 'rows': 2, 'placeholder': 'Clinical notes or photographic description...'}),
         }
@@ -737,7 +737,7 @@ class CompulsoryPreoperativePhotosForm(forms.Form):
     photo_1 = forms.ImageField(
         label="Preoperative Photo 1 (Frontal View)",
         required=True,
-        widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'capture': 'environment', 'id': 'preop_file_1'})
+        widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'id': 'preop_file_1'})
     )
     description_1 = forms.CharField(
         label="Photo 1 Description",
@@ -748,7 +748,7 @@ class CompulsoryPreoperativePhotosForm(forms.Form):
     photo_2 = forms.ImageField(
         label="Preoperative Photo 2 (Upper Arch)",
         required=True,
-        widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'capture': 'environment', 'id': 'preop_file_2'})
+        widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'id': 'preop_file_2'})
     )
     description_2 = forms.CharField(
         label="Photo 2 Description",
@@ -759,7 +759,7 @@ class CompulsoryPreoperativePhotosForm(forms.Form):
     photo_3 = forms.ImageField(
         label="Preoperative Photo 3 (Lower Arch / Lateral)",
         required=True,
-        widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'capture': 'environment', 'id': 'preop_file_3'})
+        widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*', 'id': 'preop_file_3'})
     )
     description_3 = forms.CharField(
         label="Photo 3 Description",

@@ -44,11 +44,23 @@
             </div>
 
             <!-- Upload Dropzone / Button -->
-            <div class="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-4 text-center cursor-pointer transition bg-slate-50/50 hover:bg-blue-50/30" onclick="document.getElementById('doctorPhotoFileInput').click();">
+            <div class="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-3 text-center cursor-pointer transition bg-slate-50/50 hover:bg-blue-50/30" onclick="document.getElementById('doctorPhotoFileInput').click();">
                 <input type="file" name="profile_picture" id="doctorPhotoFileInput" accept="image/png,image/jpeg,image/webp,image/jpg" class="hidden" onchange="previewDoctorModalPhoto(this)">
-                <i class="fa-solid fa-cloud-arrow-up text-xl text-blue-600 mb-1.5 block"></i>
-                <span class="text-xs font-semibold text-slate-800 block">Click to browse or drop an image</span>
-                <span class="text-[10px] text-slate-400 block mt-0.5">Supports JPG, PNG, WEBP &bull; Max 5MB</span>
+                <i class="fa-solid fa-cloud-arrow-up text-lg text-blue-600 mb-1 block"></i>
+                <span class="text-xs font-semibold text-slate-800 block">Browse or Drop Portrait Image</span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">JPG, PNG, WEBP &bull; Max 5MB</span>
+            </div>
+
+            <!-- Dual Action Buttons: Live Camera & Gallery -->
+            <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="openLiveCamera('doctorPhotoFileInput', 'doctorModalPreviewImg', '', 'Profile Photo Capture')" class="btn-primary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5 shadow-xs">
+                    <i class="fa-solid fa-camera text-xs"></i>
+                    <span>Take Photo</span>
+                </button>
+                <button type="button" onclick="openGallery('doctorPhotoFileInput')" class="btn-secondary py-2 px-2.5 text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-images text-xs text-slate-500"></i>
+                    <span>From Gallery</span>
+                </button>
             </div>
 
             <!-- Modal Action Buttons -->

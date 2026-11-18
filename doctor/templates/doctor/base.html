@@ -459,6 +459,7 @@
 
     <!-- Main JavaScript -->
     <script src="{% static 'doctor/js/main.js' %}?v=20261118b"></script>
+    <script src="{% static 'doctor/js/camera_uploader.js' %}?v=20261118c"></script>
     {% include 'doctor/includes/password_toggle_script.html' %}
     
     <script>
@@ -534,6 +535,7 @@
     {% block extra_js %}{% endblock %}
 
     {% include 'doctor/includes/profile_modals.html' %}
+    {% include 'doctor/includes/camera_modal.html' %}
     {% include 'doctor/includes/pwa_install_modal.html' %}
 </body>
 </html>

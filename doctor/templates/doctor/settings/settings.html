@@ -50,12 +50,18 @@
                     </div>
 
                     <!-- Upload Action Buttons -->
-                    <div class="flex items-center gap-2 justify-center sm:justify-start">
+                    <div class="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
                         <button type="button" 
-                                onclick="document.getElementById('id_profile_picture').click();" 
+                                onclick="openLiveCamera('id_profile_picture', 'avatarPreviewImg', '', 'Doctor Profile Photo Capture')" 
                                 class="btn-primary text-xs">
-                            <i class="fa-solid fa-cloud-arrow-up text-xs mr-1"></i>
-                            <span>Upload Photo</span>
+                            <i class="fa-solid fa-camera text-xs mr-1"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" 
+                                onclick="openGallery('id_profile_picture')" 
+                                class="btn-secondary text-xs">
+                            <i class="fa-solid fa-images text-xs mr-1 text-slate-500"></i>
+                            <span>From Gallery</span>
                         </button>
                         {% if doctor.profile_picture %}
                         <button type="submit" 

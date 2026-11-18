@@ -59,6 +59,16 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Upload New Upper Arch Photo</label>
                         {{ form.upper_arch_photo }}
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <button type="button" onclick="openLiveCamera('id_upper_arch_photo', '', '', 'Upper Arch Photo Capture')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-camera text-[10px]"></i>
+                                <span>Take Photo</span>
+                            </button>
+                            <button type="button" onclick="openGallery('id_upper_arch_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                                <span>From Gallery</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -139,6 +149,16 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Upload New Lower Arch Photo</label>
                         {{ form.lower_arch_photo }}
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <button type="button" onclick="openLiveCamera('id_lower_arch_photo', '', '', 'Lower Arch Photo Capture')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-camera text-[10px]"></i>
+                                <span>Take Photo</span>
+                            </button>
+                            <button type="button" onclick="openGallery('id_lower_arch_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                                <span>From Gallery</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 

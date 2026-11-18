@@ -36,33 +36,182 @@
             </div>
         </div>
 
-        <!-- 5 Dental Photo Angles File Inputs -->
+        <!-- 5 Dental Photo Angles Slots -->
         <div class="space-y-4 pt-2">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-2 border-b border-slate-100">
-                5-Angle Dental Photo Uploads
-            </h3>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">
+                    5-Angle Dental Photo Monitoring
+                </h3>
+                <span class="text-[11px] text-slate-500">Live Camera or Gallery Upload</span>
+            </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">1. Front Bite Photo</label>
-                    {{ form.front_bite_photo }}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                
+                <!-- 1. Front Bite Photo -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span class="w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center font-bold">1</span>
+                            Front Bite Photo
+                        </span>
+                        <span class="text-[9px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Centric</span>
+                    </div>
+
+                    <div class="h-36 w-full rounded-lg bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative cursor-pointer shadow-inner" onclick="openLiveCamera('id_front_bite_photo', 'preview_front_bite', 'placeholder_front_bite', '1. Front Bite Photo')">
+                        <img id="preview_front_bite" class="hidden w-full h-full object-contain p-1">
+                        <div id="placeholder_front_bite" class="text-center p-2 text-slate-400">
+                            <i class="fa-solid fa-tooth text-2xl mb-1 text-blue-400"></i>
+                            <p class="text-[11px] font-semibold text-slate-700">Front Teeth View</p>
+                            <p class="text-[9px] text-slate-400">Live Camera or Gallery</p>
+                        </div>
+                    </div>
+
+                    <input type="file" name="front_bite_photo" id="id_front_bite_photo" accept="image/*" class="hidden" onchange="previewClinicalFile(this, 'preview_front_bite', 'placeholder_front_bite')">
+
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="openLiveCamera('id_front_bite_photo', 'preview_front_bite', 'placeholder_front_bite', '1. Front Bite Photo')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-camera text-[10px]"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" onclick="openGallery('id_front_bite_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                            <span>Gallery</span>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">2. Upper Arch (Maxillary)</label>
-                    {{ form.upper_arch_photo }}
+
+                <!-- 2. Upper Arch (Maxillary) -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span class="w-4 h-4 rounded-full bg-sky-600 text-white text-[9px] flex items-center justify-center font-bold">2</span>
+                            Upper Arch (Maxillary)
+                        </span>
+                        <span class="text-[9px] font-semibold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">Occlusal</span>
+                    </div>
+
+                    <div class="h-36 w-full rounded-lg bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative cursor-pointer shadow-inner" onclick="openLiveCamera('id_upper_arch_photo', 'preview_upper_arch', 'placeholder_upper_arch', '2. Upper Arch View')">
+                        <img id="preview_upper_arch" class="hidden w-full h-full object-contain p-1">
+                        <div id="placeholder_upper_arch" class="text-center p-2 text-slate-400">
+                            <i class="fa-solid fa-arrow-up text-2xl mb-1 text-sky-400"></i>
+                            <p class="text-[11px] font-semibold text-slate-700">Upper Mirror View</p>
+                            <p class="text-[9px] text-slate-400">Live Camera or Gallery</p>
+                        </div>
+                    </div>
+
+                    <input type="file" name="upper_arch_photo" id="id_upper_arch_photo" accept="image/*" class="hidden" onchange="previewClinicalFile(this, 'preview_upper_arch', 'placeholder_upper_arch')">
+
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="openLiveCamera('id_upper_arch_photo', 'preview_upper_arch', 'placeholder_upper_arch', '2. Upper Arch View')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-camera text-[10px]"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" onclick="openGallery('id_upper_arch_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                            <span>Gallery</span>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">3. Lower Arch (Mandibular)</label>
-                    {{ form.lower_arch_photo }}
+
+                <!-- 3. Lower Arch (Mandibular) -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span class="w-4 h-4 rounded-full bg-cyan-600 text-white text-[9px] flex items-center justify-center font-bold">3</span>
+                            Lower Arch (Mandibular)
+                        </span>
+                        <span class="text-[9px] font-semibold text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded">Occlusal</span>
+                    </div>
+
+                    <div class="h-36 w-full rounded-lg bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative cursor-pointer shadow-inner" onclick="openLiveCamera('id_lower_arch_photo', 'preview_lower_arch', 'placeholder_lower_arch', '3. Lower Arch View')">
+                        <img id="preview_lower_arch" class="hidden w-full h-full object-contain p-1">
+                        <div id="placeholder_lower_arch" class="text-center p-2 text-slate-400">
+                            <i class="fa-solid fa-arrow-down text-2xl mb-1 text-cyan-400"></i>
+                            <p class="text-[11px] font-semibold text-slate-700">Lower Mirror View</p>
+                            <p class="text-[9px] text-slate-400">Live Camera or Gallery</p>
+                        </div>
+                    </div>
+
+                    <input type="file" name="lower_arch_photo" id="id_lower_arch_photo" accept="image/*" class="hidden" onchange="previewClinicalFile(this, 'preview_lower_arch', 'placeholder_lower_arch')">
+
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="openLiveCamera('id_lower_arch_photo', 'preview_lower_arch', 'placeholder_lower_arch', '3. Lower Arch View')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-camera text-[10px]"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" onclick="openGallery('id_lower_arch_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                            <span>Gallery</span>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">4. Right Occlusion</label>
-                    {{ form.right_occlusion_photo }}
+
+                <!-- 4. Right Occlusion -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span class="w-4 h-4 rounded-full bg-indigo-600 text-white text-[9px] flex items-center justify-center font-bold">4</span>
+                            Right Occlusion
+                        </span>
+                        <span class="text-[9px] font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">Lateral</span>
+                    </div>
+
+                    <div class="h-36 w-full rounded-lg bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative cursor-pointer shadow-inner" onclick="openLiveCamera('id_right_occlusion_photo', 'preview_right_occ', 'placeholder_right_occ', '4. Right Occlusion')">
+                        <img id="preview_right_occ" class="hidden w-full h-full object-contain p-1">
+                        <div id="placeholder_right_occ" class="text-center p-2 text-slate-400">
+                            <i class="fa-solid fa-angles-right text-2xl mb-1 text-indigo-400"></i>
+                            <p class="text-[11px] font-semibold text-slate-700">Right Buccal / Molar</p>
+                            <p class="text-[9px] text-slate-400">Live Camera or Gallery</p>
+                        </div>
+                    </div>
+
+                    <input type="file" name="right_occlusion_photo" id="id_right_occlusion_photo" accept="image/*" class="hidden" onchange="previewClinicalFile(this, 'preview_right_occ', 'placeholder_right_occ')">
+
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="openLiveCamera('id_right_occlusion_photo', 'preview_right_occ', 'placeholder_right_occ', '4. Right Occlusion')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-camera text-[10px]"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" onclick="openGallery('id_right_occlusion_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                            <span>Gallery</span>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">5. Left Occlusion</label>
-                    {{ form.left_occlusion_photo }}
+
+                <!-- 5. Left Occlusion -->
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span class="w-4 h-4 rounded-full bg-violet-600 text-white text-[9px] flex items-center justify-center font-bold">5</span>
+                            Left Occlusion
+                        </span>
+                        <span class="text-[9px] font-semibold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded">Lateral</span>
+                    </div>
+
+                    <div class="h-36 w-full rounded-lg bg-white border border-slate-200 overflow-hidden flex flex-col items-center justify-center relative cursor-pointer shadow-inner" onclick="openLiveCamera('id_left_occlusion_photo', 'preview_left_occ', 'placeholder_left_occ', '5. Left Occlusion')">
+                        <img id="preview_left_occ" class="hidden w-full h-full object-contain p-1">
+                        <div id="placeholder_left_occ" class="text-center p-2 text-slate-400">
+                            <i class="fa-solid fa-angles-left text-2xl mb-1 text-violet-400"></i>
+                            <p class="text-[11px] font-semibold text-slate-700">Left Buccal / Molar</p>
+                            <p class="text-[9px] text-slate-400">Live Camera or Gallery</p>
+                        </div>
+                    </div>
+
+                    <input type="file" name="left_occlusion_photo" id="id_left_occlusion_photo" accept="image/*" class="hidden" onchange="previewClinicalFile(this, 'preview_left_occ', 'placeholder_left_occ')">
+
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="openLiveCamera('id_left_occlusion_photo', 'preview_left_occ', 'placeholder_left_occ', '5. Left Occlusion')" class="btn-primary py-1.5 px-2 text-xs flex items-center justify-center gap-1 shadow-xs">
+                            <i class="fa-solid fa-camera text-[10px]"></i>
+                            <span>Take Photo</span>
+                        </button>
+                        <button type="button" onclick="openGallery('id_left_occlusion_photo')" class="btn-secondary py-1.5 px-2 text-xs flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-images text-[10px] text-slate-500"></i>
+                            <span>Gallery</span>
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
 
