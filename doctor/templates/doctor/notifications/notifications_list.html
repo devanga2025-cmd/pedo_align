@@ -18,13 +18,13 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
             {% if unread_count > 0 %}
-            <a href="{% url 'doctor:mark_all_notifications_read' %}" class="btn-secondary text-xs">
+            <a href="{% url 'doctor:mark_all_notifications_read' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-check-double text-[11px] mr-1"></i> Mark All as Read
             </a>
             {% endif %}
-            <button type="button" onclick="document.getElementById('sendReminderModal').classList.remove('hidden')" class="btn-primary text-xs">
+            <button type="button" onclick="document.getElementById('sendReminderModal').classList.remove('hidden')" class="btn-primary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-paper-plane text-[11px] mr-1"></i> Send Patient Reminder
             </button>
         </div>

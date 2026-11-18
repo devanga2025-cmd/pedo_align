@@ -31,13 +31,13 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
             <a href="{% url 'doctor:patient_clinical_journey' patient.id %}" target="_blank"
-               class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition border border-slate-200 shadow-xs flex items-center gap-1.5">
+               class="flex-1 sm:flex-initial justify-center px-3 py-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition border border-slate-200 shadow-xs flex items-center gap-1.5">
                 <i class="fa-solid fa-arrow-up-right-from-square text-blue-600"></i> View Steps 1–3 Intake
             </a>
             <a href="{% url 'doctor:patient_detail' patient.id %}" target="_blank"
-               class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-300 flex items-center gap-1.5">
+               class="flex-1 sm:flex-initial justify-center px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition border border-slate-300 flex items-center gap-1.5">
                 <i class="fa-solid fa-id-card"></i> Patient Record
             </a>
         </div>

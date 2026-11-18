@@ -18,11 +18,11 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs shadow-md">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-user-plus"></i> Add Patient
             </a>
-            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs">
+            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-key text-blue-600"></i> Joining Codes
             </a>
         </div>

@@ -275,7 +275,7 @@
             {% endif %}
 
             <!-- MAIN BODY VIEWPORT -->
-            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-20 lg:pb-6 custom-scrollbar">
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-24 lg:pb-6 custom-scrollbar">
                 {% block content %}{% endblock %}
             </main>
 
@@ -322,10 +322,6 @@
             <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Alerts</span>
         </a>
     </nav>
-            </div>
-            <span class="text-[10px] mt-0.5">Alerts</span>
-        </a>
-    </nav>
 
     <!-- GLOBAL IMAGE ZOOM MODAL -->
     <div id="globalImageModal" class="fixed inset-0 z-50 hidden items-center justify-center image-zoom-overlay p-4" onclick="closeImageModal()">
@@ -344,6 +340,7 @@
 
     <!-- Main JavaScript -->
     <script src="{% static 'doctor/js/main.js' %}"></script>
+    {% include 'doctor/includes/password_toggle_script.html' %}
     {% block extra_js %}{% endblock %}
 
     {% include 'doctor/includes/pwa_install_modal.html' %}

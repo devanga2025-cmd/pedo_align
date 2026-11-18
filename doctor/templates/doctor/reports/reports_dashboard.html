@@ -18,11 +18,11 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <a href="{% url 'doctor:export_patients_csv' %}" class="btn-secondary text-xs">
+        <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+            <a href="{% url 'doctor:export_patients_csv' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-file-csv text-emerald-600 mr-1"></i> Export CSV
             </a>
-            <a href="{% url 'doctor:print_report' %}" target="_blank" class="btn-primary text-xs shadow-md">
+            <a href="{% url 'doctor:print_report' %}" target="_blank" class="btn-primary text-xs shadow-md flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-print mr-1"></i> Printable / PDF Report
             </a>
         </div>

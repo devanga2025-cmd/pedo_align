@@ -8,8 +8,8 @@
 {% block content %}
 <div class="max-w-4xl mx-auto space-y-5">
 
-    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-        <div>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+        <div class="min-w-0">
             <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <i class="fa-solid fa-bell text-blue-600 text-sm"></i> Notifications & Reminders
             </h1>
@@ -18,7 +18,7 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
             {% if unread_count > 0 %}
             <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                 {{ unread_count }} unread

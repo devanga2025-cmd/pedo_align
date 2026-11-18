@@ -38,12 +38,12 @@
     {% endif %}
 
     <!-- TOP PATIENT BANNER CARD -->
-    <div class="pa-card p-6 bg-white relative overflow-hidden">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+    <div class="pa-card p-4 sm:p-6 bg-white relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
             
             <!-- Left Info: Avatar, Name, IDs -->
-            <div class="flex items-start sm:items-center gap-4">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-blue-100 text-blue-900 font-bold text-2xl flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0 border-2 border-blue-200">
+            <div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
+                <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-xl bg-blue-100 text-blue-900 font-bold text-xl sm:text-2xl flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0 border-2 border-blue-200">
                     {% if patient.profile_photo %}
                         <img src="{{ patient.profile_photo.url }}" alt="{{ patient.full_name }}" class="w-full h-full object-cover">
                     {% else %}
@@ -51,19 +51,19 @@
                     {% endif %}
                 </div>
 
-                <div>
-                    <div class="flex flex-wrap items-center gap-2 mb-1">
-                        <h1 class="text-xl sm:text-2xl font-bold text-slate-900">{{ patient.full_name }}</h1>
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5">
+                        <h1 class="text-lg sm:text-2xl font-bold text-slate-900 break-words">{{ patient.full_name }}</h1>
                         {% if patient.patient_category == 'CHILD' %}
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800 flex-shrink-0">
                             <i class="fa-solid fa-child"></i> Child Patient
                         </span>
                         {% else %}
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 flex-shrink-0">
                             <i class="fa-solid fa-user"></i> Adult Patient
                         </span>
                         {% endif %}
-                        <span class="badge 
+                        <span class="badge flex-shrink-0
                             {% if patient.treatment_status == 'ACTIVE' %}badge-active
                             {% elif patient.treatment_status == 'PENDING_CONNECTION' %}badge-pending
                             {% elif patient.treatment_status == 'COMPLETED' %}badge-completed
@@ -72,82 +72,101 @@
                         </span>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 font-medium">
-                        <span><strong class="text-slate-700">Patient ID:</strong> <span class="font-mono text-blue-700">{{ patient.patient_id }}</span></span>
-                        <span>•</span>
-                        <span><strong class="text-slate-700">Age/Gender:</strong> {{ patient.age }} yrs ({{ patient.gender }})</span>
-                        <span>•</span>
-                        <span><strong class="text-slate-700">Visit Frequency:</strong> {{ patient.get_appointment_frequency_display }}</span>
-                        <span>•</span>
-                        <span><strong class="text-slate-700">Doctor:</strong> Dr. {{ patient.doctor.full_name }}</span>
+                    <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 font-medium">
+                        <span class="inline-flex items-center"><strong class="text-slate-700 mr-1">ID:</strong> <span class="font-mono text-blue-700 font-semibold">{{ patient.patient_id }}</span></span>
+                        <span class="text-slate-300 hidden sm:inline">•</span>
+                        <span class="inline-flex items-center"><strong class="text-slate-700 mr-1">Age/Sex:</strong> {{ patient.age }} yrs ({{ patient.gender }})</span>
+                        <span class="text-slate-300 hidden sm:inline">•</span>
+                        <span class="inline-flex items-center"><strong class="text-slate-700 mr-1">Visits:</strong> {{ patient.get_appointment_frequency_display }}</span>
+                        <span class="text-slate-300 hidden sm:inline">•</span>
+                        <span class="inline-flex items-center"><strong class="text-slate-700 mr-1">Doctor:</strong> Dr. {{ patient.doctor.full_name }}</span>
                     </div>
 
                     {% if patient.parent_guardian_name %}
-                    <div class="mt-1 text-xs text-slate-600 bg-sky-50/60 border border-sky-100 px-2.5 py-1 rounded-lg inline-flex items-center gap-2">
-                        <i class="fa-solid fa-people-roof text-sky-600"></i>
-                        <span><strong>{{ patient.parent_guardian_relationship|default:"Guardian" }}:</strong> {{ patient.parent_guardian_name }}</span>
-                        {% if patient.parent_guardian_phone %}<span class="text-slate-400">• {{ patient.parent_guardian_phone }}</span>{% endif %}
-                        {% if patient.parent_guardian_email %}<span class="text-slate-400">• {{ patient.parent_guardian_email }}</span>{% endif %}
+                    <div class="mt-2 text-xs text-slate-700 bg-sky-50/70 border border-sky-200/80 p-2.5 rounded-lg flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2.5 max-w-full overflow-hidden">
+                        <div class="flex items-center gap-1.5 font-medium text-sky-900 min-w-0">
+                            <i class="fa-solid fa-people-roof text-sky-600 flex-shrink-0 text-xs"></i>
+                            <span class="break-words"><strong>{{ patient.parent_guardian_relationship|default:"Guardian" }}:</strong> {{ patient.parent_guardian_name }}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-slate-500 text-[11px] sm:text-xs">
+                            {% if patient.parent_guardian_phone %}
+                            <a href="tel:{{ patient.parent_guardian_phone }}" class="hover:text-blue-600 inline-flex items-center gap-1">
+                                <i class="fa-solid fa-phone text-[10px] text-slate-400"></i> {{ patient.parent_guardian_phone }}
+                            </a>
+                            {% endif %}
+                            {% if patient.parent_guardian_email %}
+                            <a href="mailto:{{ patient.parent_guardian_email }}" class="hover:text-blue-600 inline-flex items-center gap-1 break-all">
+                                <i class="fa-solid fa-envelope text-[10px] text-slate-400"></i> {{ patient.parent_guardian_email }}
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                     {% endif %}
 
                     <!-- Joining Code Pill with Copy Button -->
                     {% if joining_code %}
-                    <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs">
-                        <span class="text-blue-900 font-semibold"><i class="fa-solid fa-key text-blue-600 mr-1"></i> Joining Code:</span>
-                        <span class="font-mono font-bold text-blue-800 tracking-wider text-sm">{{ joining_code.code }}</span>
-                        <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'joiningCodeCopyBtn')" id="joiningCodeCopyBtn" class="text-blue-600 hover:text-blue-900 ml-1 font-bold" title="Copy code">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                        <span class="text-[10px] text-slate-400">({{ joining_code.get_status_display }})</span>
+                    <div class="mt-2 flex flex-wrap items-center gap-2 p-2 sm:px-3 sm:py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-xs max-w-full">
+                        <div class="flex items-center gap-1.5 text-blue-900 font-semibold">
+                            <i class="fa-solid fa-key text-blue-600"></i>
+                            <span>Joining Code:</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-mono font-bold text-blue-800 tracking-wider text-sm bg-white px-2 py-0.5 rounded border border-blue-200">{{ joining_code.code }}</span>
+                            <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'joiningCodeCopyBtn')" id="joiningCodeCopyBtn" class="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded transition font-bold" title="Copy code" aria-label="Copy joining code">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                            <span class="text-[10px] text-slate-500 font-medium">({{ joining_code.get_status_display }})</span>
+                        </div>
                     </div>
                     {% endif %}
 
                     {% if patient.notes %}
-                    <div class="mt-2.5 text-xs text-slate-700 bg-amber-50/80 border border-amber-200 px-3 py-1.5 rounded-lg flex items-start gap-2">
-                        <span class="font-bold text-amber-900 whitespace-nowrap"><i class="fa-solid fa-notes-medical text-amber-600 mr-1"></i> Chief Complaint:</span>
-                        <span class="text-slate-800">{{ patient.notes }}</span>
+                    <div class="mt-2 text-xs text-slate-700 bg-amber-50/80 border border-amber-200 p-2.5 rounded-lg flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2 max-w-full overflow-hidden">
+                        <span class="font-bold text-amber-900 flex-shrink-0 inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-notes-medical text-amber-600"></i> Chief Complaint:
+                        </span>
+                        <span class="text-slate-800 break-words flex-1 leading-relaxed">{{ patient.notes }}</span>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Quick Action Buttons -->
-            <div class="flex flex-wrap items-center gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+            <div class="flex flex-wrap items-center gap-2 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100 w-full lg:w-auto">
                 <!-- Clinical Journey Stepper (Photos, Radiographs, Next Appointment) -->
-                <a href="{% url 'doctor:patient_clinical_journey' patient.id %}" class="btn-primary text-xs bg-blue-600 hover:bg-blue-700 shadow-sm" title="Clinical Visit Journey (Photos, Radiographs, Next Visit)">
+                <a href="{% url 'doctor:patient_clinical_journey' patient.id %}" class="btn-primary text-xs bg-blue-600 hover:bg-blue-700 shadow-sm flex-1 sm:flex-initial" title="Clinical Visit Journey (Photos, Radiographs, Next Visit)">
                     <i class="fa-solid fa-folder-open mr-1"></i> Clinical Journey
                 </a>
 
                 <!-- 20-Day Follow-Up Quick Schedule (Section 4) -->
-                <button type="button" onclick="document.getElementById('quickFollowupModal').classList.remove('hidden')" class="btn-primary text-xs bg-emerald-600 hover:bg-emerald-700 shadow-sm" title="Schedule 20-Day Follow-Up">
+                <button type="button" onclick="document.getElementById('quickFollowupModal').classList.remove('hidden')" class="btn-primary text-xs bg-emerald-600 hover:bg-emerald-700 shadow-sm flex-1 sm:flex-initial" title="Schedule 20-Day Follow-Up">
                     <i class="fa-solid fa-calendar-plus mr-1"></i> 20-Day Follow-Up
                 </button>
 
                 <!-- Advance Aligner Button -->
                 {% if treatment_plan and treatment_plan.current_aligner < treatment_plan.total_aligners %}
-                <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}">
+                <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}" class="flex-1 sm:flex-initial">
                     {% csrf_token %}
-                    <button type="submit" class="btn-secondary text-xs" title="Advance to next aligner tray">
+                    <button type="submit" class="btn-secondary text-xs w-full sm:w-auto" title="Advance to next aligner tray">
                         <i class="fa-solid fa-forward-step"></i> Next Aligner (+1)
                     </button>
                 </form>
                 {% endif %}
 
                 <!-- Edit Profile -->
-                <a href="{% url 'doctor:patient_edit' patient.id %}" class="p-2 text-slate-500 hover:text-slate-800 rounded-xl border border-slate-200 text-xs" title="Edit Patient Details">
+                <a href="{% url 'doctor:patient_edit' patient.id %}" class="p-2.5 text-slate-600 hover:text-slate-900 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs flex items-center justify-center" title="Edit Patient Details" aria-label="Edit Patient Details">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </a>
 
                 <!-- Delete Account (Treatment Completed) Button -->
                 {% if not patient.is_archived %}
-                <button type="button" onclick="document.getElementById('archiveModal').classList.remove('hidden')" class="px-3 py-2 text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 text-xs font-bold transition flex items-center gap-1.5 shadow-xs" title="Complete Treatment & Delete Patient Account">
+                <button type="button" onclick="document.getElementById('archiveModal').classList.remove('hidden')" class="px-3 py-2 text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-200 text-xs font-semibold transition flex items-center gap-1.5 shadow-xs flex-1 sm:flex-initial justify-center" title="Complete Treatment & Delete Patient Account">
                     <i class="fa-solid fa-user-xmark text-rose-600"></i> Delete Patient A/C
                 </button>
                 {% endif %}
 
                 <!-- Delete -->
-                <a href="{% url 'doctor:patient_delete' patient.id %}" class="p-2 text-rose-400 hover:text-rose-600 rounded-xl border border-slate-200 text-xs" title="Delete Patient Record">
+                <a href="{% url 'doctor:patient_delete' patient.id %}" class="p-2.5 text-rose-500 hover:text-rose-700 rounded-lg border border-slate-200 hover:bg-rose-50 text-xs flex items-center justify-center" title="Delete Patient Record" aria-label="Delete Patient Record">
                     <i class="fa-solid fa-trash-can"></i>
                 </a>
             </div>
@@ -221,39 +240,39 @@
 
     <!-- 1. OVERVIEW TAB -->
     {% if active_tab == 'overview' %}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Left: Detailed Personal & Guardian Info -->
-        <div class="pa-card p-6 lg:col-span-2 space-y-6">
+        <div class="pa-card p-4 sm:p-6 lg:col-span-2 space-y-6">
             <div>
                 <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center justify-between">
                     <span><i class="fa-solid fa-user-gear text-blue-600 mr-2"></i> Patient Information</span>
                     <a href="{% url 'doctor:patient_edit' patient.id %}" class="text-xs text-blue-600 hover:underline normal-case">Edit Details</a>
                 </h3>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4 text-xs">
-                    <div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-4 text-xs">
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Full Name</span>
-                        <span class="font-bold text-slate-800 text-sm">{{ patient.full_name }}</span>
+                        <span class="font-bold text-slate-800 text-sm break-words">{{ patient.full_name }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Patient ID</span>
-                        <span class="font-mono font-bold text-blue-700">{{ patient.patient_id }}</span>
+                        <span class="font-mono font-bold text-blue-700 break-all">{{ patient.patient_id }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Age / Gender</span>
                         <span class="font-semibold text-slate-800">{{ patient.age }} Years • {{ patient.gender }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Date of Birth</span>
                         <span class="font-medium text-slate-700">{{ patient.date_of_birth|default:"Not specified" }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Patient Phone</span>
-                        <span class="font-medium text-slate-700">{{ patient.phone }}</span>
+                        <span class="font-medium text-slate-700 break-all">{{ patient.phone }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Email Address</span>
-                        <span class="font-medium text-slate-700">{{ patient.email|default:"N/A" }}</span>
+                        <span class="font-medium text-slate-700 break-all">{{ patient.email|default:"N/A" }}</span>
                     </div>
                 </div>
             </div>
@@ -263,22 +282,22 @@
                 <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100">
                     <i class="fa-solid fa-hands-holding-child text-blue-600 mr-2"></i> Parent / Guardian Information
                 </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4 text-xs">
-                    <div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-4 text-xs">
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Parent/Guardian</span>
-                        <span class="font-bold text-slate-800">{{ patient.parent_guardian_name|default:"Not provided" }}</span>
+                        <span class="font-bold text-slate-800 break-words">{{ patient.parent_guardian_name|default:"Not provided" }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Relationship</span>
                         <span class="font-medium text-slate-700">{{ patient.parent_guardian_relationship|default:"Parent" }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Contact Phone</span>
-                        <span class="font-medium text-slate-700">{{ patient.parent_guardian_phone|default:"N/A" }}</span>
+                        <span class="font-medium text-slate-700 break-all">{{ patient.parent_guardian_phone|default:"N/A" }}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <span class="text-slate-400 block font-bold uppercase text-[10px]">Parent Email</span>
-                        <span class="font-medium text-slate-700">{{ patient.parent_guardian_email|default:"N/A" }}</span>
+                        <span class="font-medium text-slate-700 break-all">{{ patient.parent_guardian_email|default:"N/A" }}</span>
                     </div>
                 </div>
             </div>

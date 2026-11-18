@@ -8,8 +8,8 @@
 {% block content %}
 <div class="max-w-2xl mx-auto space-y-5">
 
-    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-        <div>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+        <div class="min-w-0">
             <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <i class="fa-solid fa-calendar-plus text-blue-600 text-sm"></i> Request an Appointment
             </h1>
@@ -17,8 +17,8 @@
                 Choose your preferred date and time to visit Dr. {{ patient.doctor.full_name|default:"Your Doctor" }} at {{ patient.doctor.clinic_name|default:"Clinic" }}.
             </p>
         </div>
-        <a href="{% url 'patient:appointments' %}" class="btn-secondary text-xs">
-            <i class="fa-solid fa-arrow-left text-[11px]"></i> Back
+        <a href="{% url 'patient:appointments' %}" class="btn-secondary text-xs self-start sm:self-auto">
+            <i class="fa-solid fa-arrow-left text-[11px] mr-1"></i> Back
         </a>
     </div>
 

@@ -356,4 +356,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
         padding-bottom: env(safe-area-inset-bottom);
         height: calc(3.5rem + env(safe-area-inset-bottom));
     }
+    main {
+        padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
 }

@@ -12,45 +12,45 @@ Clinical Visit Journey
 <div class="space-y-6 max-w-6xl mx-auto">
 
     <!-- Top Patient Identity Card -->
-    <div class="pa-card p-6 border-blue-200/80 bg-white shadow-sm">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div class="flex items-start sm:items-center gap-4 min-w-0">
-                <div class="w-16 h-16 rounded-xl bg-blue-600 text-white font-bold text-2xl flex items-center justify-center shadow-md flex-shrink-0">
+    <div class="pa-card p-4 sm:p-6 border-blue-200/80 bg-white shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
+            <div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-blue-600 text-white font-bold text-xl sm:text-2xl flex items-center justify-center shadow-md flex-shrink-0">
                     {{ patient.first_name|first }}{{ patient.last_name|first }}
                 </div>
-                <div class="min-w-0 space-y-1">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h1 class="text-xl font-bold text-slate-900 tracking-tight">{{ patient.full_name }}</h1>
-                        <span class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">
+                <div class="min-w-0 flex-1 space-y-1">
+                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                        <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight break-words">{{ patient.full_name }}</h1>
+                        <span class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold flex-shrink-0">
                             {{ patient.patient_id }}
                         </span>
                         {% if patient.patient_category == 'CHILD' %}
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200 flex-shrink-0">
                             <i class="fa-solid fa-child mr-0.5"></i> Child Patient
                         </span>
                         {% else %}
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 flex-shrink-0">
                             <i class="fa-solid fa-user mr-0.5"></i> Adult Patient
                         </span>
                         {% endif %}
                     </div>
-                    <p class="text-xs text-slate-600">
-                        Age: <strong class="text-slate-900">{{ patient.age }} yrs</strong> (DOB: {{ patient.date_of_birth|date:"M d, Y"|default:"Not specified" }}) • Gender: <strong>{{ patient.gender }}</strong> • Phone: <strong>{{ patient.phone }}</strong>
+                    <p class="text-xs text-slate-600 break-words">
+                        Age: <strong class="text-slate-900">{{ patient.age }} yrs</strong> (DOB: {{ patient.date_of_birth|date:"M d, Y"|default:"Not specified" }}) • Gender: <strong>{{ patient.gender }}</strong> • Phone: <strong class="break-all">{{ patient.phone }}</strong>
                     </p>
                     {% if patient.parent_guardian_name %}
-                    <p class="text-[11px] text-blue-700">
-                        <i class="fa-solid fa-people-roof mr-1"></i> Parent/Guardian: <strong>{{ patient.parent_guardian_name }}</strong> ({{ patient.parent_guardian_relationship|default:"Parent" }}) - {{ patient.parent_guardian_phone|default:"No phone" }}
+                    <p class="text-[11px] text-blue-700 break-words">
+                        <i class="fa-solid fa-people-roof mr-1"></i> Parent/Guardian: <strong>{{ patient.parent_guardian_name }}</strong> ({{ patient.parent_guardian_relationship|default:"Parent" }}) <span class="break-all">- {{ patient.parent_guardian_phone|default:"No phone" }}</span>
                     </p>
                     {% endif %}
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs flex items-center gap-1.5 whitespace-nowrap">
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <a href="{% url 'doctor:patient_detail' patient.id %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center items-center gap-1.5">
                     <i class="fa-solid fa-id-card"></i> Patient Record
                 </a>
-                <a href="{% url 'doctor:treatment_plans' %}" class="btn-secondary text-xs flex items-center gap-1.5 whitespace-nowrap">
-                    <i class="fa-solid fa-arrow-left"></i> All Treatment Plans
+                <a href="{% url 'doctor:treatment_plans' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> All Plans
                 </a>
             </div>
         </div>

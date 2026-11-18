@@ -22,12 +22,12 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2.5 flex-shrink-0">
-            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <a href="{% url 'doctor:patient_create' %}" class="btn-primary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-user-plus text-xs"></i>
                 <span>Add Patient</span>
             </a>
-            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs">
+            <a href="{% url 'doctor:patient_requests' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center">
                 <i class="fa-solid fa-key text-xs text-blue-600"></i>
                 <span>Review Requests ({{ pending_approvals }})</span>
             </a>
