@@ -244,11 +244,21 @@ h1, h2, h3, h4, h5, h6 {
     scrollbar-color: #cbd5e1 transparent;
 }
 
-/* User Profile & Action Dropdown Menus */
+/* User Profile & Notification Dropdown Menus */
 #userDropdown,
 #userProfileMenu,
-.user-dropdown-menu {
+.user-dropdown-menu,
+#notifDropdownMenu {
     max-width: calc(100vw - 1.5rem) !important;
-    min-width: 15rem !important;
-    width: 16rem !important;
+}
+
+@media (min-width: 640px) {
+    #userDropdown,
+    #userProfileMenu,
+    .user-dropdown-menu {
+        width: 16rem !important;
+    }
+    #notifDropdownMenu {
+        width: 21rem !important;
+    }
 }

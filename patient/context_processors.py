@@ -10,5 +10,6 @@ def patient_context(request):
     return {
         'current_patient': patient_profile,
         'patient_unread_notifs': unread_notifications_count,
+        'patient_recent_notifications': patient_profile.notifications.all()[:5],
     }
 

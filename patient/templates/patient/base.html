@@ -209,17 +209,92 @@
                         <span>Android App</span>
                     </a>
 
-                    <!-- Notifications Bell -->
-                    <a href="{% url 'patient:notifications' %}" 
-                       class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors {% if 'notification' in request.resolver_match.url_name %}bg-slate-100 text-blue-600{% endif %}" 
-                       title="View Notifications">
-                        <i class="fa-solid fa-bell text-base"></i>
-                        {% if patient_unread_notifs > 0 %}
-                        <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
-                            {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
-                        </span>
-                        {% endif %}
-                    </a>
+                    <!-- Notification Bell Dropdown -->
+                    <div class="relative" id="notifDropdownContainer">
+                        <button type="button" 
+                                id="notifDropdownBtn" 
+                                onclick="toggleNotifDropdown(event)"
+                                class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100 {% if 'notification' in request.resolver_match.url_name %}bg-slate-100 text-blue-600{% endif %}" 
+                                title="View Notifications"
+                                aria-label="Toggle notifications menu"
+                                aria-expanded="false"
+                                aria-haspopup="true">
+                            <i class="fa-solid fa-bell text-base pointer-events-none"></i>
+                            {% if patient_unread_notifs > 0 %}
+                            <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white shadow-xs pointer-events-none">
+                                {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
+                            </span>
+                            {% endif %}
+                        </button>
+
+                        <!-- Notification Dropdown Panel -->
+                        <div id="notifDropdownMenu" 
+                             class="hidden fixed sm:absolute inset-x-3 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-0 sm:mt-2 w-auto sm:w-84 max-w-sm sm:max-w-none mx-auto sm:mx-0 bg-white rounded-xl shadow-2xl border border-slate-200 z-50 text-xs divide-y divide-slate-100"
+                             onclick="event.stopPropagation()">
+                            
+                            <!-- Dropdown Header -->
+                            <div class="px-3.5 py-2.5 flex items-center justify-between bg-slate-50/75 rounded-t-xl">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-slate-900 text-xs">Notifications</span>
+                                    {% if patient_unread_notifs > 0 %}
+                                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">
+                                        {{ patient_unread_notifs }} new
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'patient:notifications' %}" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 transition">
+                                    View All
+                                </a>
+                            </div>
+
+                            <!-- Notification List -->
+                            <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 custom-scrollbar">
+                                {% if patient_recent_notifications %}
+                                    {% for notif in patient_recent_notifications %}
+                                    <a href="{% url 'patient:notifications' %}" class="block p-3 hover:bg-slate-50 transition {% if not notif.is_read %}bg-blue-50/30{% endif %}">
+                                        <div class="flex items-start gap-2.5">
+                                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5
+                                                {% if notif.notification_type == 'EMERGENCY_RESPONSE' %}bg-rose-100 text-rose-600
+                                                {% elif notif.notification_type == 'PHOTO_REVIEW' %}bg-blue-100 text-blue-600
+                                                {% elif notif.notification_type == 'APPOINTMENT' %}bg-purple-100 text-purple-600
+                                                {% else %}bg-slate-100 text-slate-600{% endif %}">
+                                                <i class="fa-solid 
+                                                    {% if notif.notification_type == 'EMERGENCY_RESPONSE' %}fa-triangle-exclamation
+                                                    {% elif notif.notification_type == 'PHOTO_REVIEW' %}fa-camera
+                                                    {% elif notif.notification_type == 'APPOINTMENT' %}fa-calendar-check
+                                                    {% else %}fa-bell{% endif %}"></i>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-center justify-between gap-1">
+                                                    <p class="text-xs font-semibold text-slate-900 truncate">{{ notif.title }}</p>
+                                                    {% if not notif.is_read %}
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0"></span>
+                                                    {% endif %}
+                                                </div>
+                                                <p class="text-[11px] text-slate-500 line-clamp-2 mt-0.5 leading-snug">{{ notif.message }}</p>
+                                                <span class="text-[10px] text-slate-400 mt-1 block">{{ notif.created_at|timesince }} ago</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="p-6 text-center text-slate-400">
+                                        <i class="fa-regular fa-bell-slash text-2xl mb-1.5 text-slate-300 block"></i>
+                                        <p class="text-xs font-medium text-slate-600">No notifications yet</p>
+                                        <p class="text-[10px] text-slate-400 mt-0.5">You're completely up to date</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Dropdown Footer -->
+                            <div class="p-2 bg-slate-50/75 rounded-b-xl text-center border-t border-slate-100">
+                                <a href="{% url 'patient:notifications' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 transition py-1">
+                                    <span>Go to Notification Center</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Patient Pill with Dropdown -->
                     {% if current_patient %}
@@ -243,7 +318,9 @@
                         </button>
 
                         <!-- User Dropdown Menu -->
-                        <div id="userDropdown" class="hidden absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-1.5rem)] min-w-[240px] rounded-xl bg-white shadow-2xl border border-slate-200 py-1.5 z-50 text-xs divide-y divide-slate-100">
+                        <div id="userDropdown" 
+                             class="hidden fixed sm:absolute right-3 sm:right-0 top-16 sm:top-full mt-0 sm:mt-2 w-[calc(100vw-1.5rem)] sm:w-64 max-w-xs sm:max-w-none rounded-xl bg-white shadow-2xl border border-slate-200 py-1.5 z-50 text-xs divide-y divide-slate-100"
+                             onclick="event.stopPropagation()">
                             <!-- Identity Card Header -->
                             <div class="px-3.5 py-3">
                                 <div class="flex items-center gap-2.5">
@@ -351,41 +428,72 @@
     {% block extra_scripts %}{% endblock %}
 
     <script>
-        function toggleUserDropdown(e) {
-            if (e) {
-                e.stopPropagation();
+        function toggleNotifDropdown(e) {
+            if (e) e.stopPropagation();
+            const notifMenu = document.getElementById('notifDropdownMenu');
+            const profileMenu = document.getElementById('userDropdown');
+            const notifBtn = document.getElementById('notifDropdownBtn');
+            const userBtn = document.getElementById('userMenuBtn');
+
+            if (profileMenu) {
+                profileMenu.classList.add('hidden');
+                if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
             }
-            const menu = document.getElementById('userDropdown');
-            const btn = document.getElementById('userMenuBtn');
-            if (menu) {
-                const isHidden = menu.classList.toggle('hidden');
-                if (btn) btn.setAttribute('aria-expanded', !isHidden);
+
+            if (notifMenu) {
+                const isHidden = notifMenu.classList.toggle('hidden');
+                if (notifBtn) notifBtn.setAttribute('aria-expanded', !isHidden);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function toggleUserDropdown(e) {
+            if (e) e.stopPropagation();
+            const profileMenu = document.getElementById('userDropdown');
+            const notifMenu = document.getElementById('notifDropdownMenu');
             const userBtn = document.getElementById('userMenuBtn');
-            const userMenu = document.getElementById('userDropdown');
-            const userContainer = document.getElementById('userMenuContainer');
+            const notifBtn = document.getElementById('notifDropdownBtn');
 
-            if (userBtn && userMenu) {
-                userBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const isHidden = userMenu.classList.toggle('hidden');
-                    userBtn.setAttribute('aria-expanded', !isHidden);
-                });
-
-                userMenu.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
+            if (notifMenu) {
+                notifMenu.classList.add('hidden');
+                if (notifBtn) notifBtn.setAttribute('aria-expanded', 'false');
             }
 
-            document.addEventListener('click', function(e) {
-                if (userContainer && userMenu && !userContainer.contains(e.target)) {
-                    userMenu.classList.add('hidden');
-                    if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
-                }
-            });
+            if (profileMenu) {
+                const isHidden = profileMenu.classList.toggle('hidden');
+                if (userBtn) userBtn.setAttribute('aria-expanded', !isHidden);
+            }
+        }
+
+        function closeAllPatientDropdowns() {
+            const notifMenu = document.getElementById('notifDropdownMenu');
+            const profileMenu = document.getElementById('userDropdown');
+            const notifBtn = document.getElementById('notifDropdownBtn');
+            const userBtn = document.getElementById('userMenuBtn');
+
+            if (notifMenu) {
+                notifMenu.classList.add('hidden');
+                if (notifBtn) notifBtn.setAttribute('aria-expanded', 'false');
+            }
+            if (profileMenu) {
+                profileMenu.classList.add('hidden');
+                if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const notifContainer = document.getElementById('notifDropdownContainer');
+            const userContainer = document.getElementById('userMenuContainer');
+
+            const inNotif = notifContainer && notifContainer.contains(e.target);
+            const inUser = userContainer && userContainer.contains(e.target);
+
+            if (!inNotif && !inUser) {
+                closeAllPatientDropdowns();
+            }
+        });
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeAllPatientDropdowns();
         });
 
         // Global phone number strict validation: max 10 digits, numbers only, no alphabets

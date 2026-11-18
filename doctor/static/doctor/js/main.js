@@ -21,14 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2. Notification Bell Dropdown
     const notifBtn = document.getElementById('notifDropdownBtn');
     const notifMenu = document.getElementById('notifDropdownMenu');
-    if (notifBtn && notifMenu) {
+    if (notifBtn && notifMenu && !notifBtn.hasAttribute('onclick')) {
         notifBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            notifMenu.classList.toggle('hidden');
-        });
-        document.addEventListener('click', function(e) {
-            if (!notifMenu.contains(e.target) && !notifBtn.contains(e.target)) {
-                notifMenu.classList.add('hidden');
+            if (typeof toggleNotifDropdown === 'function') {
+                toggleNotifDropdown(e);
+            } else {
+                notifMenu.classList.toggle('hidden');
             }
         });
     }
@@ -36,19 +35,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. User Profile Dropdown
     const profileBtn = document.getElementById('userProfileBtn');
     const profileMenu = document.getElementById('userProfileMenu');
-    if (profileBtn && profileMenu) {
+    if (profileBtn && profileMenu && !profileBtn.hasAttribute('onclick')) {
         profileBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            const isHidden = profileMenu.classList.toggle('hidden');
-            profileBtn.setAttribute('aria-expanded', !isHidden);
-        });
-        profileMenu.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-        document.addEventListener('click', function(e) {
-            if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
-                profileMenu.classList.add('hidden');
-                profileBtn.setAttribute('aria-expanded', 'false');
+            if (typeof toggleProfileDropdown === 'function') {
+                toggleProfileDropdown(e);
+            } else {
+                profileMenu.classList.toggle('hidden');
             }
         });
     }
