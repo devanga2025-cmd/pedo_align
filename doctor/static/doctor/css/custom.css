@@ -360,3 +360,12 @@ h1, h2, h3, h4, h5, h6, .font-heading {
         padding-bottom: calc(5rem + env(safe-area-inset-bottom));
     }
 }
+
+/* User Profile & Action Dropdown Menus */
+#userDropdown,
+#userProfileMenu,
+.user-dropdown-menu {
+    max-width: calc(100vw - 1.5rem) !important;
+    min-width: 15rem !important;
+    width: 16rem !important;
+}

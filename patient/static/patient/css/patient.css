@@ -243,3 +243,12 @@ h1, h2, h3, h4, h5, h6 {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;
 }
+
+/* User Profile & Action Dropdown Menus */
+#userDropdown,
+#userProfileMenu,
+.user-dropdown-menu {
+    max-width: calc(100vw - 1.5rem) !important;
+    min-width: 15rem !important;
+    width: 16rem !important;
+}

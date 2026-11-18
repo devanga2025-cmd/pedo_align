@@ -39,11 +39,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (profileBtn && profileMenu) {
         profileBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            profileMenu.classList.toggle('hidden');
+            const isHidden = profileMenu.classList.toggle('hidden');
+            profileBtn.setAttribute('aria-expanded', !isHidden);
+        });
+        profileMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
         });
         document.addEventListener('click', function(e) {
             if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
                 profileMenu.classList.add('hidden');
+                profileBtn.setAttribute('aria-expanded', 'false');
             }
         });
     }

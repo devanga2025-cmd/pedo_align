@@ -175,7 +175,7 @@
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
             
             <!-- TOP NAVBAR -->
-            <header class="h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-20 flex-shrink-0 shadow-xs">
+            <header class="h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-30 flex-shrink-0 shadow-xs">
                 
                 <div class="flex items-center gap-3">
                     <!-- Mobile Logo -->
@@ -225,23 +225,25 @@
                     {% if current_patient %}
                     <div class="relative inline-block text-left" id="userMenuContainer">
                         <button type="button" 
-                                onclick="toggleUserDropdown()" 
+                                onclick="toggleUserDropdown(event)" 
                                 id="userMenuBtn"
                                 class="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-blue-100"
-                                aria-label="Open patient user menu">
-                            <div class="w-8 h-8 rounded-full overflow-hidden ring-1 ring-slate-200 bg-slate-100 flex items-center justify-center text-slate-600 text-xs flex-shrink-0 shadow-xs">
+                                aria-label="Open patient user menu"
+                                aria-expanded="false"
+                                aria-haspopup="true">
+                            <div class="w-8 h-8 rounded-full overflow-hidden ring-1 ring-slate-200 bg-slate-100 flex items-center justify-center text-slate-600 text-xs flex-shrink-0 shadow-xs pointer-events-none">
                                 {% if current_patient.avatar %}
-                                    <img src="{{ current_patient.avatar.url }}" alt="{{ current_patient.full_name }}" class="w-full h-full object-cover">
+                                    <img src="{{ current_patient.avatar.url }}" alt="{{ current_patient.full_name }}" class="w-full h-full object-cover pointer-events-none">
                                 {% else %}
-                                    <i class="fa-solid fa-user text-slate-400 text-xs"></i>
+                                    <i class="fa-solid fa-user text-slate-400 text-xs pointer-events-none"></i>
                                 {% endif %}
                             </div>
-                            <span class="text-xs font-semibold text-slate-800 hidden sm:inline-block max-w-[120px] truncate">{{ current_patient.full_name }}</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                            <span class="text-xs font-semibold text-slate-800 hidden sm:inline-block max-w-[120px] truncate pointer-events-none">{{ current_patient.full_name }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 pointer-events-none"></i>
                         </button>
 
                         <!-- User Dropdown Menu -->
-                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-white shadow-xl border border-slate-200 py-1.5 z-50 text-xs divide-y divide-slate-100">
+                        <div id="userDropdown" class="hidden absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-1.5rem)] min-w-[240px] rounded-xl bg-white shadow-2xl border border-slate-200 py-1.5 z-50 text-xs divide-y divide-slate-100">
                             <!-- Identity Card Header -->
                             <div class="px-3.5 py-3">
                                 <div class="flex items-center gap-2.5">
@@ -328,54 +330,62 @@
 
     <!-- MOBILE BOTTOM NAVIGATION BAR -->
     <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white border-t border-slate-200 flex items-center justify-around z-40 shadow-xs mobile-bottom-nav">
-        <a href="{% url 'patient:dashboard' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'patient:dashboard' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-house-medical text-sm sm:text-base"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Journey</span>
+            <span class="text-[10px] mt-0.5 truncate">Journey</span>
         </a>
-        <a href="{% url 'patient:upload_photos' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'upload_photos' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'patient:upload_photos' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if request.resolver_match.url_name == 'upload_photos' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-camera text-sm sm:text-base"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Photos</span>
+            <span class="text-[10px] mt-0.5 truncate">Photos</span>
         </a>
-        <a href="{% url 'patient:appointments' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if 'appointment' in request.resolver_match.url_name %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'patient:appointments' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if 'appointment' in request.resolver_match.url_name %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-calendar-check text-sm sm:text-base"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Visits</span>
+            <span class="text-[10px] mt-0.5 truncate">Visits</span>
         </a>
-        <a href="{% url 'patient:notifications' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'notifications' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <div class="relative">
-                <i class="fa-solid fa-bell text-sm sm:text-base"></i>
-                {% if patient_unread_notifs > 0 %}
-                <span class="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
-                    {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
-                </span>
-                {% endif %}
-            </div>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Alerts</span>
-        </a>
-        <a href="{% url 'patient:emergency' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'emergency' %}text-rose-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+        <a href="{% url 'patient:emergency' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if request.resolver_match.url_name == 'emergency' %}text-rose-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
             <i class="fa-solid fa-triangle-exclamation text-sm sm:text-base"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Help</span>
-        </a>
-        <a href="{% url 'patient:profile' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-0.5 {% if request.resolver_match.url_name == 'profile' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-user-circle text-sm sm:text-base"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Profile</span>
+            <span class="text-[10px] mt-0.5 truncate">Help</span>
         </a>
     </nav>
 
     {% block extra_scripts %}{% endblock %}
 
     <script>
-        function toggleUserDropdown() {
+        function toggleUserDropdown(e) {
+            if (e) {
+                e.stopPropagation();
+            }
             const menu = document.getElementById('userDropdown');
+            const btn = document.getElementById('userMenuBtn');
             if (menu) {
-                menu.classList.toggle('hidden');
+                const isHidden = menu.classList.toggle('hidden');
+                if (btn) btn.setAttribute('aria-expanded', !isHidden);
             }
         }
-        document.addEventListener('click', function(e) {
-            const container = document.getElementById('userMenuContainer');
-            const dropdown = document.getElementById('userDropdown');
-            if (container && dropdown && !container.contains(e.target)) {
-                dropdown.classList.add('hidden');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userBtn = document.getElementById('userMenuBtn');
+            const userMenu = document.getElementById('userDropdown');
+            const userContainer = document.getElementById('userMenuContainer');
+
+            if (userBtn && userMenu) {
+                userBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isHidden = userMenu.classList.toggle('hidden');
+                    userBtn.setAttribute('aria-expanded', !isHidden);
+                });
+
+                userMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
             }
+
+            document.addEventListener('click', function(e) {
+                if (userContainer && userMenu && !userContainer.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                    if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
         });
 
         // Global phone number strict validation: max 10 digits, numbers only, no alphabets
