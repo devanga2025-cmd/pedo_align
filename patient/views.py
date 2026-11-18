@@ -971,13 +971,31 @@ def notifications_view(request):
 
     sync_patient_reminders_from_schedule(patient)
 
-    notifications = patient.notifications.all()
-    unread_count = notifications.filter(is_read=False).count()
+    base_qs = patient.notifications.all()
+    total_count = base_qs.count()
+    unread_count = base_qs.filter(is_read=False).count()
+    urgent_count = base_qs.filter(notification_type='EMERGENCY_RESPONSE').count()
+
+    current_filter = request.GET.get('filter', 'all')
+    type_filter = request.GET.get('type', 'ALL')
+
+    notifications = base_qs
+    if current_filter == 'unread':
+        notifications = notifications.filter(is_read=False)
+    elif current_filter == 'urgent':
+        notifications = notifications.filter(notification_type='EMERGENCY_RESPONSE')
+    elif type_filter != 'ALL':
+        notifications = notifications.filter(notification_type=type_filter)
+        current_filter = type_filter
 
     context = {
         'patient': patient,
         'notifications': notifications,
+        'total_count': total_count,
         'unread_count': unread_count,
+        'urgent_count': urgent_count,
+        'current_filter': current_filter,
+        'type_filter': type_filter,
     }
     return render(request, 'patient/notifications.html', context)
 
@@ -1117,3 +1135,52 @@ def change_password_view(request):
             return redirect('patient:profile')
 
     return redirect('patient:profile')
+
+
+@login_required(login_url='patient:login')
+def patient_update_profile_picture_view(request):
+    """
+    Directly updates or removes the patient's avatar from dropdown modal or profile page.
+    Supports both traditional POST redirect and XMLHttpRequest JSON responses.
+    """
+    patient = get_patient_profile_or_none(request.user)
+    if not patient:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+        return redirect('patient:login')
+
+    if request.method == 'POST':
+        if 'remove' in request.POST or request.POST.get('action') == 'remove':
+            if patient.avatar:
+                patient.avatar.delete(save=False)
+                patient.avatar = None
+                patient.save()
+            messages.success(request, "Profile photo removed successfully.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True, 'removed': True})
+            return redirect(request.META.get('HTTP_REFERER') or 'patient:dashboard')
+
+        uploaded_file = request.FILES.get('avatar') or request.FILES.get('profile_picture')
+        if not uploaded_file:
+            messages.error(request, "Please select an image file to upload.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'No file selected'})
+            return redirect(request.META.get('HTTP_REFERER') or 'patient:dashboard')
+
+        if uploaded_file.size > 5 * 1024 * 1024:
+            messages.error(request, "Image file too large. Maximum size is 5MB.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'File too large (max 5MB)'})
+            return redirect(request.META.get('HTTP_REFERER') or 'patient:dashboard')
+
+        patient.avatar = uploaded_file
+        patient.save()
+        messages.success(request, "Profile photo updated successfully!")
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'image_url': patient.avatar.url})
+
+        return redirect(request.META.get('HTTP_REFERER') or 'patient:dashboard')
+
+    return redirect('patient:dashboard')
+

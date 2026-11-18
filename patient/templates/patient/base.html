@@ -53,6 +53,16 @@
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- Lucide Icons -->
+    <script src="{% static 'patient/js/lucide.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+
     <!-- Custom Patient CSS -->
     <link rel="stylesheet" href="{% static 'patient/css/patient.css' %}">
 
@@ -205,7 +215,7 @@
                        title="View Notifications">
                         <i class="fa-solid fa-bell text-base"></i>
                         {% if patient_unread_notifs > 0 %}
-                        <span class="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
+                        <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
                             {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
                         </span>
                         {% endif %}
@@ -217,39 +227,67 @@
                         <button type="button" 
                                 onclick="toggleUserDropdown()" 
                                 id="userMenuBtn"
-                                class="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition focus:outline-none">
-                            <div class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200 bg-slate-100 flex items-center justify-center text-slate-600 text-xs flex-shrink-0">
+                                class="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                aria-label="Open patient user menu">
+                            <div class="w-8 h-8 rounded-full overflow-hidden ring-1 ring-slate-200 bg-slate-100 flex items-center justify-center text-slate-600 text-xs flex-shrink-0 shadow-xs">
                                 {% if current_patient.avatar %}
                                     <img src="{{ current_patient.avatar.url }}" alt="{{ current_patient.full_name }}" class="w-full h-full object-cover">
                                 {% else %}
                                     <i class="fa-solid fa-user text-slate-400 text-xs"></i>
                                 {% endif %}
                             </div>
-                            <span class="text-xs font-medium text-slate-800 hidden sm:inline-block max-w-[120px] truncate">{{ current_patient.full_name }}</span>
-                            <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            <span class="text-xs font-semibold text-slate-800 hidden sm:inline-block max-w-[120px] truncate">{{ current_patient.full_name }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
                         </button>
 
                         <!-- User Dropdown Menu -->
-                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-lg bg-white shadow-lg border border-slate-200 py-1.5 z-50 text-xs">
-                            <div class="px-3.5 py-2.5 border-b border-slate-100">
-                                <p class="font-semibold text-slate-900 truncate">{{ current_patient.full_name }}</p>
-                                <span class="inline-block mt-1 px-1.5 py-0.2 rounded text-[10px] font-mono text-slate-600 bg-slate-100">{{ current_patient.patient_id }}</span>
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-white shadow-xl border border-slate-200 py-1.5 z-50 text-xs divide-y divide-slate-100">
+                            <!-- Identity Card Header -->
+                            <div class="px-3.5 py-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full overflow-hidden ring-1 ring-slate-200 flex-shrink-0 bg-slate-100 flex items-center justify-center">
+                                        {% if current_patient.avatar %}
+                                            <img src="{{ current_patient.avatar.url }}" alt="{{ current_patient.full_name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            <i class="fa-solid fa-user text-slate-400 text-xs"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-bold text-slate-900 truncate">{{ current_patient.full_name }}</p>
+                                        <span class="inline-block px-1.5 py-0.2 rounded text-[10px] font-mono text-slate-600 bg-slate-100">{{ current_patient.patient_id }}</span>
+                                        <span class="inline-flex items-center gap-1 text-[9px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded mt-0.5 ml-1">
+                                            Patient Portal
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Menu Items -->
                             <div class="py-1">
-                                <a href="{% url 'patient:profile' %}" class="flex items-center gap-2 px-3.5 py-2 text-slate-700 hover:bg-slate-50 transition">
-                                    <i class="fa-solid fa-user-circle text-slate-400 w-4"></i>
+                                <a href="{% url 'patient:profile' %}" class="flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition font-medium">
+                                    <i class="fa-solid fa-user text-slate-400 w-4 text-center"></i>
                                     <span>My Profile</span>
                                 </a>
-                                <a href="{% url 'patient:emergency' %}" class="flex items-center gap-2 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition">
-                                    <i class="fa-solid fa-triangle-exclamation text-rose-500 w-4"></i>
+                                <button type="button" onclick="openPatientPhotoModal()" class="w-full flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition font-medium text-left">
+                                    <i class="fa-solid fa-camera text-slate-400 w-4 text-center"></i>
+                                    <span>Change Profile Photo</span>
+                                </button>
+                                <a href="{% url 'patient:profile' %}" class="flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition font-medium">
+                                    <i class="fa-solid fa-user-pen text-slate-400 w-4 text-center"></i>
+                                    <span>Edit Profile</span>
+                                </a>
+                                <a href="{% url 'patient:emergency' %}" class="flex items-center gap-2.5 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition font-medium">
+                                    <i class="fa-solid fa-triangle-exclamation text-rose-500 w-4 text-center"></i>
                                     <span>Help & Emergency</span>
                                 </a>
                             </div>
-                            <div class="pt-1 border-t border-slate-100">
-                                <a href="{% url 'patient:logout' %}" class="flex items-center gap-2 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition">
-                                    <i class="fa-solid fa-arrow-right-from-bracket text-rose-500 w-4"></i>
-                                    <span>Log Out</span>
-                                </a>
+
+                            <!-- Logout Option -->
+                            <div class="py-1">
+                                <button type="button" onclick="openPatientLogoutModal()" class="w-full flex items-center gap-2.5 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition font-medium text-left">
+                                    <i class="fa-solid fa-arrow-right-from-bracket text-rose-500 w-4 text-center"></i>
+                                    <span>Logout</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -306,7 +344,7 @@
             <div class="relative">
                 <i class="fa-solid fa-bell text-sm sm:text-base"></i>
                 {% if patient_unread_notifs > 0 %}
-                <span class="absolute -top-1 -right-1.5 min-w-[13px] h-[13px] px-0.5 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
+                <span class="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
                     {% if patient_unread_notifs > 99 %}99+{% else %}{{ patient_unread_notifs }}{% endif %}
                 </span>
                 {% endif %}
@@ -388,6 +426,7 @@
 
     </script>
     {% include 'doctor/includes/password_toggle_script.html' %}
+    {% include 'patient/includes/profile_modals.html' %}
 
     {% include 'doctor/includes/pwa_install_modal.html' %}
 </body>

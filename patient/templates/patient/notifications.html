@@ -1,125 +1,227 @@
 {% extends 'patient/base.html' %}
 {% load static %}
 
-{% block title %}Notifications - PEDO ALIGN{% endblock %}
+{% block title %}Notifications & Reminders - PEDO ALIGN{% endblock %}
 {% block page_title %}Notifications{% endblock %}
 {% block breadcrumb %}Notifications{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-5">
+<div class="space-y-5 max-w-5xl mx-auto">
 
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
-        <div class="min-w-0">
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-bell text-blue-600 text-sm"></i> Notifications & Reminders
-            </h1>
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200">
+        <div>
+            <div class="flex items-center gap-2">
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-bell text-blue-600 text-sm"></i>
+                    <span>Notifications & Reminders</span>
+                </h1>
+                {% if unread_count > 0 %}
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    {{ unread_count }} New
+                </span>
+                {% endif %}
+            </div>
             <p class="text-xs text-slate-500 mt-1">
-                Aligner change reminders, clinic appointment updates, and doctor remarks.
+                Aligner change reminders, clinic appointment updates, and doctor instructions.
             </p>
         </div>
 
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
             {% if unread_count > 0 %}
-            <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                {{ unread_count }} unread
-            </span>
-            <a href="{% url 'patient:mark_all_notifications_read' %}" class="btn-secondary text-xs">
-                <i class="fa-solid fa-check-double text-[11px] mr-1"></i> Mark all read
+            <a href="{% url 'patient:mark_all_notifications_read' %}" class="btn-secondary text-xs flex-1 sm:flex-initial justify-center shadow-xs">
+                <i class="fa-solid fa-check-double text-[11px] mr-1"></i> Mark All as Read
+            </a>
+            {% endif %}
+            <a href="{% url 'patient:emergency' %}" class="btn-secondary text-xs text-rose-600 border-rose-200 hover:bg-rose-50 flex-1 sm:flex-initial justify-center shadow-xs">
+                <i class="fa-solid fa-triangle-exclamation text-[11px] mr-1"></i> Report Urgent Issue
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter & Category Toolbar -->
+    <div class="pa-card p-3 bg-white border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+        
+        <!-- Status Tabs (Scrollable on mobile) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+            <!-- All -->
+            <a href="?filter=all" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 {% if current_filter == 'all' and type_filter == 'ALL' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                <span>All Alerts</span>
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold {% if current_filter == 'all' and type_filter == 'ALL' %}bg-white/20 text-white{% else %}bg-slate-200 text-slate-700{% endif %}">
+                    {{ total_count }}
+                </span>
+            </a>
+
+            <!-- Unread -->
+            <a href="?filter=unread" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 {% if current_filter == 'unread' %}bg-blue-600 text-white shadow-xs font-semibold{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                <span>Unread</span>
+                {% if unread_count > 0 %}
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold {% if current_filter == 'unread' %}bg-white text-blue-600{% else %}bg-blue-600 text-white{% endif %}">
+                    {{ unread_count }}
+                </span>
+                {% endif %}
+            </a>
+
+            <!-- Urgent / Emergencies -->
+            {% if urgent_count > 0 or current_filter == 'urgent' or type_filter == 'EMERGENCY_RESPONSE' %}
+            <a href="?filter=urgent" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 {% if current_filter == 'urgent' or type_filter == 'EMERGENCY_RESPONSE' %}bg-rose-600 text-white shadow-xs font-semibold{% else %}bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200{% endif %}">
+                <i class="fa-solid fa-triangle-exclamation text-[11px]"></i>
+                <span>Urgent</span>
+                {% if urgent_count > 0 %}
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold {% if current_filter == 'urgent' or type_filter == 'EMERGENCY_RESPONSE' %}bg-white text-rose-600{% else %}bg-rose-600 text-white{% endif %}">
+                    {{ urgent_count }}
+                </span>
+                {% endif %}
             </a>
             {% endif %}
         </div>
+
+        <!-- Category Dropdown Select -->
+        <div class="flex items-center gap-2 self-start md:self-auto w-full md:w-auto">
+            <span class="text-slate-400 font-semibold text-[11px] uppercase tracking-wider hidden lg:inline whitespace-nowrap">Category:</span>
+            <div class="relative w-full md:w-56">
+                <select onchange="window.location.href=this.value" class="w-full text-xs font-medium py-1.5 pl-3 pr-8 rounded-lg border border-slate-200 bg-white text-slate-700 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer appearance-none shadow-2xs">
+                    <option value="?filter=all" {% if current_filter == 'all' and type_filter == 'ALL' %}selected{% endif %}>All Categories</option>
+                    <option value="?type=ALIGNER_CHANGE" {% if type_filter == 'ALIGNER_CHANGE' %}selected{% endif %}>Aligner Trays & Changes</option>
+                    <option value="?type=PHOTO_SUBMISSION" {% if type_filter == 'PHOTO_SUBMISSION' %}selected{% endif %}>Progress Photo Check-ins</option>
+                    <option value="?type=APPOINTMENT" {% if type_filter == 'APPOINTMENT' %}selected{% endif %}>Clinic Appointments</option>
+                    <option value="?type=DOCTOR_INSTRUCTION" {% if type_filter == 'DOCTOR_INSTRUCTION' %}selected{% endif %}>Doctor Instructions</option>
+                    <option value="?type=EMERGENCY_RESPONSE" {% if type_filter == 'EMERGENCY_RESPONSE' %}selected{% endif %}>Urgent Care Responses</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                    <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Notifications List Card -->
-    <div class="pa-card p-5 sm:p-6 bg-white space-y-3">
-        
-        {% if notifications %}
-        <div class="divide-y divide-slate-100">
-            {% for notif in notifications %}
-            <div class="py-3 flex items-start gap-3 rounded-lg p-2.5 transition-colors
-                        {% if not notif.is_read %}bg-blue-50/40 border border-blue-100{% else %}hover:bg-slate-50{% endif %}">
+    <!-- Notifications List -->
+    {% if notifications %}
+    <div class="space-y-3">
+        {% for notif in notifications %}
+        <div class="pa-card p-4 sm:p-5 transition hover:shadow-md border border-slate-200/90 rounded-xl
+            {% if not notif.is_read %}
+                {% if notif.notification_type == 'EMERGENCY_RESPONSE' %}
+                    bg-rose-50/20 border-l-4 border-l-rose-500
+                {% elif notif.notification_type == 'PHOTO_SUBMISSION' or notif.notification_type == 'PHOTO_REMINDER' %}
+                    bg-sky-50/20 border-l-4 border-l-sky-500
+                {% elif notif.notification_type == 'APPOINTMENT' %}
+                    bg-purple-50/20 border-l-4 border-l-purple-500
+                {% elif notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
+                    bg-emerald-50/20 border-l-4 border-l-emerald-500
+                {% else %}
+                    bg-blue-50/20 border-l-4 border-l-blue-600
+                {% endif %}
+            {% else %}
+                bg-white border-l-4 border-l-slate-200
+            {% endif %}">
+
+            <!-- Card Layout: Flexible Responsive Grid -->
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
                 
-                <!-- Type Icon -->
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs flex-shrink-0 mt-0.5
-                    {% if notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
-                        bg-blue-50 text-blue-600
-                    {% elif notif.notification_type == 'PHOTO_REMINDER' or notif.notification_type == 'PHOTO_SUBMISSION' %}
-                        bg-sky-50 text-sky-600
-                    {% elif notif.notification_type == 'DOCTOR_FEEDBACK' or notif.notification_type == 'DOCTOR_INSTRUCTION' %}
-                        bg-indigo-50 text-indigo-600
-                    {% elif notif.notification_type == 'APPOINTMENT' or notif.notification_type == 'APPOINTMENT_REMINDER' %}
-                        bg-amber-50 text-amber-600
-                    {% elif notif.notification_type == 'EMERGENCY_RESPONSE' %}
-                        bg-rose-50 text-rose-600
-                    {% else %}
-                        bg-slate-100 text-slate-600
-                    {% endif %}">
-                    {% if notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
-                        <i class="fa-solid fa-teeth-open"></i>
-                    {% elif notif.notification_type == 'PHOTO_REMINDER' or notif.notification_type == 'PHOTO_SUBMISSION' %}
-                        <i class="fa-solid fa-camera"></i>
-                    {% elif notif.notification_type == 'DOCTOR_FEEDBACK' or notif.notification_type == 'DOCTOR_INSTRUCTION' %}
-                        <i class="fa-solid fa-user-doctor"></i>
-                    {% elif notif.notification_type == 'APPOINTMENT' or notif.notification_type == 'APPOINTMENT_REMINDER' %}
-                        <i class="fa-solid fa-calendar-check"></i>
-                    {% elif notif.notification_type == 'EMERGENCY_RESPONSE' %}
-                        <i class="fa-solid fa-kit-medical"></i>
-                    {% else %}
-                        <i class="fa-solid fa-bell"></i>
+                <!-- Left: Category Icon + Content Block -->
+                <div class="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
+                    
+                    <!-- Icon Thumbnail -->
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-sm flex-shrink-0 mt-0.5 shadow-2xs
+                        {% if notif.notification_type == 'EMERGENCY_RESPONSE' %}
+                            bg-rose-100 text-rose-700
+                        {% elif notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}
+                            bg-emerald-100 text-emerald-800
+                        {% elif notif.notification_type == 'PHOTO_SUBMISSION' or notif.notification_type == 'PHOTO_REMINDER' %}
+                            bg-sky-100 text-sky-700
+                        {% elif notif.notification_type == 'APPOINTMENT' %}
+                            bg-purple-100 text-purple-700
+                        {% elif notif.notification_type == 'DOCTOR_INSTRUCTION' or notif.notification_type == 'DOCTOR_FEEDBACK' %}
+                            bg-indigo-100 text-indigo-700
+                        {% else %}
+                            bg-blue-100 text-blue-700
+                        {% endif %}">
+                        <i class="fa-solid 
+                            {% if notif.notification_type == 'EMERGENCY_RESPONSE' %}fa-kit-medical
+                            {% elif notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}fa-teeth-open
+                            {% elif notif.notification_type == 'PHOTO_SUBMISSION' or notif.notification_type == 'PHOTO_REMINDER' %}fa-camera
+                            {% elif notif.notification_type == 'APPOINTMENT' %}fa-calendar-check
+                            {% elif notif.notification_type == 'DOCTOR_INSTRUCTION' or notif.notification_type == 'DOCTOR_FEEDBACK' %}fa-user-doctor
+                            {% else %}fa-bell{% endif %}"></i>
+                    </div>
+
+                    <!-- Text Details -->
+                    <div class="min-w-0 flex-1">
+                        <!-- Header Line: Title + Dot + Badge -->
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug break-words">
+                                {{ notif.title }}
+                            </h4>
+                            {% if not notif.is_read %}
+                            <span class="w-2 h-2 rounded-full bg-blue-600 ring-2 ring-blue-100 flex-shrink-0" title="Unread notification"></span>
+                            {% endif %}
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md flex-shrink-0
+                                {% if notif.notification_type == 'EMERGENCY_RESPONSE' %}bg-rose-50 text-rose-700 border border-rose-200
+                                {% elif notif.notification_type == 'ALIGNER_CHANGE' or notif.notification_type == 'TRAY_CHANGE' %}bg-emerald-50 text-emerald-800 border border-emerald-200
+                                {% elif notif.notification_type == 'PHOTO_SUBMISSION' or notif.notification_type == 'PHOTO_REMINDER' %}bg-sky-50 text-sky-700 border border-sky-200
+                                {% elif notif.notification_type == 'APPOINTMENT' %}bg-purple-50 text-purple-700 border border-purple-200
+                                {% elif notif.notification_type == 'DOCTOR_INSTRUCTION' or notif.notification_type == 'DOCTOR_FEEDBACK' %}bg-indigo-50 text-indigo-700 border border-indigo-200
+                                {% else %}bg-slate-100 text-slate-700 border border-slate-200{% endif %}">
+                                {{ notif.get_notification_type_display }}
+                            </span>
+                        </div>
+
+                        <!-- Notification Body Message -->
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed break-words">
+                            {{ notif.message }}
+                        </p>
+
+                        <!-- Metadata Row (Timestamp) -->
+                        <div class="flex items-center gap-3 text-[11px] text-slate-400 mt-2 flex-wrap font-medium">
+                            <span class="flex items-center gap-1">
+                                <i class="fa-regular fa-clock text-[10px]"></i>
+                                <span>{{ notif.created_at|timesince }} ago</span>
+                            </span>
+                            {% if current_patient.doctor %}
+                            <span>&bull;</span>
+                            <span class="inline-flex items-center gap-1 text-slate-500">
+                                <i class="fa-solid fa-user-doctor text-[10px] text-slate-400"></i>
+                                <span>Dr. {{ current_patient.doctor.full_name }}</span>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right / Bottom Action Buttons -->
+                <div class="flex items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t border-slate-100 sm:border-0 mt-2 sm:mt-0 flex-shrink-0">
+                    {% if not notif.is_read %}
+                    <a href="{% url 'patient:mark_notification_read' notif.id %}" class="btn-secondary py-1 px-3 text-xs flex items-center gap-1 shadow-2xs hover:bg-slate-100" title="Mark as read">
+                        <i class="fa-solid fa-check text-[10px]"></i>
+                        <span>Mark Read</span>
+                    </a>
+                    {% endif %}
+                    {% if notif.link_url %}
+                    <a href="{{ notif.link_url }}" class="btn-primary py-1 px-3 text-xs flex items-center gap-1 shadow-2xs">
+                        <span>View</span>
+                        <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                    </a>
                     {% endif %}
                 </div>
 
-                <!-- Content -->
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-1.5">
-                            <h4 class="text-xs font-semibold text-slate-900 leading-tight">{{ notif.title }}</h4>
-                            {% if not notif.is_read %}
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600" title="Unread"></span>
-                            {% endif %}
-                        </div>
-                        <span class="text-[10px] text-slate-400 whitespace-nowrap">
-                            {{ notif.created_at|date:"M d, h:i A" }}
-                        </span>
-                    </div>
-
-                    <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                        {{ notif.message }}
-                    </p>
-
-                    <div class="mt-2 flex items-center gap-3 text-[11px]">
-                        {% if not notif.is_read %}
-                        <a href="{% url 'patient:mark_notification_read' notif.id %}" class="font-medium text-blue-600 hover:text-blue-800 transition flex items-center gap-1">
-                            <i class="fa-solid fa-check text-[10px]"></i> Mark as read
-                        </a>
-                        {% else %}
-                        <span class="text-slate-400 flex items-center gap-1">
-                            <i class="fa-solid fa-circle-check text-slate-400 text-[10px]"></i> Read
-                        </span>
-                        {% endif %}
-
-                        {% if notif.link_url %}
-                        <a href="{{ notif.link_url }}" class="font-medium text-blue-600 hover:underline flex items-center gap-1">
-                            View details <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-
             </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="py-10 text-center text-slate-400">
-            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-lg mx-auto mb-2">
-                <i class="fa-regular fa-bell"></i>
-            </div>
-            <h4 class="text-xs font-semibold text-slate-800">You're all caught up</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">There are no new notifications at this time.</p>
-        </div>
-        {% endif %}
 
+        </div>
+        {% endfor %}
     </div>
+    {% else %}
+    <!-- Clean Empty State -->
+    <div class="pa-card p-12 text-center text-xs text-slate-400 bg-white border border-slate-200 rounded-xl">
+        <div class="w-14 h-14 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xl mx-auto mb-3">
+            <i class="fa-regular fa-bell-slash"></i>
+        </div>
+        <h4 class="text-sm font-semibold text-slate-800">You're all caught up</h4>
+        <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            There are no new notifications or aligner reminders under this filter.
+        </p>
+    </div>
+    {% endif %}
 
 </div>
 {% endblock %}

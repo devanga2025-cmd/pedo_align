@@ -58,6 +58,16 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Lucide Icons -->
+    <script src="{% static 'doctor/js/lucide.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+    
     <!-- Custom Clinical CSS -->
     <link rel="stylesheet" href="{% static 'doctor/css/custom.css' %}">
     
@@ -202,7 +212,7 @@
                     <a href="{% url 'doctor:notifications' %}" class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors {% if 'notification' in request.resolver_match.url_name %}bg-slate-100 text-blue-600{% endif %}" title="View Notifications">
                         <i class="fa-solid fa-bell text-base"></i>
                         {% if unread_notifications_count > 0 %}
-                        <span class="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
+                        <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white shadow-xs">
                             {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
                         </span>
                         {% endif %}
@@ -218,34 +228,63 @@
 
                     <!-- Profile Dropdown -->
                     {% if current_doctor %}
-                    <div class="relative">
-                        <button id="userProfileBtn" class="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition focus:outline-none">
-                            <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-medium flex items-center justify-center text-xs overflow-hidden ring-1 ring-slate-200">
+                    <div class="relative" id="userProfileContainer">
+                        <button id="userProfileBtn" class="flex items-center gap-2 p-1 rounded-lg hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-blue-100" aria-label="Open doctor profile menu">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-medium flex items-center justify-center text-xs overflow-hidden ring-1 ring-slate-200 shadow-xs">
                                 {% if current_doctor.profile_picture %}
                                     <img src="{{ current_doctor.profile_picture.url }}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
                                 {% else %}
                                     <img src="{% static 'doctor/images/doctor_avatar_sample_hq.png' %}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
                                 {% endif %}
                             </div>
-                            <span class="hidden md:inline-block text-xs font-medium text-slate-800">Dr. {{ current_doctor.full_name }}</span>
-                            <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            <span class="hidden md:inline-block text-xs font-semibold text-slate-800">Dr. {{ current_doctor.full_name }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
                         </button>
 
-                        <div id="userProfileMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-1.5 z-50 text-xs">
-                            <div class="px-3.5 py-2.5 border-b border-slate-100">
-                                <p class="font-semibold text-slate-900 truncate">Dr. {{ current_doctor.full_name }}</p>
-                                <p class="text-[11px] text-slate-500 truncate mt-0.5">{{ current_doctor.clinic_name }}</p>
+                        <div id="userProfileMenu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 text-xs divide-y divide-slate-100">
+                            <!-- Identity Card Header -->
+                            <div class="px-3.5 py-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full overflow-hidden ring-1 ring-slate-200 flex-shrink-0 bg-slate-100">
+                                        {% if current_doctor.profile_picture %}
+                                            <img src="{{ current_doctor.profile_picture.url }}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            <img src="{% static 'doctor/images/doctor_avatar_sample_hq.png' %}" alt="{{ current_doctor.full_name }}" class="w-full h-full object-cover">
+                                        {% endif %}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-bold text-slate-900 truncate">Dr. {{ current_doctor.full_name }}</p>
+                                        <p class="text-[11px] text-slate-500 truncate">{{ current_doctor.clinic_name }}</p>
+                                        <span class="inline-flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded mt-0.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Doctor Portal
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2 px-3.5 py-2 text-slate-700 hover:bg-slate-50 transition">
-                                <i class="fa-solid fa-user-doctor text-slate-400 w-4"></i> Clinic Profile & Details
-                            </a>
-                            <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2 px-3.5 py-2 text-slate-700 hover:bg-slate-50 transition">
-                                <i class="fa-solid fa-shield-halved text-slate-400 w-4"></i> Security & Password
-                            </a>
-                            <div class="border-t border-slate-100 my-1"></div>
-                            <a href="{% url 'doctor:logout' %}" class="flex items-center gap-2 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition">
-                                <i class="fa-solid fa-arrow-right-from-bracket text-rose-500 w-4"></i> Sign Out
-                            </a>
+
+                            <!-- Menu Items -->
+                            <div class="py-1">
+                                <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition font-medium">
+                                    <i class="fa-solid fa-user text-slate-400 w-4 text-center"></i>
+                                    <span>My Profile</span>
+                                </a>
+                                <button type="button" onclick="openChangePhotoModal()" class="w-full flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition font-medium text-left">
+                                    <i class="fa-solid fa-camera text-slate-400 w-4 text-center"></i>
+                                    <span>Change Profile Photo</span>
+                                </button>
+                                <a href="{% url 'doctor:settings' %}" class="flex items-center gap-2.5 px-3.5 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition font-medium">
+                                    <i class="fa-solid fa-user-pen text-slate-400 w-4 text-center"></i>
+                                    <span>Edit Profile</span>
+                                </a>
+                            </div>
+
+                            <!-- Logout Option -->
+                            <div class="py-1">
+                                <button type="button" onclick="openLogoutModal()" class="w-full flex items-center gap-2.5 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition font-medium text-left">
+                                    <i class="fa-solid fa-arrow-right-from-bracket text-rose-500 w-4 text-center"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     {% endif %}
@@ -314,7 +353,7 @@
             <div class="relative">
                 <i class="fa-solid fa-bell text-sm sm:text-base"></i>
                 {% if unread_notifications_count > 0 %}
-                <span class="absolute -top-1 -right-1.5 min-w-[13px] h-[13px] px-0.5 bg-rose-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
+                <span class="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
                     {% if unread_notifications_count > 99 %}99+{% else %}{{ unread_notifications_count }}{% endif %}
                 </span>
                 {% endif %}
@@ -343,6 +382,7 @@
     {% include 'doctor/includes/password_toggle_script.html' %}
     {% block extra_js %}{% endblock %}
 
+    {% include 'doctor/includes/profile_modals.html' %}
     {% include 'doctor/includes/pwa_install_modal.html' %}
 </body>
 </html>

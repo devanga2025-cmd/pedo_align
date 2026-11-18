@@ -93,4 +93,5 @@ urlpatterns = [
 
     # Doctor Profile & Settings
     path('settings/', views.doctor_settings_view, name='settings'),
+    path('profile/update-picture/', views.doctor_update_profile_picture_view, name='update_profile_picture'),
 ]

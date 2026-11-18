@@ -1,0 +1,178 @@
+{% load static %}
+<!-- ======================================================== -->
+<!-- PEDO ALIGN - PATIENT PROFILE MODALS (PHOTO & LOGOUT)     -->
+<!-- ======================================================== -->
+
+<!-- 1. CHANGE PROFILE PHOTO MODAL -->
+<div id="patientChangePhotoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity" role="dialog" aria-modal="true" aria-labelledby="patientPhotoModalTitle">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all" onclick="event.stopPropagation()">
+        
+        <!-- Modal Header -->
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+                <div>
+                    <h3 id="patientPhotoModalTitle" class="text-sm font-bold text-slate-900 leading-tight">Change Profile Photo</h3>
+                    <p class="text-[11px] text-slate-500">Update your avatar displayed on your treatment records</p>
+                </div>
+            </div>
+            <button type="button" onclick="closePatientPhotoModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition flex items-center justify-center" aria-label="Close modal">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body & Form -->
+        <form method="POST" action="{% url 'patient:update_profile_picture' %}" enctype="multipart/form-data" id="patientPhotoUploadForm" class="p-5 space-y-4">
+            {% csrf_token %}
+
+            <!-- Live Avatar Preview Area -->
+            <div class="flex flex-col items-center justify-center text-center py-2">
+                <div class="relative w-24 h-24 rounded-full ring-4 ring-blue-50 overflow-hidden border-2 border-slate-200 bg-slate-100 shadow-inner flex items-center justify-center group">
+                    <img id="patientModalPreviewImg" 
+                         src="{% if current_patient.avatar %}{{ current_patient.avatar.url }}{% else %}{% static 'doctor/images/doctor_avatar_sample_hq.png' %}{% endif %}" 
+                         alt="{{ current_patient.full_name }}" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-medium cursor-pointer" onclick="document.getElementById('patientPhotoFileInput').click();">
+                        <i class="fa-solid fa-camera mr-1"></i> Change
+                    </div>
+                </div>
+                <p id="patientPhotoFileName" class="text-[11px] text-slate-500 mt-2 font-medium truncate max-w-xs">
+                    {% if current_patient.avatar %}Current profile photo active{% else %}No custom photo set{% endif %}
+                </p>
+            </div>
+
+            <!-- Upload Dropzone / Button -->
+            <div class="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-4 text-center cursor-pointer transition bg-slate-50/50 hover:bg-blue-50/30" onclick="document.getElementById('patientPhotoFileInput').click();">
+                <input type="file" name="avatar" id="patientPhotoFileInput" accept="image/png,image/jpeg,image/webp,image/jpg" class="hidden" onchange="previewPatientModalPhoto(this)">
+                <i class="fa-solid fa-cloud-arrow-up text-xl text-blue-600 mb-1.5 block"></i>
+                <span class="text-xs font-semibold text-slate-800 block">Click to browse or drop an image</span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">Supports JPG, PNG, WEBP &bull; Max 5MB</span>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2.5">
+                <div>
+                    {% if current_patient.avatar %}
+                    <button type="submit" name="remove" value="1" onclick="return confirm('Remove your current profile photo?');" class="text-xs text-rose-600 hover:text-rose-800 font-medium py-1.5 px-2 rounded-lg hover:bg-rose-50 transition flex items-center gap-1">
+                        <i class="fa-solid fa-trash-can text-[11px]"></i>
+                        <span>Remove</span>
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closePatientPhotoModal()" class="btn-secondary py-1.5 px-3 text-xs">
+                        Cancel
+                    </button>
+                    <button type="submit" id="patientPhotoSaveBtn" class="btn-primary py-1.5 px-4 text-xs">
+                        <i class="fa-solid fa-check text-xs mr-1"></i> Save Photo
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- 2. LOGOUT CONFIRMATION MODAL -->
+<div id="patientLogoutConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity" role="dialog" aria-modal="true" aria-labelledby="patientLogoutModalTitle">
+    <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all text-center p-6" onclick="event.stopPropagation()">
+        
+        <!-- Warning Icon -->
+        <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center text-xl mx-auto mb-3 shadow-xs ring-4 ring-rose-50/50">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+
+        <h3 id="patientLogoutModalTitle" class="text-base font-bold text-slate-900">Sign Out of Patient Portal?</h3>
+        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+            Are you sure you want to log out, <strong class="text-slate-800">{{ current_patient.full_name }}</strong>? You will need to sign in again to access aligner tracking and appointments.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="mt-5 flex items-center justify-center gap-2.5">
+            <button type="button" onclick="closePatientLogoutModal()" class="flex-1 py-2 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition shadow-xs">
+                Cancel
+            </button>
+            <a href="{% url 'patient:logout' %}" class="flex-1 py-2 px-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition shadow-xs flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i>
+                <span>Yes, Sign Out</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Patient Profile Modals Logic
+function openPatientPhotoModal() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.add('hidden');
+    const modal = document.getElementById('patientChangePhotoModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closePatientPhotoModal() {
+    const modal = document.getElementById('patientChangePhotoModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function openPatientLogoutModal() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.add('hidden');
+    const modal = document.getElementById('patientLogoutConfirmModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closePatientLogoutModal() {
+    const modal = document.getElementById('patientLogoutConfirmModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function previewPatientModalPhoto(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const fileNameEl = document.getElementById('patientPhotoFileName');
+        if (fileNameEl) {
+            fileNameEl.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewImg = document.getElementById('patientModalPreviewImg');
+            if (previewImg) previewImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Close modals on backdrop click or ESC key
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePatientPhotoModal();
+        closePatientLogoutModal();
+    }
+});
+
+document.addEventListener('click', function(e) {
+    const photoModal = document.getElementById('patientChangePhotoModal');
+    if (photoModal && e.target === photoModal) {
+        closePatientPhotoModal();
+    }
+    const logoutModal = document.getElementById('patientLogoutConfirmModal');
+    if (logoutModal && e.target === logoutModal) {
+        closePatientLogoutModal();
+    }
+});
+</script>

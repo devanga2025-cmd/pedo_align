@@ -3345,4 +3345,53 @@ def download_apk_view(request):
     return response
 
 
+@login_required(login_url='doctor:login')
+def doctor_update_profile_picture_view(request):
+    """
+    Directly updates or removes the doctor's profile picture from dropdown modal or profile page.
+    Supports both traditional POST redirect and XMLHttpRequest JSON responses.
+    """
+    doctor = get_doctor_or_none(request.user)
+    if not doctor:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+        return redirect('doctor:login')
+
+    if request.method == 'POST':
+        if 'remove' in request.POST or request.POST.get('action') == 'remove':
+            if doctor.profile_picture:
+                doctor.profile_picture.delete(save=False)
+                doctor.profile_picture = None
+                doctor.save()
+            messages.success(request, "Profile picture removed successfully.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True, 'removed': True})
+            return redirect(request.META.get('HTTP_REFERER') or 'doctor:dashboard')
+
+        uploaded_file = request.FILES.get('profile_picture') or request.FILES.get('avatar')
+        if not uploaded_file:
+            messages.error(request, "Please select an image file to upload.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'No file selected'})
+            return redirect(request.META.get('HTTP_REFERER') or 'doctor:dashboard')
+
+        if uploaded_file.size > 5 * 1024 * 1024:
+            messages.error(request, "Image file too large. Maximum size is 5MB.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'File too large (max 5MB)'})
+            return redirect(request.META.get('HTTP_REFERER') or 'doctor:dashboard')
+
+        doctor.profile_picture = uploaded_file
+        doctor.save()
+        messages.success(request, "Profile photo updated successfully!")
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'image_url': doctor.profile_picture.url})
+
+        return redirect(request.META.get('HTTP_REFERER') or 'doctor:dashboard')
+
+    return redirect('doctor:dashboard')
+
+
+
 
