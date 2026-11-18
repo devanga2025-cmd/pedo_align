@@ -5,123 +5,149 @@
 {% block breadcrumb %}Appointments{% endblock %}
 
 {% block content %}
-<div class="space-y-5">
+<div class="space-y-4 sm:space-y-5 pb-20 sm:pb-8 max-w-7xl mx-auto">
 
-    <!-- Header -->
+    <!-- PAGE HEADER -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200">
-        <div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <i class="fa-solid fa-calendar-check text-blue-600 text-sm"></i> Clinic Appointment Management
+        <div class="min-w-0">
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-calendar-check text-blue-600 text-lg"></i>
+                <span>Clinic Appointment Management</span>
             </h1>
             <p class="text-xs text-slate-500 mt-1">
-                Schedule aligner deliveries, refinement scans, routine progress checks, and retainers
+                Schedule aligner deliveries, refinement scans, routine progress checks, and clinical evaluations
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <a href="{% url 'doctor:appointment_create' %}" class="btn-primary text-xs">
-                <i class="fa-solid fa-calendar-plus text-xs mr-1"></i> Book New Appointment
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <a href="{% url 'doctor:appointment_create' %}" class="btn-primary text-xs w-full sm:w-auto justify-center py-2 px-3.5 shadow-xs">
+                <i class="fa-solid fa-calendar-plus text-xs mr-1.5"></i>
+                <span>Book New Appointment</span>
             </a>
         </div>
     </div>
 
-    <!-- Quick Stat Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div class="pa-card p-4 bg-white flex items-center justify-between">
-            <div>
-                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Upcoming Visits</span>
-                <div class="text-xl font-bold text-slate-900 mt-0.5">{{ upcoming_count }}</div>
-                <p class="text-[11px] text-slate-500 mt-0.5">Scheduled upcoming</p>
+    <!-- METRIC STAT CARDS (Compact 3-column responsive grid) -->
+    <div class="grid grid-cols-3 gap-2 sm:gap-4">
+        <!-- Upcoming Visits -->
+        <div class="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-xs">
+            <div class="min-w-0">
+                <span class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-400 block truncate">Upcoming</span>
+                <div class="text-lg sm:text-2xl font-bold text-slate-900 mt-0.5">{{ upcoming_count }}</div>
+                <p class="hidden sm:block text-[11px] text-slate-500 mt-0.5 truncate">Scheduled visits</p>
             </div>
-            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+            <div class="hidden sm:flex w-9 h-9 rounded-lg bg-blue-50 text-blue-600 items-center justify-center text-sm flex-shrink-0">
                 <i class="fa-solid fa-calendar-days"></i>
             </div>
         </div>
 
-        <div class="pa-card p-4 bg-white flex items-center justify-between">
-            <div>
-                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Completed Sessions</span>
-                <div class="text-xl font-bold text-slate-900 mt-0.5">{{ completed_count }}</div>
-                <p class="text-[11px] text-slate-500 mt-0.5">Concluded visits</p>
+        <!-- Completed Sessions -->
+        <div class="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-xs">
+            <div class="min-w-0">
+                <span class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-400 block truncate">Completed</span>
+                <div class="text-lg sm:text-2xl font-bold text-emerald-600 mt-0.5">{{ completed_count }}</div>
+                <p class="hidden sm:block text-[11px] text-slate-500 mt-0.5 truncate">Concluded sessions</p>
             </div>
-            <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+            <div class="hidden sm:flex w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 items-center justify-center text-sm flex-shrink-0">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
         </div>
 
-        <div class="pa-card p-4 bg-white flex items-center justify-between">
-            <div>
-                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Today's Date</span>
-                <div class="text-sm font-bold text-slate-900 mt-1">{{ today|date:"l, M d, Y" }}</div>
-                <p class="text-[11px] text-slate-500 mt-0.5">Clinic operational day</p>
+        <!-- Today's Date -->
+        <div class="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-xs">
+            <div class="min-w-0">
+                <span class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-400 block truncate">Today</span>
+                <div class="text-xs sm:text-sm font-bold text-slate-900 mt-0.5 sm:mt-1 truncate">{{ today|date:"M d, Y" }}</div>
+                <p class="hidden sm:block text-[11px] text-slate-500 mt-0.5 truncate">Clinic operational day</p>
             </div>
-            <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-sm">
+            <div class="hidden sm:flex w-9 h-9 rounded-lg bg-slate-100 text-slate-600 items-center justify-center text-sm flex-shrink-0">
                 <i class="fa-solid fa-clock"></i>
             </div>
         </div>
     </div>
 
-    <!-- Toolbar: Filter Status & View Switcher -->
-    <div class="pa-card p-3 bg-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <div class="flex flex-wrap items-center gap-1.5">
-            <span class="font-medium text-slate-500 mr-1 text-[11px]">Filter:</span>
-            <a href="?status=ALL&view={{ view_mode }}" class="px-2.5 py-1 rounded text-xs font-medium transition {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+    <!-- TOOLBAR: FILTERS & VIEW MODE SWITCHER -->
+    <div class="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-xs">
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 custom-scrollbar -mx-0.5 px-0.5">
+            <span class="text-[11px] font-semibold text-slate-400 mr-1 flex-shrink-0 hidden xs:inline">Filter:</span>
+            <a href="?status=ALL&view={{ view_mode }}" 
+               class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'ALL' %}bg-blue-600 text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                 All ({{ appointments.count }})
             </a>
-            <a href="?status=UPCOMING&view={{ view_mode }}" class="px-2.5 py-1 rounded text-xs font-medium transition {% if status_filter == 'UPCOMING' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            <a href="?status=UPCOMING&view={{ view_mode }}" 
+               class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'UPCOMING' %}bg-blue-600 text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                 Upcoming
             </a>
-            <a href="?status=COMPLETED&view={{ view_mode }}" class="px-2.5 py-1 rounded text-xs font-medium transition {% if status_filter == 'COMPLETED' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            <a href="?status=COMPLETED&view={{ view_mode }}" 
+               class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'COMPLETED' %}bg-blue-600 text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                 Completed
             </a>
-            <a href="?status=CANCELLED&view={{ view_mode }}" class="px-2.5 py-1 rounded text-xs font-medium transition {% if status_filter == 'CANCELLED' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            <a href="?status=CANCELLED&view={{ view_mode }}" 
+               class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'CANCELLED' %}bg-blue-600 text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                 Cancelled
             </a>
         </div>
 
-        <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0 text-xs">
-            <a href="?status={{ status_filter }}&view=list" class="py-1 px-2.5 {% if view_mode == 'list' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-                <i class="fa-solid fa-list mr-1 text-[11px]"></i> List
+        <!-- View Mode Segmented Control -->
+        <div class="flex items-center self-start sm:self-auto border border-slate-200 rounded-lg p-0.5 bg-slate-100/90 flex-shrink-0">
+            <a href="?status={{ status_filter }}&view=list" 
+               class="py-1 px-3 rounded-md text-xs font-medium transition flex items-center gap-1.5 {% if view_mode == 'list' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                <i class="fa-solid fa-list text-[11px]"></i>
+                <span>List</span>
             </a>
-            <a href="?status={{ status_filter }}&view=calendar" class="py-1 px-2.5 {% if view_mode == 'calendar' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-                <i class="fa-solid fa-calendar-days mr-1 text-[11px]"></i> Calendar
+            <a href="?status={{ status_filter }}&view=calendar" 
+               class="py-1 px-3 rounded-md text-xs font-medium transition flex items-center gap-1.5 {% if view_mode == 'calendar' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                <i class="fa-solid fa-calendar-days text-[11px]"></i>
+                <span>Calendar</span>
             </a>
         </div>
     </div>
 
-    <!-- Output View -->
+    <!-- MAIN APPOINTMENT CONTENT -->
     {% if view_mode == 'calendar' %}
     <!-- CALENDAR GRID VIEW -->
-    <div class="pa-card p-5 bg-white">
+    <div class="bg-white border border-slate-200/90 rounded-xl p-4 sm:p-5 shadow-xs">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-            <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider">Schedule - {{ today|date:"F Y" }}</h3>
+            <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-calendar-days text-blue-600"></i>
+                <span>Schedule — {{ today|date:"F Y" }}</span>
+            </h3>
             <span class="text-xs text-slate-400">Click any patient to open record</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {% for appt in appointments %}
-            <div class="p-3 rounded-lg border border-slate-200 bg-white hover:border-blue-400 transition shadow-xs space-y-1.5">
-                <div class="flex items-center justify-between">
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-blue-300 transition shadow-xs space-y-2">
+                <div class="flex items-center justify-between gap-1">
                     <span class="text-xs font-bold text-slate-900">{{ appt.scheduled_date|date:"M d, D" }}</span>
-                    <span class="badge {% if appt.status == 'UPCOMING' %}badge-pending{% elif appt.status == 'COMPLETED' %}badge-active{% else %}badge-emergency-high{% endif %} text-[9px]">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold
+                        {% if appt.status == 'UPCOMING' %}bg-blue-50 text-blue-700 border border-blue-200/80
+                        {% elif appt.status == 'COMPLETED' %}bg-emerald-50 text-emerald-700 border border-emerald-200/80
+                        {% elif appt.status == 'CANCELLED' %}bg-rose-50 text-rose-700 border border-rose-200/80
+                        {% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">
                         {{ appt.get_status_display }}
                     </span>
                 </div>
 
-                <div class="text-xs">
-                    <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="font-semibold text-slate-900 hover:text-blue-600 block truncate">
+                <div>
+                    <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="font-semibold text-xs text-slate-900 hover:text-blue-600 block truncate">
                         {{ appt.patient.full_name }}
                     </a>
-                    <p class="text-slate-500 text-[11px] truncate">{{ appt.get_appointment_type_display }}</p>
+                    <p class="text-slate-500 text-[11px] truncate mt-0.5">{{ appt.get_appointment_type_display }}</p>
                 </div>
 
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                    <span><i class="fa-regular fa-clock mr-1 text-[10px]"></i>{{ appt.scheduled_time|time:"g:i A" }}</span>
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                    <span class="flex items-center gap-1">
+                        <i class="fa-regular fa-clock text-[10px]"></i>
+                        <span>{{ appt.scheduled_time|time:"g:i A" }}</span>
+                    </span>
                     <span>{{ appt.duration_minutes }}m</span>
                 </div>
             </div>
             {% empty %}
-            <div class="col-span-full py-8 text-center text-xs text-slate-400">
+            <div class="col-span-full py-10 text-center text-xs text-slate-400">
+                <i class="fa-solid fa-calendar-xmark text-2xl mb-1 text-slate-300 block"></i>
                 No appointments scheduled in calendar view.
             </div>
             {% endfor %}
@@ -130,60 +156,161 @@
 
     {% else %}
 
-    <!-- LIST VIEW -->
+    <!-- LIST VIEW: RESPONSIVE DUAL-LAYOUT -->
     {% if appointments %}
-    <div class="pa-card overflow-hidden bg-white">
+
+    <!-- 1. MOBILE CARD VIEW (Visible on small screens < 768px) -->
+    <div class="space-y-3 md:hidden">
+        {% for appt in appointments %}
+        <div class="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-xs transition hover:border-blue-300 space-y-3">
+            
+            <!-- Card Header: Date/Time & Status -->
+            <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-100">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                        <i class="fa-regular fa-calendar text-blue-600 text-xs flex-shrink-0"></i>
+                        <span class="truncate">{{ appt.scheduled_date|date:"l, M d, Y" }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1 text-[11px] text-slate-500 font-medium">
+                        <span class="inline-flex items-center gap-1">
+                            <i class="fa-regular fa-clock text-slate-400 text-[10px]"></i>
+                            <span>{{ appt.scheduled_time|time:"g:i A" }}</span>
+                        </span>
+                        <span class="text-slate-300">•</span>
+                        <span>{{ appt.duration_minutes }} Mins</span>
+                    </div>
+                </div>
+
+                <!-- Status Badge -->
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold flex-shrink-0
+                    {% if appt.status == 'UPCOMING' %}bg-blue-50 text-blue-700 border border-blue-200/80
+                    {% elif appt.status == 'COMPLETED' %}bg-emerald-50 text-emerald-700 border border-emerald-200/80
+                    {% elif appt.status == 'CANCELLED' %}bg-rose-50 text-rose-700 border border-rose-200/80
+                    {% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">
+                    {{ appt.get_status_display }}
+                </span>
+            </div>
+
+            <!-- Card Body: Patient Details & Type -->
+            <div class="space-y-1.5">
+                <div class="flex items-baseline justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <span class="text-[9px] font-semibold uppercase tracking-wider text-slate-400 block">Patient</span>
+                        <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="font-bold text-sm text-slate-900 hover:text-blue-600 truncate block">
+                            {{ appt.patient.full_name }}
+                        </a>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                        {{ appt.patient.patient_id }}
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs text-slate-700 pt-0.5">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-blue-50/70 text-blue-700 font-medium text-[11px] border border-blue-100">
+                        <i class="fa-solid fa-tooth text-[10px]"></i>
+                        <span>{{ appt.get_appointment_type_display }}</span>
+                    </span>
+                </div>
+
+                {% if appt.notes %}
+                <div class="mt-2 p-2 rounded-lg bg-slate-50 border border-slate-100 text-[11px] text-slate-600">
+                    <span class="font-semibold text-slate-700">Note:</span> {{ appt.notes }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Card Actions -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="btn-secondary py-1.5 px-3 text-xs flex-1 justify-center">
+                    <i class="fa-solid fa-folder-open text-[11px] mr-1.5 text-slate-400"></i>
+                    <span>Record</span>
+                </a>
+
+                {% if appt.status == 'UPCOMING' %}
+                <!-- Complete Action -->
+                <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}" class="flex-1">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="COMPLETED">
+                    <button type="submit" class="w-full py-1.5 px-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold flex items-center justify-center gap-1 transition">
+                        <i class="fa-solid fa-check text-[11px]"></i>
+                        <span>Complete</span>
+                    </button>
+                </form>
+
+                <!-- Cancel Action -->
+                <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}" class="flex-none" onsubmit="return confirm('Cancel this appointment?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="CANCELLED">
+                    <button type="submit" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs transition" title="Cancel Appointment">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 2. DESKTOP DATA TABLE (Visible on tablets and desktop >= 768px) -->
+    <div class="hidden md:block bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[10px] tracking-wider">
-                        <th class="py-2.5 px-3.5">Date & Time</th>
-                        <th class="py-2.5 px-3.5">Patient</th>
-                        <th class="py-2.5 px-3.5">Appointment Type</th>
-                        <th class="py-2.5 px-3.5">Duration</th>
-                        <th class="py-2.5 px-3.5">Status</th>
-                        <th class="py-2.5 px-3.5">Notes</th>
-                        <th class="py-2.5 px-3.5 text-right">Actions</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Date & Time</th>
+                        <th class="py-3 px-4">Patient</th>
+                        <th class="py-3 px-4">Appointment Type</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Duration</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4">Notes</th>
+                        <th class="py-3 px-4 text-right whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     {% for appt in appointments %}
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-3.5">
-                            <div class="font-semibold text-slate-900">{{ appt.scheduled_date|date:"M d, Y (D)" }}</div>
-                            <div class="text-slate-500 text-[11px]"><i class="fa-regular fa-clock mr-1 text-[10px]"></i>{{ appt.scheduled_time|time:"g:i A" }}</div>
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-3 px-4 whitespace-nowrap">
+                            <div class="font-semibold text-slate-900">{{ appt.scheduled_date|date:"M d, Y" }}</div>
+                            <div class="text-slate-500 text-[11px] flex items-center gap-1 mt-0.5">
+                                <i class="fa-regular fa-clock text-[10px]"></i>
+                                <span>{{ appt.scheduled_time|time:"g:i A" }} ({{ appt.scheduled_date|date:"D" }})</span>
+                            </div>
                         </td>
-                        <td class="py-3 px-3.5">
+                        <td class="py-3 px-4">
                             <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="font-semibold text-slate-900 hover:text-blue-600 block">
                                 {{ appt.patient.full_name }}
                             </a>
                             <span class="text-[10px] text-slate-400 font-mono">{{ appt.patient.patient_id }}</span>
                         </td>
-                        <td class="py-3 px-3.5 font-medium text-slate-800">
+                        <td class="py-3 px-4 font-medium text-slate-800">
                             {{ appt.get_appointment_type_display }}
                         </td>
-                        <td class="py-3 px-3.5 text-slate-600">{{ appt.duration_minutes }} Mins</td>
-                        <td class="py-3 px-3.5">
-                            <span class="badge 
-                                {% if appt.status == 'UPCOMING' %}badge-pending
-                                {% elif appt.status == 'COMPLETED' %}badge-active
-                                {% elif appt.status == 'CANCELLED' %}badge-emergency-high
-                                {% else %}badge-hold{% endif %} text-[10px]">
+                        <td class="py-3 px-4 text-slate-600 whitespace-nowrap">
+                            {{ appt.duration_minutes }} Mins
+                        </td>
+                        <td class="py-3 px-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                {% if appt.status == 'UPCOMING' %}bg-blue-50 text-blue-700 border border-blue-200/80
+                                {% elif appt.status == 'COMPLETED' %}bg-emerald-50 text-emerald-700 border border-emerald-200/80
+                                {% elif appt.status == 'CANCELLED' %}bg-rose-50 text-rose-700 border border-rose-200/80
+                                {% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">
                                 {{ appt.get_status_display }}
                             </span>
                         </td>
-                        <td class="py-3 px-3.5 text-slate-500 max-w-xs truncate">
+                        <td class="py-3 px-4 text-slate-500 max-w-xs truncate" title="{{ appt.notes }}">
                             {{ appt.notes|default:"—" }}
                         </td>
-                        <td class="py-3 px-3.5 text-right">
+                        <td class="py-3 px-4 text-right whitespace-nowrap">
                             <div class="flex items-center justify-end gap-1.5">
                                 {% if appt.status == 'UPCOMING' %}
                                 <!-- Complete -->
                                 <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="status" value="COMPLETED">
-                                    <button type="submit" class="btn-secondary py-1 px-2 text-xs text-emerald-700 hover:bg-emerald-50" title="Mark Completed">
-                                        <i class="fa-solid fa-check text-[11px]"></i>
+                                    <button type="submit" class="btn-secondary py-1 px-2.5 text-xs text-emerald-700 hover:bg-emerald-50 border-emerald-200" title="Mark Completed">
+                                        <i class="fa-solid fa-check text-[11px] mr-1"></i>
+                                        <span>Complete</span>
                                     </button>
                                 </form>
 
@@ -191,13 +318,13 @@
                                 <form method="POST" action="{% url 'doctor:appointment_status_update' appt.id %}" onsubmit="return confirm('Cancel this appointment?');">
                                     {% csrf_token %}
                                     <input type="hidden" name="status" value="CANCELLED">
-                                    <button type="submit" class="btn-secondary py-1 px-2 text-xs text-rose-600 hover:bg-rose-50" title="Cancel Appointment">
+                                    <button type="submit" class="btn-secondary py-1 px-2 text-xs text-rose-600 hover:bg-rose-50 border-rose-200" title="Cancel Appointment">
                                         <i class="fa-solid fa-xmark text-[11px]"></i>
                                     </button>
                                 </form>
                                 {% endif %}
 
-                                <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="btn-secondary py-1 px-2 text-xs">
+                                <a href="{% url 'doctor:patient_detail' appt.patient.id %}" class="btn-secondary py-1 px-2.5 text-xs">
                                     Record
                                 </a>
                             </div>
@@ -208,10 +335,18 @@
             </table>
         </div>
     </div>
+
     {% else %}
-    <div class="pa-card p-10 text-center text-xs text-slate-400 bg-white">
-        <i class="fa-solid fa-calendar-xmark text-2xl mb-1 text-slate-300 block"></i>
-        No appointments found for the selected filter.
+    <!-- EMPTY STATE -->
+    <div class="bg-white border border-slate-200/90 rounded-xl p-10 text-center text-xs text-slate-400 shadow-xs">
+        <i class="fa-solid fa-calendar-xmark text-3xl mb-2 text-slate-300 block"></i>
+        <p class="font-medium text-slate-600 text-sm">No appointments found</p>
+        <p class="text-slate-400 mt-1">There are no clinic visits matching the current filter criteria.</p>
+        <div class="mt-4">
+            <a href="{% url 'doctor:appointment_create' %}" class="btn-primary text-xs inline-flex">
+                <i class="fa-solid fa-calendar-plus text-xs mr-1.5"></i> Schedule Appointment
+            </a>
+        </div>
     </div>
     {% endif %}
 
