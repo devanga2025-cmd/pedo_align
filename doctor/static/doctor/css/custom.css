@@ -1,19 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
 :root {
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-active: #1e40af;
-    --primary-light: #eff6ff;
+    /* PEDO ALIGN Premium Healthcare Brand Color System */
+    --brand-navy: #083878;
+    --brand-navy-dark: #05244f;
+    --brand-navy-light: #114c9c;
+    --brand-teal: #08B8C8;
+    --brand-teal-dark: #069ba9;
+    --brand-teal-light: #18d4e5;
+    --brand-aqua: #08C8C8;
+    --brand-light-aqua: #E8F8F8;
+    --brand-soft-blue: #E8F0F8;
+    --brand-bg: #F3F8FC;
+    --brand-white: #FFFFFF;
+    --brand-pink: #F28AA8;
+
+    --primary: #083878;
+    --primary-hover: #05244f;
+    --primary-active: #041c3d;
+    --primary-light: #E8F0F8;
     --secondary: #ffffff;
     --border-color: #e2e8f0;
     --border-color-hover: #cbd5e1;
-    --text-navy: #0f172a;
+    --text-navy: #083878;
     --text-slate: #334155;
     --text-muted: #64748b;
-    --bg-light: #f8fafc;
-    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-    --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    --bg-light: #F3F8FC;
+    --card-shadow: 0 1px 3px 0 rgba(8, 56, 120, 0.05), 0 1px 2px -1px rgba(8, 56, 120, 0.03);
+    --card-shadow-hover: 0 4px 12px -2px rgba(8, 56, 120, 0.08), 0 2px 6px -2px rgba(8, 56, 120, 0.04);
 }
 
 * {
@@ -124,8 +138,8 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 /* Custom Cards */
 .pa-card {
     background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 0.75rem;
+    border: 1px solid rgba(8, 56, 120, 0.08);
+    border-radius: 0.875rem;
     box-shadow: var(--card-shadow);
     max-width: 100%;
     min-width: 0;
@@ -133,45 +147,86 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+.pa-card-tinted {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFE 100%);
+    border: 1px solid rgba(8, 56, 120, 0.09);
+}
+
+.pa-card-teal-tint {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F0FBFB 100%);
+    border: 1px solid rgba(8, 184, 200, 0.18);
+}
+
+.pa-card-soft-blue {
+    background: linear-gradient(180deg, #FFFFFF 0%, #EFF6FC 100%);
+    border: 1px solid rgba(8, 56, 120, 0.12);
+}
+
 .pa-card-hover:hover {
     box-shadow: var(--card-shadow-hover);
-    border-color: var(--border-color-hover);
+    border-color: rgba(8, 56, 120, 0.18);
 }
 
 /* Buttons */
 .btn-primary {
-    background-color: var(--primary);
+    background-color: var(--brand-navy);
     color: #ffffff;
     padding: 0.55rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.8125rem;
     line-height: 1.25rem;
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
+    border-radius: 0.625rem;
+    border: 1px solid var(--brand-navy);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
     min-height: 42px;
     touch-action: manipulation;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 1px 2px 0 rgba(8, 56, 120, 0.1);
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     cursor: pointer;
 }
 
 @media (min-width: 640px) {
     .btn-primary {
-        min-height: 36px;
+        min-height: 38px;
         padding: 0.5rem 1rem;
     }
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-hover);
+    background-color: var(--brand-navy-dark);
+    border-color: var(--brand-navy-dark);
 }
 
 .btn-primary:active {
     background-color: var(--primary-active);
+}
+
+.btn-teal {
+    background-color: var(--brand-teal);
+    color: #ffffff;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    border-radius: 0.625rem;
+    border: 1px solid var(--brand-teal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 42px;
+    touch-action: manipulation;
+    box-shadow: 0 1px 2px 0 rgba(8, 184, 200, 0.15);
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-teal:hover {
+    background-color: var(--brand-teal-dark);
+    border-color: var(--brand-teal-dark);
 }
 
 .btn-secondary {
@@ -182,21 +237,21 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     font-weight: 500;
     font-size: 0.8125rem;
     line-height: 1.25rem;
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
     min-height: 42px;
     touch-action: manipulation;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 2px 0 rgba(8, 56, 120, 0.04);
     transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     cursor: pointer;
 }
 
 @media (min-width: 640px) {
     .btn-secondary {
-        min-height: 36px;
+        min-height: 38px;
         padding: 0.5rem 1rem;
     }
 }
@@ -204,76 +259,103 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .btn-secondary:hover {
     background-color: #f8fafc;
     border-color: #94a3b8;
-    color: var(--text-navy);
+    color: var(--brand-navy);
 }
 
 .btn-accent {
-    background-color: #0284c7;
+    background-color: var(--brand-teal);
     color: #ffffff;
     padding: 0.5rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.8125rem;
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     border: 1px solid transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
+    min-height: 42px;
     transition: background-color 0.15s ease;
     cursor: pointer;
 }
 
 .btn-accent:hover {
-    background-color: #0369a1;
+    background-color: var(--brand-teal-dark);
 }
 
-/* Badges */
+/* Badges - Modern Healthcare SaaS Pill Design */
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.2rem 0.55rem;
-    border-radius: 0.375rem;
-    font-size: 0.6875rem;
+    gap: 0.35rem;
+    padding: 0.2rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem; /* 11px */
     font-weight: 600;
-    line-height: 1rem;
-    letter-spacing: 0.01em;
+    line-height: 1.15;
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+    vertical-align: middle;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.badge::before {
+    content: '';
+    display: inline-block;
+    width: 0.375rem; /* 6px status indicator dot */
+    height: 0.375rem;
+    border-radius: 9999px;
+    background-color: currentColor;
+    opacity: 0.85;
+    flex-shrink: 0;
 }
 
 .badge-active {
-    background-color: #ecfdf5;
+    background-color: #ECFDF5;
     color: #047857;
-    border: 1px solid #a7f3d0;
+    border: 1px solid rgba(16, 185, 129, 0.28);
 }
 
 .badge-pending {
-    background-color: #fffbeb;
-    color: #b45309;
-    border: 1px solid #fde68a;
+    background-color: #FFFBEB;
+    color: #B45309;
+    border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .badge-hold {
-    background-color: #f1f5f9;
+    background-color: #F8FAFC;
     color: #475569;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #E2E8F0;
 }
 
 .badge-completed {
-    background-color: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background-color: #EFF6FF;
+    color: #083878;
+    border: 1px solid rgba(8, 56, 120, 0.22);
 }
 
 .badge-emergency-high {
-    background-color: #fff1f2;
-    color: #be123c;
-    border: 1px solid #fecdd3;
+    background-color: #FFF1F2;
+    color: #BE123C;
+    border: 1px solid rgba(225, 29, 72, 0.28);
 }
 
 .badge-emergency-med {
-    background-color: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #fed7aa;
+    background-color: #FFF7ED;
+    color: #C2410C;
+    border: 1px solid rgba(234, 88, 12, 0.28);
+}
+
+.badge-sm {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.625rem; /* 10px */
+    gap: 0.25rem;
+}
+.badge-sm::before {
+    width: 0.3125rem;
+    height: 0.3125rem;
 }
 
 /* Global & Sidebar scrollbar */
@@ -360,15 +442,68 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 /* Mobile Bottom Navigation & Safe Area Inset */
 .mobile-bottom-nav {
     touch-action: manipulation;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(8, 56, 120, 0.08) !important;
+    box-shadow: 0 -4px 20px rgba(8, 56, 120, 0.05) !important;
+}
+
+.mobile-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+    padding: 0.25rem 0.125rem;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.mobile-nav-link.active {
+    color: var(--brand-navy) !important;
+    font-weight: 700;
+}
+
+.mobile-nav-link.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 2.5px;
+    background: var(--brand-teal);
+    border-radius: 0 0 3px 3px;
+}
+
+/* Brand Palette Badges */
+.badge-brand-navy {
+    background-color: #E8F0F8;
+    color: #083878;
+    border: 1px solid rgba(8, 56, 120, 0.2);
+}
+
+.badge-brand-teal {
+    background-color: #E8F8F8;
+    color: #088090;
+    border: 1px solid rgba(8, 184, 200, 0.3);
+}
+
+.badge-brand-pink {
+    background-color: #FDF2F4;
+    color: #B8325E;
+    border: 1px solid rgba(242, 138, 168, 0.35);
 }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
     .mobile-bottom-nav {
         padding-bottom: env(safe-area-inset-bottom);
-        height: calc(3.5rem + env(safe-area-inset-bottom));
+        height: calc(3.75rem + env(safe-area-inset-bottom));
     }
     main {
-        padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
     }
 }
 

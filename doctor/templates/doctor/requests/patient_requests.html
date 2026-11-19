@@ -20,56 +20,56 @@
     </div>
 
     <!-- 3 Quick KPI Counters -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         
-        <div class="pa-card p-4 flex items-center justify-between">
+        <div class="pa-card p-3.5 sm:p-4 flex items-center justify-between border-l-4 border-l-amber-500">
             <div>
                 <span class="text-xs font-medium text-slate-500">Awaiting Approval</span>
-                <div class="text-2xl font-bold text-amber-800 mt-1">{{ pending_count }}</div>
+                <div class="text-2xl font-bold text-amber-800 mt-0.5">{{ pending_count }}</div>
                 <p class="text-[11px] text-amber-700 mt-0.5">Code entered & awaiting doctor approval</p>
             </div>
-            <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm flex-shrink-0">
-                <i class="fa-solid fa-user-clock"></i>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm flex-shrink-0">
+                <i class="fa-solid fa-user-clock text-base"></i>
             </div>
         </div>
 
-        <div class="pa-card p-4 flex items-center justify-between">
+        <div class="pa-card p-3.5 sm:p-4 flex items-center justify-between border-l-4 border-l-[#083878]">
             <div>
                 <span class="text-xs font-medium text-slate-500">Active / Unclaimed</span>
-                <div class="text-2xl font-bold text-slate-900 mt-1">{{ active_count }}</div>
+                <div class="text-2xl font-bold text-[#083878] mt-0.5">{{ active_count }}</div>
                 <p class="text-[11px] text-slate-500 mt-0.5">Codes ready to be shared with patients</p>
             </div>
-            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm flex-shrink-0">
-                <i class="fa-solid fa-key"></i>
+            <div class="w-10 h-10 rounded-xl bg-[#E8F0F8] text-[#083878] flex items-center justify-center text-sm flex-shrink-0">
+                <i class="fa-solid fa-key text-base"></i>
             </div>
         </div>
 
-        <div class="pa-card p-4 flex items-center justify-between">
+        <div class="pa-card p-3.5 sm:p-4 flex items-center justify-between border-l-4 border-l-emerald-500">
             <div>
                 <span class="text-xs font-medium text-slate-500">Connected & Active</span>
-                <div class="text-2xl font-bold text-emerald-700 mt-1">{{ approved_count }}</div>
+                <div class="text-2xl font-bold text-emerald-700 mt-0.5">{{ approved_count }}</div>
                 <p class="text-[11px] text-emerald-600 mt-0.5">Patients successfully linked to portal</p>
             </div>
-            <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm flex-shrink-0">
-                <i class="fa-solid fa-circle-check"></i>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm flex-shrink-0">
+                <i class="fa-solid fa-circle-check text-base"></i>
             </div>
         </div>
 
     </div>
 
     <!-- Filter Pills -->
-    <div class="pa-card p-3 flex flex-wrap items-center gap-1.5 text-xs">
-        <span class="font-medium text-slate-500 mr-2 text-[11px]">Filter:</span>
-        <a href="?status=ALL" class="px-2.5 py-1 rounded-md font-medium transition {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+    <div class="pa-card p-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1.5 text-xs -mx-1 px-1 sm:flex-wrap">
+        <span class="font-semibold text-slate-400 mr-1 text-[11px] flex-shrink-0">Filter:</span>
+        <a href="?status=ALL" class="px-2.5 py-1.5 rounded-lg font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'ALL' %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
             All ({{ codes.count }})
         </a>
-        <a href="?status=PENDING_APPROVAL" class="px-2.5 py-1 rounded-md font-medium transition {% if status_filter == 'PENDING_APPROVAL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+        <a href="?status=PENDING_APPROVAL" class="px-2.5 py-1.5 rounded-lg font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'PENDING_APPROVAL' %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
             Awaiting Approval ({{ pending_count }})
         </a>
-        <a href="?status=ACTIVE" class="px-2.5 py-1 rounded-md font-medium transition {% if status_filter == 'ACTIVE' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+        <a href="?status=ACTIVE" class="px-2.5 py-1.5 rounded-lg font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'ACTIVE' %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
             Active / Unclaimed ({{ active_count }})
         </a>
-        <a href="?status=APPROVED" class="px-2.5 py-1 rounded-md font-medium transition {% if status_filter == 'APPROVED' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+        <a href="?status=APPROVED" class="px-2.5 py-1.5 rounded-lg font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'APPROVED' %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
             Approved ({{ approved_count }})
         </a>
     </div>
@@ -91,26 +91,40 @@
                     </div>
 
                     <div class="min-w-0 flex-1">
-                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                            <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="font-semibold text-slate-900 text-sm hover:text-blue-600 break-words">
-                                {{ c.patient.full_name }}
-                            </a>
-                            <span class="text-xs text-slate-500 font-mono">({{ c.patient.patient_id }})</span>
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="font-bold text-slate-900 text-sm hover:text-[#083878] transition">
+                                    {{ c.patient.full_name }}
+                                </a>
+                                <span class="text-[11px] font-mono font-semibold text-[#083878] bg-[#E8F0F8] px-2 py-0.5 rounded border border-[#083878]/20 whitespace-nowrap inline-block">
+                                    {{ c.patient.patient_id }}
+                                </span>
+                            </div>
+
                             <span class="badge flex-shrink-0
                                 {% if c.status == 'APPROVED' %}badge-active
                                 {% elif c.status == 'PENDING_APPROVAL' %}badge-pending
                                 {% elif c.status == 'ACTIVE' %}badge-completed
                                 {% else %}badge-emergency-high{% endif %}">
-                                {{ c.get_status_display }}
+                                {% if c.status == 'APPROVED' %}Connected{% elif c.status == 'PENDING_APPROVAL' %}Awaiting Approval{% elif c.status == 'ACTIVE' %}Active Code{% else %}{{ c.get_status_display }}{% endif %}
                             </span>
                         </div>
 
-                        <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 mt-1">
-                            <span>Phone: <strong class="text-slate-700 font-medium break-all">{{ c.patient.phone }}</strong></span>
+                        <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 mt-1.5">
+                            <span class="inline-flex items-center gap-1">
+                                <i class="fa-solid fa-phone text-[10px] text-slate-400"></i>
+                                <strong class="text-slate-700 font-medium whitespace-nowrap">{{ c.patient.phone }}</strong>
+                            </span>
                             <span class="text-slate-300 hidden sm:inline">&bull;</span>
-                            <span>Generated: {{ c.created_at|date:"M d, Y" }}</span>
+                            <span class="inline-flex items-center gap-1 whitespace-nowrap text-[11px]">
+                                <i class="fa-regular fa-calendar text-[10px] text-slate-400"></i>
+                                <span>Generated: {{ c.created_at|date:"M d, Y" }}</span>
+                            </span>
                             <span class="text-slate-300 hidden sm:inline">&bull;</span>
-                            <span>Expires: {{ c.expires_at|date:"M d, Y" }}</span>
+                            <span class="inline-flex items-center gap-1 whitespace-nowrap text-[11px]">
+                                <i class="fa-regular fa-clock text-[10px] text-slate-400"></i>
+                                <span>Expires: {{ c.expires_at|date:"M d, Y" }}</span>
+                            </span>
                         </div>
 
                         {% if c.patient_request_notes %}
@@ -122,46 +136,46 @@
                 </div>
 
                 <!-- Middle: Code Display -->
-                <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 self-start sm:self-auto flex-shrink-0">
-                    <div class="text-center px-2">
-                        <span class="text-[9px] uppercase font-medium text-slate-400 block">Joining Code</span>
-                        <span class="font-mono text-base font-bold text-blue-700 tracking-wider">{{ c.code }}</span>
+                <div class="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2.5 bg-[#E8F8F8]/60 p-2.5 rounded-lg border border-[#08B8C8]/30 flex-shrink-0">
+                    <div class="text-left sm:text-center px-1">
+                        <span class="text-[9px] uppercase font-bold text-[#083878]/70 block tracking-wider">Joining Code</span>
+                        <span class="font-mono text-base font-bold text-[#083878] tracking-wider">{{ c.code }}</span>
                     </div>
-                    <button type="button" onclick="copyToClipboard('{{ c.code }}', 'cpCode{{ c.id }}')" id="cpCode{{ c.id }}" class="btn-secondary py-1 px-2.5 text-xs">
-                        <i class="fa-regular fa-copy text-[11px]"></i> Copy
+                    <button type="button" onclick="copyToClipboard('{{ c.code }}', 'cpCode{{ c.id }}')" id="cpCode{{ c.id }}" class="btn-secondary py-1.5 px-3 text-xs text-[#083878] font-semibold border-[#08B8C8]/40 hover:bg-[#E8F8F8] transition">
+                        <i class="fa-regular fa-copy text-[11px] mr-1"></i> Copy
                     </button>
                 </div>
 
                 <!-- Right: Action Buttons (Approve / Reject) -->
-                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-full lg:w-auto">
                     {% if c.status == 'PENDING_APPROVAL' %}
                     <!-- APPROVE CONNECTION REQUEST -->
-                    <form method="POST" action="{% url 'doctor:approve_patient_request' c.id %}">
+                    <form method="POST" action="{% url 'doctor:approve_patient_request' c.id %}" class="flex-1 sm:flex-initial">
                         {% csrf_token %}
-                        <button type="submit" class="btn-primary bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-xs px-3 py-1.5 font-medium">
+                        <button type="submit" class="w-full sm:w-auto btn-primary bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-xs px-3.5 py-2 font-medium justify-center">
                             <i class="fa-solid fa-check text-xs mr-1"></i> Approve
                         </button>
                     </form>
 
                     <!-- REJECT CONNECTION REQUEST -->
-                    <form method="POST" action="{% url 'doctor:reject_patient_request' c.id %}" onsubmit="return confirm('Reject this connection request?');">
+                    <form method="POST" action="{% url 'doctor:reject_patient_request' c.id %}" onsubmit="return confirm('Reject this connection request?');" class="flex-1 sm:flex-initial">
                         {% csrf_token %}
-                        <button type="submit" class="btn-secondary text-rose-600 hover:bg-rose-50 border-slate-300 text-xs px-3 py-1.5">
+                        <button type="submit" class="w-full sm:w-auto btn-secondary text-rose-600 hover:bg-rose-50 border-slate-300 text-xs px-3.5 py-2 justify-center">
                             <i class="fa-solid fa-xmark text-xs mr-1"></i> Reject
                         </button>
                     </form>
 
                     {% elif c.status == 'ACTIVE' %}
-                    <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="btn-secondary text-xs">
+                    <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="btn-secondary text-xs w-full sm:w-auto justify-center py-2 px-3.5">
                         View Patient
                     </a>
 
                     {% elif c.is_expired or c.status == 'REJECTED' %}
-                    <a href="{% url 'doctor:regenerate_code' c.patient.id %}" class="btn-primary text-xs">
+                    <a href="{% url 'doctor:regenerate_code' c.patient.id %}" class="btn-primary text-xs w-full sm:w-auto justify-center py-2 px-3.5">
                         <i class="fa-solid fa-arrows-rotate text-xs mr-1"></i> Regenerate Code
                     </a>
                     {% else %}
-                    <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="btn-secondary text-xs text-emerald-700">
+                    <a href="{% url 'doctor:patient_detail' c.patient.id %}" class="btn-secondary text-xs text-emerald-700 w-full sm:w-auto justify-center py-2 px-3.5">
                         <i class="fa-solid fa-circle-check text-xs mr-1"></i> Connected
                     </a>
                     {% endif %}

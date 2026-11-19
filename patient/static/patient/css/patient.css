@@ -6,11 +6,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
 :root {
-    --pt-primary: #2563eb;
-    --pt-primary-hover: #1d4ed8;
-    --pt-primary-subtle: #eff6ff;
+    /* PEDO ALIGN Premium Healthcare Brand Color System */
+    --brand-navy: #083878;
+    --brand-navy-dark: #05244f;
+    --brand-navy-light: #114c9c;
+    --brand-teal: #08B8C8;
+    --brand-teal-dark: #069ba9;
+    --brand-teal-light: #18d4e5;
+    --brand-aqua: #08C8C8;
+    --brand-light-aqua: #E8F8F8;
+    --brand-soft-blue: #E8F0F8;
+    --brand-bg: #F3F8FC;
+    --brand-white: #FFFFFF;
+    --brand-pink: #F28AA8;
+
+    --pt-primary: #083878;
+    --pt-primary-hover: #05244f;
+    --pt-primary-subtle: #E8F0F8;
     
-    --pt-navy: #0f172a;
+    --pt-navy: #083878;
     --pt-slate-800: #1e293b;
     --pt-slate-700: #334155;
     --pt-slate-600: #475569;
@@ -19,12 +33,12 @@
     --pt-slate-300: #cbd5e1;
     --pt-slate-200: #e2e8f0;
     --pt-slate-100: #f1f5f9;
-    --pt-bg: #f8fafc;
+    --pt-bg: #F3F8FC;
     
     --card-bg: #ffffff;
-    --card-border: #e2e8f0;
-    --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
-    --card-shadow-hover: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+    --card-border: rgba(8, 56, 120, 0.08);
+    --card-shadow: 0 1px 3px 0 rgba(8, 56, 120, 0.05), 0 1px 2px -1px rgba(8, 56, 120, 0.03);
+    --card-shadow-hover: 0 4px 12px -2px rgba(8, 56, 120, 0.08), 0 2px 6px -2px rgba(8, 56, 120, 0.04);
 }
 
 /* Base Body & Reset */
@@ -82,13 +96,24 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
 }
 
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 /* ==========================================================================
    CARDS & CONTAINERS
    ========================================================================== */
 .pa-patient-card, .pa-card, .patient-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 0.75rem; /* 12px clean medical standard */
+    border-radius: 0.875rem;
     box-shadow: var(--card-shadow);
     max-width: 100%;
     min-width: 0;
@@ -97,8 +122,18 @@ h1, h2, h3, h4, h5, h6 {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+.pa-patient-card-tinted {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFE 100%);
+    border: 1px solid rgba(8, 56, 120, 0.09);
+}
+
+.pa-patient-card-teal {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F0FBFB 100%);
+    border: 1px solid rgba(8, 184, 200, 0.2);
+}
+
 .pa-patient-card-hover:hover {
-    border-color: var(--pt-slate-300);
+    border-color: rgba(8, 56, 120, 0.2);
     box-shadow: var(--card-shadow-hover);
 }
 
@@ -109,14 +144,14 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     border: 1px solid var(--pt-slate-300);
     background-color: #ffffff;
     padding: 0.625rem 0.85rem;
     font-size: 1rem; /* 16px on mobile prevents auto-zoom on iOS */
     color: var(--pt-navy);
     line-height: 1.35;
-    min-height: 42px;
+    min-height: 44px;
     touch-action: manipulation;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -131,8 +166,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .form-input-patient:focus {
     outline: none;
-    border-color: var(--pt-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    border-color: var(--brand-teal);
+    box-shadow: 0 0 0 3px rgba(8, 184, 200, 0.18);
 }
 
 .form-input-patient::placeholder {
@@ -144,34 +179,58 @@ h1, h2, h3, h4, h5, h6 {
    BUTTONS
    ========================================================================== */
 .btn-patient-primary, .btn-primary {
-    background-color: var(--pt-primary);
+    background-color: var(--brand-navy);
     color: #ffffff;
-    border: 1px solid var(--pt-primary);
+    border: 1px solid var(--brand-navy);
     padding: 0.55rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.8125rem;
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
-    min-height: 42px;
+    gap: 0.45rem;
+    min-height: 44px;
     touch-action: manipulation;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 1px 2px 0 rgba(8, 56, 120, 0.1);
+    transition: all 0.15s ease;
     cursor: pointer;
 }
 
 @media (min-width: 640px) {
     .btn-patient-primary, .btn-primary {
-        min-height: 36px;
+        min-height: 38px;
         padding: 0.5rem 1rem;
     }
 }
 
 .btn-patient-primary:hover, .btn-primary:hover {
-    background-color: var(--pt-primary-hover);
-    border-color: var(--pt-primary-hover);
+    background-color: var(--brand-navy-dark);
+    border-color: var(--brand-navy-dark);
+}
+
+.btn-patient-teal, .btn-teal {
+    background-color: var(--brand-teal);
+    color: #ffffff;
+    border: 1px solid var(--brand-teal);
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    border-radius: 0.625rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    touch-action: manipulation;
+    box-shadow: 0 1px 2px 0 rgba(8, 184, 200, 0.15);
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-patient-teal:hover, .btn-teal:hover {
+    background-color: var(--brand-teal-dark);
+    border-color: var(--brand-teal-dark);
 }
 
 .btn-patient-secondary, .btn-secondary {
@@ -181,21 +240,21 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0.55rem 1rem;
     font-weight: 500;
     font-size: 0.8125rem;
-    border-radius: 0.5rem;
+    border-radius: 0.625rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
-    min-height: 42px;
+    gap: 0.45rem;
+    min-height: 44px;
     touch-action: manipulation;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 2px 0 rgba(8, 56, 120, 0.04);
     transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     cursor: pointer;
 }
 
 @media (min-width: 640px) {
     .btn-patient-secondary, .btn-secondary {
-        min-height: 36px;
+        min-height: 38px;
         padding: 0.5rem 1rem;
     }
 }
@@ -203,21 +262,55 @@ h1, h2, h3, h4, h5, h6 {
 .btn-patient-secondary:hover, .btn-secondary:hover {
     background-color: var(--pt-slate-50);
     border-color: var(--pt-slate-400);
-    color: var(--pt-navy);
+    color: var(--brand-navy);
 }
 
 /* Mobile Bottom Navigation & Safe Area Inset */
 .mobile-bottom-nav {
     touch-action: manipulation;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(8, 56, 120, 0.08) !important;
+    box-shadow: 0 -4px 20px rgba(8, 56, 120, 0.05) !important;
+}
+
+.mobile-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+    padding: 0.25rem 0.125rem;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.mobile-nav-link.active {
+    color: var(--brand-navy) !important;
+    font-weight: 700;
+}
+
+.mobile-nav-link.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 2.5px;
+    background: var(--brand-teal);
+    border-radius: 0 0 3px 3px;
 }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
     .mobile-bottom-nav {
         padding-bottom: env(safe-area-inset-bottom);
-        height: calc(3.5rem + env(safe-area-inset-bottom));
+        height: calc(3.75rem + env(safe-area-inset-bottom));
     }
     main {
-        padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
     }
 }
 
@@ -261,4 +354,87 @@ h1, h2, h3, h4, h5, h6 {
     #notifDropdownMenu {
         width: 21rem !important;
     }
+}
+
+/* Badges - Modern Healthcare SaaS Pill Design */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+    vertical-align: middle;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.badge::before {
+    content: '';
+    display: inline-block;
+    width: 0.375rem; /* 6px status indicator dot */
+    height: 0.375rem;
+    border-radius: 9999px;
+    background-color: currentColor;
+    opacity: 0.85;
+    flex-shrink: 0;
+}
+
+.badge-active {
+    background-color: #ECFDF5;
+    color: #047857;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+.badge-pending {
+    background-color: #FFFBEB;
+    color: #B45309;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-hold {
+    background-color: #F8FAFC;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+}
+
+.badge-completed {
+    background-color: #EFF6FF;
+    color: #083878;
+    border: 1px solid rgba(8, 56, 120, 0.22);
+}
+
+.badge-emergency-high {
+    background-color: #FFF1F2;
+    color: #BE123C;
+    border: 1px solid rgba(225, 29, 72, 0.28);
+}
+
+.badge-emergency-med {
+    background-color: #FFF7ED;
+    color: #C2410C;
+    border: 1px solid rgba(234, 88, 12, 0.28);
+}
+
+.badge-brand-navy {
+    background-color: #E8F0F8;
+    color: #083878;
+    border: 1px solid rgba(8, 56, 120, 0.2);
+}
+
+.badge-brand-teal {
+    background-color: #E8F8F8;
+    color: #088090;
+    border: 1px solid rgba(8, 184, 200, 0.3);
+}
+
+.badge-brand-pink {
+    background-color: #FDF2F4;
+    color: #B8325E;
+    border: 1px solid rgba(242, 138, 168, 0.35);
 }

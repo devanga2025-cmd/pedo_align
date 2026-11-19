@@ -42,7 +42,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'patient/css/patient.css' %}">
 </head>
-<body class="min-h-full flex flex-col justify-center py-10 px-4 sm:px-6 bg-slate-50 antialiased font-sans text-slate-700">
+<body class="min-h-full flex flex-col justify-center py-10 px-4 sm:px-6 bg-[#F3F8FC] antialiased font-sans text-slate-700">
 
     <div class="sm:mx-auto sm:w-full sm:max-w-md space-y-4">
 
@@ -60,10 +60,10 @@
         </div>
 
         <!-- Main Card -->
-        <div class="bg-white rounded-xl shadow-xs border border-slate-200 p-5 sm:p-7 space-y-4">
+        <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 p-5 sm:p-7 space-y-4">
             
             <div class="text-center pb-1">
-                <h1 class="text-lg font-bold text-slate-900 tracking-tight">Portal Access</h1>
+                <h1 class="text-lg font-bold text-[#083878] tracking-tight">Portal Access</h1>
                 <p class="text-xs text-slate-500 mt-0.5">Sign in to your patient account or doctor workstation</p>
             </div>
 
@@ -71,7 +71,7 @@
             {% if messages %}
             <div class="space-y-2">
                 {% for message in messages %}
-                <div class="p-3 rounded-lg text-xs font-medium {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                <div class="p-3 rounded-lg text-xs font-medium {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-[#E8F8F8] text-[#083878] border border-[#08B8C8]/30{% endif %}">
                     {{ message }}
                 </div>
                 {% endfor %}
@@ -79,20 +79,20 @@
             {% endif %}
 
             <!-- Portal Switcher Tabs: Patient vs Doctor -->
-            <div class="flex p-1 bg-slate-100 rounded-lg border border-slate-200 text-xs font-medium">
+            <div class="flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-medium">
                 <button type="button" 
                         id="portalBtnPatient"
                         onclick="switchPortal('patient')"
-                        class="flex-1 py-1.5 px-3 rounded-md transition-all flex items-center justify-center gap-1.5 {% if active_tab != 'doctor' %}bg-white text-slate-900 shadow-xs font-semibold{% else %}text-slate-600 hover:text-slate-900{% endif %}">
-                    <i class="fa-solid fa-user text-blue-600 text-[11px]"></i>
+                        class="flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 {% if active_tab != 'doctor' %}bg-white text-[#083878] shadow-xs font-bold{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    <i class="fa-solid fa-user text-[#08B8C8] text-[11px]"></i>
                     <span>Patient Portal</span>
                 </button>
 
                 <button type="button" 
                         id="portalBtnDoctor"
                         onclick="switchPortal('doctor')"
-                        class="flex-1 py-1.5 px-3 rounded-md transition-all flex items-center justify-center gap-1.5 {% if active_tab == 'doctor' %}bg-white text-slate-900 shadow-xs font-semibold{% else %}text-slate-600 hover:text-slate-900{% endif %}">
-                    <i class="fa-solid fa-stethoscope text-blue-600 text-[11px]"></i>
+                        class="flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 {% if active_tab == 'doctor' %}bg-white text-[#083878] shadow-xs font-bold{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    <i class="fa-solid fa-stethoscope text-[#083878] text-[11px]"></i>
                     <span>Doctor Portal</span>
                 </button>
             </div>
@@ -155,7 +155,7 @@
                                        value="{{ code_form.joining_code.value|default:'' }}" 
                                        required 
                                        placeholder="PA-XXXXXX" 
-                                       class="form-input-patient pl-9 font-mono font-semibold text-blue-700 tracking-wider text-sm uppercase"
+                                       class="form-input-patient pl-9 font-mono font-bold text-[#083878] tracking-wider text-base sm:text-sm py-2.5 sm:py-2 uppercase"
                                        autofocus>
                             </div>
                             {% if code_form.joining_code.errors %}
@@ -178,7 +178,7 @@
                                        name="email" 
                                        value="{{ code_form.email.value|default:'' }}" 
                                        placeholder="patient@example.com" 
-                                       class="form-input-patient pl-9 text-xs">
+                                       class="form-input-patient pl-9 text-base sm:text-xs py-2.5 sm:py-2">
                             </div>
                         </div>
 

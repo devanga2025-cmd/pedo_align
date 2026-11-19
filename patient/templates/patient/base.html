@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en" class="h-full bg-[#F3F8FC]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
 
     <!-- PWA Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#083878">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PEDO ALIGN">
@@ -37,12 +37,22 @@
                     },
                     colors: {
                         brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
+                            navy: '#083878',
+                            teal: '#08B8C8',
+                            aqua: '#08C8C8',
+                            'light-aqua': '#E8F8F8',
+                            'soft-blue': '#E8F0F8',
+                            bg: '#F3F8FC',
+                            white: '#FFFFFF',
+                            pink: '#F28AA8',
+                            50: '#E8F0F8',
+                            100: '#D1E1F1',
                             200: '#bfdbfe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
+                            500: '#08B8C8',
+                            600: '#083878',
+                            700: '#05244f',
+                            800: '#041c3d',
+                            900: '#021024',
                         }
                     }
                 }
@@ -68,7 +78,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full flex flex-col font-sans text-slate-700 bg-slate-50 antialiased selection:bg-blue-100 selection:text-blue-900">
+<body class="h-full flex flex-col font-sans text-slate-700 bg-[#F3F8FC] antialiased selection:bg-teal-100 selection:text-navy-900">
 
     <div class="flex h-screen overflow-hidden">
 
@@ -406,22 +416,37 @@
     </div>
 
     <!-- MOBILE BOTTOM NAVIGATION BAR -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white border-t border-slate-200 flex items-center justify-around z-40 shadow-xs mobile-bottom-nav">
-        <a href="{% url 'patient:dashboard' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if request.resolver_match.url_name == 'dashboard' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-house-medical text-sm sm:text-base"></i>
-            <span class="text-[10px] mt-0.5 truncate">Journey</span>
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white/95 backdrop-blur-md border-t border-slate-200/90 flex items-center justify-around z-40 mobile-bottom-nav">
+        <!-- 1. Clinical Journey -->
+        <a href="{% url 'patient:dashboard' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-house-medical text-sm sm:text-base {% if request.resolver_match.url_name == 'dashboard' %}text-[#083878]{% endif %}"></i>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Journey</span>
         </a>
-        <a href="{% url 'patient:upload_photos' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if request.resolver_match.url_name == 'upload_photos' %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-camera text-sm sm:text-base"></i>
-            <span class="text-[10px] mt-0.5 truncate">Photos</span>
+
+        <!-- 2. Treatment Plan -->
+        <a href="{% url 'patient:my_treatment' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'my_treatment' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-tooth text-sm sm:text-base {% if request.resolver_match.url_name == 'my_treatment' %}text-[#083878]{% endif %}"></i>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Treatment</span>
         </a>
-        <a href="{% url 'patient:appointments' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if 'appointment' in request.resolver_match.url_name %}text-blue-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-calendar-check text-sm sm:text-base"></i>
-            <span class="text-[10px] mt-0.5 truncate">Visits</span>
+
+        <!-- 3. Upload Photos -->
+        <a href="{% url 'patient:upload_photos' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'upload_photos' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <div class="w-8 h-8 rounded-full bg-[#083878] text-white flex items-center justify-center shadow-xs">
+                <i class="fa-solid fa-camera text-xs"></i>
+            </div>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 text-[#083878] font-semibold truncate">Photos</span>
         </a>
-        <a href="{% url 'patient:emergency' %}" class="flex flex-col items-center justify-center flex-1 h-full min-w-0 px-1 {% if request.resolver_match.url_name == 'emergency' %}text-rose-600 font-semibold{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-triangle-exclamation text-sm sm:text-base"></i>
-            <span class="text-[10px] mt-0.5 truncate">Help</span>
+
+        <!-- 4. Visits / Appointments -->
+        <a href="{% url 'patient:appointments' %}" class="mobile-nav-link {% if 'appointment' in request.resolver_match.url_name %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-calendar-check text-sm sm:text-base {% if 'appointment' in request.resolver_match.url_name %}text-[#083878]{% endif %}"></i>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Visits</span>
+        </a>
+
+        <!-- 5. Emergency / Help -->
+        <a href="{% url 'patient:emergency' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'emergency' %}active text-rose-600{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+            <i class="fa-solid fa-triangle-exclamation text-sm sm:text-base {% if request.resolver_match.url_name == 'emergency' %}text-rose-600{% endif %}"></i>
+            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Help</span>
         </a>
     </nav>
 

@@ -40,33 +40,33 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </div>
-                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, ID, phone, or joining code..." class="form-input pl-9 text-xs w-full">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, ID, phone, or joining code..." class="form-input pl-9 text-base sm:text-xs py-2 sm:py-1.5 w-full">
             </div>
 
             <!-- Status Filter Pills -->
-            <div class="flex flex-wrap items-center gap-1.5 w-full xl:w-auto">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 w-full xl:w-auto xl:flex-wrap -mx-1 px-1">
                 <a href="?status=ALL{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
-                   class="px-2.5 py-1 rounded-md text-xs font-medium transition {% if status_filter == 'ALL' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                   class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'ALL' %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                     All ({{ total_count }})
                 </a>
                 {% for code, label in status_choices %}
                 <a href="?status={{ code }}{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
-                   class="px-2.5 py-1 rounded-md text-xs font-medium transition {% if status_filter == code %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                   class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == code %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
                     {{ label }}
                 </a>
                 {% endfor %}
                 <a href="?status=ARCHIVED{% if query %}&q={{ query }}{% endif %}&view={{ view_mode }}" 
-                   class="px-2.5 py-1 rounded-md text-xs font-medium transition {% if status_filter == 'ARCHIVED' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}" title="View Completed and Archived Patient Accounts">
+                   class="px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex-shrink-0 {% if status_filter == 'ARCHIVED' %}bg-[#083878] text-white shadow-xs{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}" title="View Completed and Archived Patient Accounts">
                     Archived ({{ archived_count }})
                 </a>
             </div>
 
             <!-- View Mode Switch -->
-            <div class="flex items-center border border-slate-200 rounded-md overflow-hidden bg-slate-50 flex-shrink-0">
-                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=grid" class="p-1.5 px-2.5 text-xs {% if view_mode == 'grid' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}" title="Grid Cards View">
+            <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0 self-start sm:self-auto">
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=grid" class="p-1.5 px-2.5 text-xs {% if view_mode == 'grid' %}bg-white text-[#083878] font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}" title="Grid Cards View">
                     <i class="fa-solid fa-table-cells mr-1"></i> Cards
                 </a>
-                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=table" class="p-1.5 px-2.5 text-xs {% if view_mode == 'table' %}bg-white text-blue-600 font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}" title="Table View">
+                <a href="?status={{ status_filter }}{% if query %}&q={{ query }}{% endif %}&view=table" class="p-1.5 px-2.5 text-xs {% if view_mode == 'table' %}bg-white text-[#083878] font-semibold shadow-xs{% else %}text-slate-500 hover:text-slate-800{% endif %}" title="Table View">
                     <i class="fa-solid fa-list mr-1"></i> Table
                 </a>
             </div>
@@ -83,8 +83,8 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[10px] tracking-wider">
-                            <th class="py-3 px-4">Patient</th>
+                        <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[10px] tracking-wider whitespace-nowrap">
+                            <th class="py-3 px-4 min-w-[200px]">Patient</th>
                             <th class="py-3 px-4">Patient ID</th>
                             <th class="py-3 px-4">Age / Gender</th>
                             <th class="py-3 px-4">Contact</th>
@@ -97,45 +97,45 @@
                     <tbody class="divide-y divide-slate-100">
                         {% for pt in patients %}
                         <tr class="hover:bg-slate-50/60 transition-colors">
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-xs flex-shrink-0 border border-slate-200">
+                                    <div class="w-8 h-8 rounded-full bg-[#E8F0F8] text-[#083878] font-bold flex items-center justify-center text-xs flex-shrink-0 border border-[#083878]/15 shadow-2xs">
                                         {{ pt.first_name|first }}{{ pt.last_name|first }}
                                     </div>
                                     <div>
-                                        <div class="flex items-center gap-1.5">
-                                            <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-semibold text-slate-900 hover:text-blue-600">
+                                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                            <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 hover:text-[#083878] text-xs transition">
                                                 {{ pt.full_name }}
                                             </a>
                                             {% if pt.patient_category == 'CHILD' %}
-                                            <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                                            <span class="px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-sky-50 text-sky-700 border border-sky-200">
                                                 Child
                                             </span>
                                             {% else %}
-                                            <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                                            <span class="px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                                                 Adult
                                             </span>
                                             {% endif %}
                                         </div>
                                         {% if pt.parent_guardian_name %}
-                                        <span class="text-[11px] text-slate-400 block">Guardian: {{ pt.parent_guardian_name }}{% if pt.parent_guardian_phone %} ({{ pt.parent_guardian_phone }}){% endif %}</span>
+                                        <span class="text-[11px] text-slate-400 block whitespace-nowrap">Guardian: {{ pt.parent_guardian_name }}{% if pt.parent_guardian_phone %} ({{ pt.parent_guardian_phone }}){% endif %}</span>
                                         {% endif %}
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-3 px-4 font-mono font-medium text-slate-700">{{ pt.patient_id }}</td>
-                            <td class="py-3 px-4 text-slate-700">{{ pt.age }} yrs &bull; {{ pt.gender }}</td>
-                            <td class="py-3 px-4 text-slate-700">
+                            <td class="py-3 px-4 font-mono font-semibold text-slate-700 whitespace-nowrap text-xs">{{ pt.patient_id }}</td>
+                            <td class="py-3 px-4 text-slate-700 whitespace-nowrap text-xs">{% if pt.age == 0 %}&lt;1 yr{% else %}{{ pt.age }} yrs{% endif %} &bull; {{ pt.gender }}</td>
+                            <td class="py-3 px-4 text-slate-700 whitespace-nowrap text-xs">
                                 <div>{{ pt.phone }}</div>
                                 {% if pt.email %}<div class="text-[11px] text-slate-400">{{ pt.email }}</div>{% endif %}
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <span class="badge 
                                     {% if pt.treatment_status == 'ACTIVE' %}badge-active
                                     {% elif pt.treatment_status == 'PENDING_CONNECTION' %}badge-pending
                                     {% elif pt.treatment_status == 'COMPLETED' %}badge-completed
                                     {% else %}badge-hold{% endif %}">
-                                    {{ pt.get_treatment_status_display }}
+                                    {% if pt.treatment_status == 'PENDING_CONNECTION' %}Pending{% elif pt.treatment_status == 'ACTIVE' %}Active{% elif pt.treatment_status == 'COMPLETED' %}Completed{% else %}{{ pt.get_treatment_status_display }}{% endif %}
                                 </span>
                             </td>
                             <td class="py-3 px-4">
@@ -146,7 +146,7 @@
                                         <span>of {{ pt.treatment_plan.total_aligners }}</span>
                                     </div>
                                     <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
+                                        <div class="bg-[#08B8C8] h-1.5 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
                                     </div>
                                 </div>
                                 {% else %}
@@ -155,7 +155,7 @@
                             </td>
                             <td class="py-3 px-4">
                                 {% if pt.joining_code %}
-                                <span class="inline-flex items-center gap-1 font-mono font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-[11px]">
+                                <span class="inline-flex items-center gap-1 font-mono font-medium text-[#083878] bg-[#E8F8F8] px-2 py-0.5 rounded border border-[#08B8C8]/30 text-[11px]">
                                     {{ pt.joining_code.code }}
                                 </span>
                                 {% else %}
@@ -195,7 +195,7 @@
                     <!-- Top row: Avatar, Name, Status Badge -->
                     <div class="flex items-start justify-between gap-2.5 mb-3">
                         <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-xs border border-slate-200 flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-[#E8F0F8] text-[#083878] font-bold flex items-center justify-center text-xs border border-[#083878]/15 flex-shrink-0 shadow-2xs">
                                 {% if pt.profile_photo %}
                                     <img src="{{ pt.profile_photo.url }}" alt="{{ pt.full_name }}" class="w-full h-full object-cover rounded-full">
                                 {% else %}
@@ -203,10 +203,10 @@
                                 {% endif %}
                             </div>
                             <div class="min-w-0 flex-1">
-                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-semibold text-slate-900 text-sm hover:text-blue-600 transition truncate block">
+                                <a href="{% url 'doctor:patient_detail' pt.id %}" class="font-bold text-slate-900 text-sm hover:text-[#083878] transition truncate block" title="{{ pt.full_name }}">
                                     {{ pt.full_name }}
                                 </a>
-                                <p class="text-[11px] text-slate-500 font-mono truncate">{{ pt.patient_id }}</p>
+                                <p class="text-[11px] text-slate-500 font-mono tracking-tight whitespace-nowrap mt-0.5">{{ pt.patient_id }}</p>
                             </div>
                         </div>
 
@@ -214,24 +214,24 @@
                             {% if pt.treatment_status == 'ACTIVE' %}badge-active
                             {% elif pt.treatment_status == 'PENDING_CONNECTION' %}badge-pending
                             {% elif pt.treatment_status == 'COMPLETED' %}badge-completed
-                            {% else %}badge-hold{% endif %} flex-shrink-0">
-                            {{ pt.get_treatment_status_display }}
+                            {% else %}badge-hold{% endif %}">
+                            {% if pt.treatment_status == 'PENDING_CONNECTION' %}Pending{% elif pt.treatment_status == 'ACTIVE' %}Active{% elif pt.treatment_status == 'COMPLETED' %}Completed{% else %}{{ pt.get_treatment_status_display }}{% endif %}
                         </span>
                     </div>
 
                     <!-- Meta Details -->
-                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-3">
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50/80 p-2.5 rounded-xl border border-slate-100 mb-3">
                         <div>
-                            <span class="text-slate-400 block text-[10px] uppercase font-medium">Demographics</span>
-                            <span class="font-medium text-slate-800">{{ pt.age }} yrs</span> &bull; {{ pt.gender }}
+                            <span class="text-slate-400 block text-[10px] uppercase font-semibold tracking-wider">Demographics</span>
+                            <span class="font-semibold text-slate-800">{% if pt.age == 0 %}&lt;1 yr{% else %}{{ pt.age }} yrs{% endif %}</span> &bull; {{ pt.gender }}
                         </div>
                         <div>
-                            <span class="text-slate-400 block text-[10px] uppercase font-medium">Guardian</span>
-                            <span class="truncate block font-medium">{{ pt.parent_guardian_name|default:"Self / Patient" }}</span>
+                            <span class="text-slate-400 block text-[10px] uppercase font-semibold tracking-wider">Guardian</span>
+                            <span class="truncate block font-semibold text-slate-800">{{ pt.parent_guardian_name|default:"Self / Patient" }}</span>
                         </div>
-                        <div class="col-span-2">
-                            <span class="text-slate-400 block text-[10px] uppercase font-medium">Phone / WhatsApp</span>
-                            <span class="font-medium text-slate-700"><i class="fa-solid fa-phone text-[10px] text-slate-400 mr-1"></i>{{ pt.phone }}</span>
+                        <div class="col-span-2 pt-1 border-t border-slate-200/60">
+                            <span class="text-slate-400 block text-[10px] uppercase font-semibold tracking-wider">Phone / WhatsApp</span>
+                            <span class="font-medium text-slate-700 font-mono text-[11px]"><i class="fa-solid fa-phone text-[10px] text-[#08B8C8] mr-1.5"></i>{{ pt.phone }}</span>
                         </div>
                     </div>
 
@@ -240,23 +240,23 @@
                     <div class="mb-3">
                         <div class="flex items-center justify-between text-xs mb-1">
                             <span class="text-slate-500 font-medium">Aligner Progress</span>
-                            <span class="font-semibold text-blue-700">Stage {{ pt.treatment_plan.current_aligner }} of {{ pt.treatment_plan.total_aligners }} ({{ pt.treatment_plan.progress_percentage }}%)</span>
+                            <span class="font-semibold text-[#083878]">Stage {{ pt.treatment_plan.current_aligner }} of {{ pt.treatment_plan.total_aligners }} ({{ pt.treatment_plan.progress_percentage }}%)</span>
                         </div>
                         <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                            <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
+                            <div class="bg-[#08B8C8] h-1.5 rounded-full" style="width: {{ pt.treatment_plan.progress_percentage }}%"></div>
                         </div>
                     </div>
                     {% endif %}
 
                     <!-- Joining Code Pill -->
                     {% if pt.joining_code %}
-                    <div class="p-2 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-between text-xs mb-3">
+                    <div class="p-2.5 rounded-lg bg-[#E8F8F8]/60 border border-[#08B8C8]/30 flex items-center justify-between text-xs mb-3">
                         <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-key text-blue-600 text-xs"></i>
+                            <i class="fa-solid fa-key text-[#083878] text-xs"></i>
                             <span class="text-slate-500">Code:</span>
-                            <span class="font-mono font-semibold text-slate-900">{{ pt.joining_code.code }}</span>
+                            <span class="font-mono font-semibold text-[#083878]">{{ pt.joining_code.code }}</span>
                         </div>
-                        <button type="button" onclick="copyToClipboard('{{ pt.joining_code.code }}', 'copyBtn{{ pt.id }}')" id="copyBtn{{ pt.id }}" class="text-[11px] font-medium text-blue-600 hover:text-blue-800">
+                        <button type="button" onclick="copyToClipboard('{{ pt.joining_code.code }}', 'copyBtn{{ pt.id }}')" id="copyBtn{{ pt.id }}" class="text-[11px] font-semibold text-[#083878] hover:text-[#08B8C8] transition">
                             Copy
                         </button>
                     </div>

@@ -8,34 +8,34 @@
 <div class="max-w-5xl mx-auto space-y-5">
 
     <!-- Top Clinical Session & Cadence Header -->
-    <div class="pa-patient-card p-5 sm:p-6 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="pa-patient-card-tinted p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#08B8C8]/20 shadow-xs">
         <div class="space-y-1 max-w-2xl">
             <div class="flex items-center gap-2 flex-wrap">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                    <i class="fa-solid fa-clock-rotate-left text-[10px]"></i> {{ cadence_label|default:"Weekly" }} Cadence Monitoring Schedule
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F8F8] text-[#083878] border border-[#08B8C8]/30">
+                    <i class="fa-solid fa-clock-rotate-left text-[10px] text-[#08B8C8]"></i> {{ cadence_label|default:"Weekly" }} Cadence Monitoring Schedule
                 </span>
                 {% if current_op or doctor_media.operation_name %}
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
-                    <i class="fa-solid fa-bullseye text-[10px] text-blue-600"></i> Operation: {{ doctor_media.operation_name|default:current_op }}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white text-slate-700 border border-slate-200">
+                    <i class="fa-solid fa-bullseye text-[10px] text-[#083878]"></i> Operation: {{ doctor_media.operation_name|default:current_op }}
                 </span>
                 {% endif %}
             </div>
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 class="text-xl sm:text-2xl font-bold text-[#083878] tracking-tight">
                 Submit {{ cadence_label|default:"Weekly" }} Progress Photos
             </h1>
-            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                 Capture or paste your 5-angle progress photos for Dr. {{ doctor.full_name|default:"Your Doctor" }}'s clinical evaluation.
             </p>
             {% if diagnosed_problem or doctor_media.patient_problem %}
-            <div class="mt-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
-                <strong><i class="fa-solid fa-stethoscope text-blue-600 mr-1"></i> Clinical Condition:</strong> {{ doctor_media.patient_problem|default:diagnosed_problem }}
+            <div class="mt-2 p-2.5 rounded-lg bg-white/90 border border-[#08B8C8]/25 text-xs text-slate-700 leading-relaxed shadow-2xs">
+                <strong class="text-[#083878]"><i class="fa-solid fa-stethoscope text-[#08B8C8] mr-1"></i> Clinical Condition:</strong> {{ doctor_media.patient_problem|default:diagnosed_problem }}
             </div>
             {% endif %}
         </div>
 
-        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1 flex-shrink-0">
-            <span class="text-[10px] font-medium uppercase text-slate-400 block">Examining Clinician</span>
-            <span class="font-semibold text-slate-900 block">Dr. {{ doctor.full_name }}</span>
+        <div class="p-3.5 rounded-xl bg-white/95 border border-[#08B8C8]/25 text-xs space-y-1 flex-shrink-0 shadow-xs">
+            <span class="text-[10px] font-bold uppercase text-slate-400 block tracking-wider">Examining Clinician</span>
+            <span class="font-bold text-[#083878] block text-xs">Dr. {{ doctor.full_name }}</span>
             <span class="text-[11px] text-slate-500 block">{{ doctor.clinic_name }}</span>
         </div>
     </div>
@@ -238,10 +238,10 @@
 
                         <div class="mt-2 space-y-1 w-full">
                             <div class="grid grid-cols-2 gap-1" id="actions_initial_front">
-                                <button type="button" onclick="triggerCamera('photo_front_input')" class="py-1 px-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerCamera('photo_front_input')" class="py-1.5 px-2 rounded-lg bg-[#083878] hover:bg-[#062854] text-white font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-camera"></i> Camera
                                 </button>
-                                <button type="button" onclick="triggerGallery('photo_front_input')" class="py-1 px-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerGallery('photo_front_input')" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-images"></i> Browse
                                 </button>
                             </div>
@@ -277,10 +277,10 @@
 
                         <div class="mt-2 space-y-1 w-full">
                             <div class="grid grid-cols-2 gap-1" id="actions_initial_right">
-                                <button type="button" onclick="triggerCamera('photo_right_input')" class="py-1 px-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerCamera('photo_right_input')" class="py-1.5 px-2 rounded-lg bg-[#083878] hover:bg-[#062854] text-white font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-camera"></i> Camera
                                 </button>
-                                <button type="button" onclick="triggerGallery('photo_right_input')" class="py-1 px-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerGallery('photo_right_input')" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-images"></i> Browse
                                 </button>
                             </div>
@@ -313,10 +313,10 @@
 
                         <div class="mt-2 space-y-1 w-full">
                             <div class="grid grid-cols-2 gap-1" id="actions_initial_left">
-                                <button type="button" onclick="triggerCamera('photo_left_input')" class="py-1 px-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerCamera('photo_left_input')" class="py-1.5 px-2 rounded-lg bg-[#083878] hover:bg-[#062854] text-white font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-camera"></i> Camera
                                 </button>
-                                <button type="button" onclick="triggerGallery('photo_left_input')" class="py-1 px-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerGallery('photo_left_input')" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-images"></i> Browse
                                 </button>
                             </div>
@@ -349,10 +349,10 @@
 
                         <div class="mt-2 space-y-1 w-full">
                             <div class="grid grid-cols-2 gap-1" id="actions_initial_upper">
-                                <button type="button" onclick="triggerCamera('photo_upper_input')" class="py-1 px-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerCamera('photo_upper_input')" class="py-1.5 px-2 rounded-lg bg-[#083878] hover:bg-[#062854] text-white font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-camera"></i> Camera
                                 </button>
-                                <button type="button" onclick="triggerGallery('photo_upper_input')" class="py-1 px-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerGallery('photo_upper_input')" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-images"></i> Browse
                                 </button>
                             </div>
@@ -385,10 +385,10 @@
 
                         <div class="mt-2 space-y-1 w-full">
                             <div class="grid grid-cols-2 gap-1" id="actions_initial_lower">
-                                <button type="button" onclick="triggerCamera('photo_lower_input')" class="py-1 px-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerCamera('photo_lower_input')" class="py-1.5 px-2 rounded-lg bg-[#083878] hover:bg-[#062854] text-white font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-camera"></i> Camera
                                 </button>
-                                <button type="button" onclick="triggerGallery('photo_lower_input')" class="py-1 px-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-[10px] flex items-center justify-center gap-1 transition">
+                                <button type="button" onclick="triggerGallery('photo_lower_input')" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-[10px] flex items-center justify-center gap-1 transition">
                                     <i class="fa-solid fa-images"></i> Browse
                                 </button>
                             </div>

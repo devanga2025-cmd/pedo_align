@@ -9,10 +9,10 @@
 <div class="max-w-6xl mx-auto space-y-5">
 
     <!-- Top Summary Banner -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
+    <div class="pa-patient-card-tinted p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#08B8C8]/20 shadow-xs">
         <div>
-            <div class="flex items-center gap-2">
-                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Active Aligner Treatment Plan</h1>
+            <div class="flex items-center gap-2 flex-wrap">
+                <h1 class="text-xl font-bold text-[#083878] tracking-tight">Active Aligner Treatment Plan</h1>
                 <span class="badge badge-active text-[11px]">
                     {{ record.get_treatment_status_display|default:"Active Care" }}
                 </span>
@@ -24,26 +24,26 @@
 
         <!-- Quick Action Buttons -->
         <div class="flex items-center gap-2 flex-wrap">
-            <a href="{% url 'patient:upload_photos' %}" class="btn-primary text-xs">
+            <a href="{% url 'patient:upload_photos' %}" class="btn-patient-primary text-xs shadow-xs">
                 <i class="fa-solid fa-camera text-xs mr-1"></i> Upload Photos
             </a>
-            <a href="{% url 'patient:emergency' %}" class="btn-secondary text-xs text-rose-600 hover:bg-rose-50 border-rose-200">
+            <a href="{% url 'patient:emergency' %}" class="btn-patient-secondary text-xs text-rose-600 hover:bg-rose-50 border-rose-200">
                 <i class="fa-solid fa-triangle-exclamation text-xs mr-1 text-rose-500"></i> Report Issue
             </a>
         </div>
     </div>
 
     <!-- Treatment Metrics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-3.5">
         <!-- Card 1: Current Tray -->
-        <div class="pa-card p-4 bg-white flex flex-col justify-between">
+        <div class="pa-card p-3.5 sm:p-4 bg-white flex flex-col justify-between shadow-2xs border-slate-200/90">
             <div class="flex items-center justify-between text-slate-400 mb-1.5">
                 <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Active Tray</span>
-                <i class="fa-solid fa-layer-group text-blue-600 text-xs"></i>
+                <i class="fa-solid fa-layer-group text-[#083878] text-xs"></i>
             </div>
             <div>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-2xl font-bold text-blue-600">#{{ plan.current_aligner|stringformat:"02d"|default:"01" }}</span>
+                    <span class="text-2xl font-bold text-[#083878]">#{{ plan.current_aligner|stringformat:"02d"|default:"01" }}</span>
                     <span class="text-xs text-slate-400">/ {{ plan.total_aligners|stringformat:"02d"|default:"20" }}</span>
                 </div>
                 <div class="mt-1 text-[11px] {% if plan.is_paused %}text-amber-600{% else %}text-emerald-600{% endif %} font-medium flex items-center gap-1">
@@ -57,10 +57,10 @@
         </div>
 
         <!-- Card 2: Frequency -->
-        <div class="pa-card p-4 bg-white flex flex-col justify-between">
+        <div class="pa-card p-3.5 sm:p-4 bg-white flex flex-col justify-between shadow-2xs border-slate-200/90">
             <div class="flex items-center justify-between text-slate-400 mb-1.5">
                 <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Change Pace</span>
-                <i class="fa-solid fa-rotate text-slate-400 text-xs"></i>
+                <i class="fa-solid fa-rotate text-[#08B8C8] text-xs"></i>
             </div>
             <div>
                 <span class="text-xl font-bold text-slate-900">
@@ -71,23 +71,23 @@
         </div>
 
         <!-- Card 3: Next Change Date -->
-        <div class="pa-card p-4 bg-white flex flex-col justify-between">
+        <div class="pa-card p-3.5 sm:p-4 bg-white flex flex-col justify-between shadow-2xs border-slate-200/90">
             <div class="flex items-center justify-between text-slate-400 mb-1.5">
                 <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Next Tray #{{ plan.next_aligner|stringformat:"02d" }}</span>
-                <i class="fa-solid fa-calendar-check text-slate-400 text-xs"></i>
+                <i class="fa-solid fa-calendar-check text-[#083878] text-xs"></i>
             </div>
             <div>
                 <span class="text-sm font-bold text-slate-900 block truncate">
                     {{ plan.computed_next_change_date|date:"M d, Y"|default:"Scheduled soon" }}
                 </span>
-                <p class="mt-1 text-[11px] text-blue-600 font-medium">
+                <p class="mt-1 text-[11px] text-[#083878] font-semibold">
                     Reminder Active
                 </p>
             </div>
         </div>
 
         <!-- Card 4: Daily Wear Goal -->
-        <div class="pa-card p-4 bg-white flex flex-col justify-between">
+        <div class="pa-card p-3.5 sm:p-4 bg-white flex flex-col justify-between shadow-2xs border-slate-200/90">
             <div class="flex items-center justify-between text-slate-400 mb-1.5">
                 <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Daily Wear Target</span>
                 <i class="fa-solid fa-stopwatch text-slate-400 text-xs"></i>
