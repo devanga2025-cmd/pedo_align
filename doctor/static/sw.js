@@ -1,6 +1,6 @@
 // PEDO ALIGN Progressive Web App Service Worker
-// Version 4.0 - Secure Static-Only Cache (No Private Healthcare Data Cached)
-const CACHE_NAME = 'pedo-align-v5';
+// Version 6.0 - Secure Static-Only Cache (No Private Healthcare Data Cached)
+const CACHE_NAME = 'pedo-align-v6';
 
 // Essential public static assets for offline branding and app shell only
 const STATIC_ASSETS = [
