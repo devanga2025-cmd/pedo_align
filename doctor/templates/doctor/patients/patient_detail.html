@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5">
                         <h1 class="text-xl sm:text-2xl font-bold font-heading text-slate-900 tracking-tight break-words">{{ patient.full_name }}</h1>
                         {% if patient.patient_category == 'CHILD' %}
                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200/80 flex-shrink-0">
@@ -94,85 +94,13 @@
                             <span class="text-slate-700 font-medium">Dr. {{ patient.doctor.full_name }}</span>
                         </span>
                     </div>
-
-                    <!-- Unified Clinical Overview Panel -->
-                    <div class="mt-3.5 bg-slate-50/90 rounded-xl border border-slate-200/80 p-3 sm:p-4 space-y-2.5 text-xs">
-                        <!-- Row 1: Parent/Guardian & Contacts -->
-                        {% if patient.parent_guardian_name %}
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 {% if joining_code or patient.notes %}border-b border-slate-200/70{% endif %}">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <span class="w-6 h-6 rounded-md bg-blue-100/70 text-blue-700 flex items-center justify-center text-xs flex-shrink-0">
-                                    <i class="fa-solid fa-people-roof text-[11px]"></i>
-                                </span>
-                                <div class="min-w-0">
-                                    <span class="text-slate-500 text-[11px]">{{ patient.parent_guardian_relationship|default:"Guardian" }}:</span>
-                                    <strong class="text-slate-900 ml-1 font-semibold">{{ patient.parent_guardian_name }}</strong>
-                                </div>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-1.5 pl-8 sm:pl-0">
-                                {% if patient.parent_guardian_phone %}
-                                <a href="tel:{{ patient.parent_guardian_phone }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 transition text-[11px] font-medium shadow-2xs">
-                                    <i class="fa-solid fa-phone text-slate-400 text-[10px]"></i>
-                                    <span>{{ patient.parent_guardian_phone }}</span>
-                                </a>
-                                {% endif %}
-                                {% if patient.parent_guardian_email %}
-                                <a href="mailto:{{ patient.parent_guardian_email }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 transition text-[11px] font-medium shadow-2xs break-all">
-                                    <i class="fa-solid fa-envelope text-slate-400 text-[10px]"></i>
-                                    <span>{{ patient.parent_guardian_email }}</span>
-                                </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Row 2: Portal Joining Code (Strict Non-breaking) -->
-                        {% if joining_code %}
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-0.5 {% if patient.notes %}pb-2.5 border-b border-slate-200/70{% endif %}">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <span class="w-6 h-6 rounded-md bg-indigo-100/70 text-indigo-700 flex items-center justify-center text-xs flex-shrink-0">
-                                    <i class="fa-solid fa-key text-[11px]"></i>
-                                </span>
-                                <span class="text-slate-600 font-medium">Portal Access:</span>
-                            </div>
-                            <div class="flex items-center gap-2 pl-8 sm:pl-0 flex-wrap">
-                                <div class="inline-flex items-center gap-1.5 bg-white border border-slate-200/90 rounded-lg px-2.5 py-1 shadow-2xs">
-                                    <span class="font-mono font-bold text-slate-900 tracking-wider text-xs whitespace-nowrap select-all inline-block">{{ joining_code.code }}</span>
-                                    <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'joiningCodeCopyBtn')" id="joiningCodeCopyBtn" class="text-slate-400 hover:text-blue-600 transition p-0.5" title="Copy code" aria-label="Copy joining code">
-                                        <i class="fa-regular fa-copy text-xs"></i>
-                                    </button>
-                                </div>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                    {% if joining_code.status == 'CONNECTED' or joining_code.status == 'APPROVED' %}bg-emerald-50 text-emerald-700 border border-emerald-200
-                                    {% elif joining_code.status == 'PENDING_APPROVAL' %}bg-amber-50 text-amber-700 border border-amber-200
-                                    {% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">
-                                    <span class="w-1.5 h-1.5 rounded-full {% if joining_code.status == 'CONNECTED' or joining_code.status == 'APPROVED' %}bg-emerald-500{% elif joining_code.status == 'PENDING_APPROVAL' %}bg-amber-500{% else %}bg-slate-400{% endif %}"></span>
-                                    <span>{{ joining_code.get_status_display }}</span>
-                                </span>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Row 3: Chief Complaint (Clinical Note Callout) -->
-                        {% if patient.notes %}
-                        <div class="flex items-start gap-2 pt-0.5">
-                            <span class="w-6 h-6 rounded-md bg-amber-100/70 text-amber-700 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                                <i class="fa-solid fa-notes-medical text-[11px]"></i>
-                            </span>
-                            <div class="text-xs text-slate-700 leading-relaxed flex-1">
-                                <span class="font-semibold text-slate-900 mr-1">Chief Complaint:</span>
-                                <span class="text-slate-600 italic">"{{ patient.notes }}"</span>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
 
-            <!-- Quick Action Buttons Toolbar -->
-            <div class="flex flex-col gap-2.5 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100 w-full lg:w-auto flex-shrink-0">
+            <!-- Quick Action Buttons Toolbar (Desktop Right) -->
+            <div class="hidden lg:flex flex-col gap-2.5 w-auto flex-shrink-0">
                 <!-- Primary Action Row -->
-                <div class="grid grid-cols-2 gap-2 w-full lg:w-auto">
+                <div class="grid grid-cols-2 gap-2 w-auto">
                     <a href="{% url 'doctor:patient_clinical_journey' patient.id %}" class="btn-primary py-2.5 px-3.5 text-xs font-semibold rounded-xl shadow-xs inline-flex items-center justify-center gap-1.5 text-center whitespace-nowrap" title="Clinical Visit Journey (Photos, Radiographs, Next Visit)">
                         <i class="fa-solid fa-folder-open text-xs"></i>
                         <span>Clinical Journey</span>
@@ -184,7 +112,7 @@
                 </div>
 
                 <!-- Secondary Utility Tools Row -->
-                <div class="flex items-center gap-2 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-auto">
                     {% if treatment_plan and treatment_plan.current_aligner < treatment_plan.total_aligners %}
                     <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}" class="flex-1">
                         {% csrf_token %}
@@ -203,7 +131,7 @@
                     {% if not patient.is_archived %}
                     <button type="button" onclick="document.getElementById('archiveModal').classList.remove('hidden')" class="py-2 px-3 text-xs font-semibold rounded-xl border border-rose-200 bg-rose-50/70 hover:bg-rose-100 text-rose-700 transition flex items-center justify-center gap-1.5 shadow-2xs" title="Complete Treatment & Archive">
                         <i class="fa-solid fa-user-xmark text-rose-600 text-xs"></i>
-                        <span class="hidden sm:inline">Archive / </span>Delete
+                        <span>Archive / Delete</span>
                     </button>
                     {% endif %}
 
@@ -213,6 +141,124 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- Full-Width Clinical Overview Panel (Guardian & Portal Access) - NO AWKWARD LEFT GAP! -->
+        {% if patient.parent_guardian_name or joining_code or patient.notes %}
+        <div class="mt-4 bg-slate-50/90 rounded-xl border border-slate-200/80 p-3 sm:p-4 space-y-2.5 text-xs w-full">
+            <!-- Row 1: Parent/Guardian & Quick Communication Actions -->
+            {% if patient.parent_guardian_name %}
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 {% if joining_code or patient.notes %}border-b border-slate-200/70{% endif %}">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-6 h-6 rounded-md bg-blue-100/70 text-blue-700 flex items-center justify-center text-xs flex-shrink-0">
+                        <i class="fa-solid fa-people-roof text-[11px]"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <span class="text-slate-500 text-[11px]">{{ patient.parent_guardian_relationship|default:"Guardian" }}:</span>
+                        <strong class="text-slate-900 ml-1 font-semibold">{{ patient.parent_guardian_name }}</strong>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5">
+                    {% if patient.parent_guardian_phone %}
+                    <a href="tel:{{ patient.parent_guardian_phone }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 transition text-[11px] font-medium shadow-2xs">
+                        <i class="fa-solid fa-phone text-slate-400 text-[10px]"></i>
+                        <span>{{ patient.parent_guardian_phone }}</span>
+                    </a>
+                    {% endif %}
+                    {% if patient.parent_guardian_email %}
+                    <a href="mailto:{{ patient.parent_guardian_email }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 transition text-[11px] font-medium shadow-2xs break-all">
+                        <i class="fa-solid fa-envelope text-slate-400 text-[10px]"></i>
+                        <span>{{ patient.parent_guardian_email }}</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Row 2: Portal Joining Code (Strict Non-breaking) -->
+            {% if joining_code %}
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-0.5 {% if patient.notes %}pb-2.5 border-b border-slate-200/70{% endif %}">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-6 h-6 rounded-md bg-indigo-100/70 text-indigo-700 flex items-center justify-center text-xs flex-shrink-0">
+                        <i class="fa-solid fa-key text-[11px]"></i>
+                    </span>
+                    <span class="text-slate-600 font-medium">Portal Access:</span>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="inline-flex items-center gap-1.5 bg-white border border-slate-200/90 rounded-lg px-2.5 py-1 shadow-2xs">
+                        <span class="font-mono font-bold text-slate-900 tracking-wider text-xs whitespace-nowrap select-all inline-block">{{ joining_code.code }}</span>
+                        <button type="button" onclick="copyToClipboard('{{ joining_code.code }}', 'joiningCodeCopyBtn')" id="joiningCodeCopyBtn" class="text-slate-400 hover:text-blue-600 transition p-0.5" title="Copy code" aria-label="Copy joining code">
+                            <i class="fa-regular fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold
+                        {% if joining_code.status == 'CONNECTED' or joining_code.status == 'APPROVED' %}bg-emerald-50 text-emerald-700 border border-emerald-200
+                        {% elif joining_code.status == 'PENDING_APPROVAL' %}bg-amber-50 text-amber-700 border border-amber-200
+                        {% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">
+                        <span class="w-1.5 h-1.5 rounded-full {% if joining_code.status == 'CONNECTED' or joining_code.status == 'APPROVED' %}bg-emerald-500{% elif joining_code.status == 'PENDING_APPROVAL' %}bg-amber-500{% else %}bg-slate-400{% endif %}"></span>
+                        <span>{{ joining_code.get_status_display }}</span>
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Row 3: Chief Complaint (Clinical Note Callout) -->
+            {% if patient.notes %}
+            <div class="flex items-start gap-2 pt-0.5">
+                <span class="w-6 h-6 rounded-md bg-amber-100/70 text-amber-700 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                    <i class="fa-solid fa-notes-medical text-[11px]"></i>
+                </span>
+                <div class="text-xs text-slate-700 leading-relaxed flex-1">
+                    <span class="font-semibold text-slate-900 mr-1">Chief Complaint:</span>
+                    <span class="text-slate-600 italic">"{{ patient.notes }}"</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Quick Action Buttons Toolbar (Mobile View: Positioned Below Overview Panel) -->
+        <div class="flex lg:hidden flex-col gap-2.5 pt-3.5 border-t border-slate-100 w-full">
+            <!-- Primary Action Row -->
+            <div class="grid grid-cols-2 gap-2 w-full">
+                <a href="{% url 'doctor:patient_clinical_journey' patient.id %}" class="btn-primary py-2.5 px-3.5 text-xs font-semibold rounded-xl shadow-xs inline-flex items-center justify-center gap-1.5 text-center whitespace-nowrap" title="Clinical Visit Journey (Photos, Radiographs, Next Visit)">
+                    <i class="fa-solid fa-folder-open text-xs"></i>
+                    <span>Clinical Journey</span>
+                </a>
+                <button type="button" onclick="document.getElementById('quickFollowupModal').classList.remove('hidden')" class="btn-secondary py-2.5 px-3.5 text-xs font-semibold rounded-xl shadow-xs inline-flex items-center justify-center gap-1.5 text-center text-slate-800 hover:text-blue-600 whitespace-nowrap" title="Schedule 20-Day Follow-Up">
+                    <i class="fa-regular fa-calendar-plus text-xs text-blue-600"></i>
+                    <span>20-Day Visit</span>
+                </button>
+            </div>
+
+            <!-- Secondary Utility Tools Row -->
+            <div class="flex items-center gap-2 w-full">
+                {% if treatment_plan and treatment_plan.current_aligner < treatment_plan.total_aligners %}
+                <form method="POST" action="{% url 'doctor:advance_aligner' patient.id %}" class="flex-1">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full py-2 px-3 text-xs font-semibold rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition flex items-center justify-center gap-1.5 shadow-2xs" title="Advance to next aligner tray">
+                        <i class="fa-solid fa-forward-step text-slate-400 text-xs"></i>
+                        <span>Tray +1</span>
+                    </button>
+                </form>
+                {% endif %}
+
+                <a href="{% url 'doctor:patient_edit' patient.id %}" class="py-2 px-3 text-xs font-semibold rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition flex items-center justify-center gap-1.5 shadow-2xs {% if not treatment_plan or treatment_plan.current_aligner >= treatment_plan.total_aligners %}flex-1{% endif %}" title="Edit Patient Details">
+                    <i class="fa-solid fa-pen-to-square text-slate-400 text-xs"></i>
+                    <span>Edit</span>
+                </a>
+
+                {% if not patient.is_archived %}
+                <button type="button" onclick="document.getElementById('archiveModal').classList.remove('hidden')" class="py-2 px-3 text-xs font-semibold rounded-xl border border-rose-200 bg-rose-50/70 hover:bg-rose-100 text-rose-700 transition flex items-center justify-center gap-1.5 shadow-2xs" title="Complete Treatment & Archive">
+                    <i class="fa-solid fa-user-xmark text-rose-600 text-xs"></i>
+                    <span>Archive / Delete</span>
+                </button>
+                {% endif %}
+
+                <a href="{% url 'doctor:patient_delete' patient.id %}" class="p-2 text-slate-400 hover:text-rose-600 rounded-xl border border-slate-200 hover:border-rose-200 bg-white hover:bg-rose-50 text-xs flex items-center justify-center shadow-2xs transition" title="Permanent Delete Patient Record" aria-label="Delete Patient Record">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                </a>
+            </div>
         </div>
 
         <!-- Aligner Therapy Progress Bar Header Widget -->
@@ -250,33 +296,125 @@
         {% endif %}
     </div>
 
-    <!-- NAVIGATION TABS -->
-    <div class="flex items-center gap-1.5 border-b border-slate-200 overflow-x-auto custom-scrollbar pb-1 text-xs font-semibold">
-        <!-- 1. Overview -->
-        <a href="?tab=overview" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'overview' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
-            <i class="fa-solid fa-id-card-clip mr-1.5 text-xs"></i> Overview
-        </a>
+    <!-- PATIENT CLINICAL NAVIGATION & RECORDS HUB -->
+    <section class="space-y-2 mt-2" aria-label="Patient Records Navigation">
+        <!-- Section Header with clear context and mobile hint -->
+        <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-blue-100 text-blue-700 text-[10px] shadow-2xs">
+                    <i class="fa-solid fa-folder-tree"></i>
+                </span>
+                <span class="text-xs font-bold font-heading text-slate-800 uppercase tracking-wider">Patient Records &amp; Modules</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                <span class="hidden sm:inline font-medium text-slate-400">Viewing:</span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/90 tracking-wide uppercase">
+                    {% if active_tab == 'overview' %}Overview
+                    {% elif active_tab == 'clinical' %}Clinical Intake
+                    {% elif active_tab == 'treatment' or active_tab == 'operations' %}Treatment Plan
+                    {% elif active_tab == 'photos' or active_tab == 'preop_photos' %}Clinical Photos
+                    {% elif active_tab == 'carepath' or active_tab == 'appointments' %}CarePath Timeline
+                    {% else %}{{ active_tab|title }}{% endif %}
+                </span>
+            </div>
+        </div>
 
-        <!-- 2. Clinical Intake -->
-        <a href="?tab=clinical" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'clinical' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
-            <i class="fa-solid fa-file-medical mr-1.5 text-xs"></i> Clinical Intake
-        </a>
+        <!-- Segmented Tab Navigation Bar with Clear Affordance -->
+        <div class="relative bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <nav class="flex items-center gap-1.5 overflow-x-auto scroll-smooth py-0.5 px-0.5 no-scrollbar text-xs font-semibold" aria-label="Patient Modules Navigation">
+                
+                <!-- 1. Overview -->
+                <a href="?tab=overview" 
+                   data-patient-tab-active="{% if active_tab == 'overview' %}true{% else %}false{% endif %}"
+                   class="group inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap min-h-[40px]
+                   {% if active_tab == 'overview' %}
+                       bg-white text-blue-700 shadow-xs border border-slate-200/90 font-bold ring-1 ring-blue-500/20
+                   {% else %}
+                       text-slate-600 hover:text-slate-900 hover:bg-white/70 border border-transparent
+                   {% endif %}">
+                    <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs {% if active_tab == 'overview' %}bg-blue-100 text-blue-700{% else %}bg-slate-200/70 text-slate-500 group-hover:bg-slate-200{% endif %}">
+                        <i class="fa-solid fa-id-card-clip text-[11px]"></i>
+                    </span>
+                    <span>Overview</span>
+                </a>
 
-        <!-- 3. Treatment -->
-        <a href="?tab=treatment" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'treatment' or active_tab == 'operations' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
-            <i class="fa-solid fa-tooth mr-1.5 text-xs"></i> Treatment ({{ operation_records.count }})
-        </a>
+                <!-- 2. Clinical Intake -->
+                <a href="?tab=clinical" 
+                   data-patient-tab-active="{% if active_tab == 'clinical' %}true{% else %}false{% endif %}"
+                   class="group inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap min-h-[40px]
+                   {% if active_tab == 'clinical' %}
+                       bg-white text-blue-700 shadow-xs border border-slate-200/90 font-bold ring-1 ring-blue-500/20
+                   {% else %}
+                       text-slate-600 hover:text-slate-900 hover:bg-white/70 border border-transparent
+                   {% endif %}">
+                    <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs {% if active_tab == 'clinical' %}bg-blue-100 text-blue-700{% else %}bg-slate-200/70 text-slate-500 group-hover:bg-slate-200{% endif %}">
+                        <i class="fa-solid fa-file-medical text-[11px]"></i>
+                    </span>
+                    <span>Clinical Intake</span>
+                </a>
 
-        <!-- 4. Photos -->
-        <a href="?tab=photos" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'photos' or active_tab == 'preop_photos' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
-            <i class="fa-solid fa-camera mr-1.5 text-xs"></i> Photos ({{ preop_photos.count|add:photo_uploads.count }})
-        </a>
+                <!-- 3. Treatment -->
+                <a href="?tab=treatment" 
+                   data-patient-tab-active="{% if active_tab == 'treatment' or active_tab == 'operations' %}true{% else %}false{% endif %}"
+                   class="group inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap min-h-[40px]
+                   {% if active_tab == 'treatment' or active_tab == 'operations' %}
+                       bg-white text-blue-700 shadow-xs border border-slate-200/90 font-bold ring-1 ring-blue-500/20
+                   {% else %}
+                       text-slate-600 hover:text-slate-900 hover:bg-white/70 border border-transparent
+                   {% endif %}">
+                    <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs {% if active_tab == 'treatment' or active_tab == 'operations' %}bg-blue-100 text-blue-700{% else %}bg-slate-200/70 text-slate-500 group-hover:bg-slate-200{% endif %}">
+                        <i class="fa-solid fa-tooth text-[11px]"></i>
+                    </span>
+                    <span>Treatment</span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center {% if active_tab == 'treatment' or active_tab == 'operations' %}bg-blue-100 text-blue-800 border border-blue-200{% else %}bg-slate-200 text-slate-600{% endif %}">
+                        {{ operation_records.count }}
+                    </span>
+                </a>
 
-        <!-- 5. CarePath -->
-        <a href="?tab=carepath" class="px-3.5 py-2 rounded-lg transition whitespace-nowrap {% if active_tab == 'carepath' or active_tab == 'appointments' %}bg-blue-600 text-white shadow-xs{% else %}bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200{% endif %}">
-            <i class="fa-solid fa-route mr-1.5 text-xs"></i> CarePath
-        </a>
-    </div>
+                <!-- 4. Photos -->
+                <a href="?tab=photos" 
+                   data-patient-tab-active="{% if active_tab == 'photos' or active_tab == 'preop_photos' %}true{% else %}false{% endif %}"
+                   class="group inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap min-h-[40px]
+                   {% if active_tab == 'photos' or active_tab == 'preop_photos' %}
+                       bg-white text-blue-700 shadow-xs border border-slate-200/90 font-bold ring-1 ring-blue-500/20
+                   {% else %}
+                       text-slate-600 hover:text-slate-900 hover:bg-white/70 border border-transparent
+                   {% endif %}">
+                    <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs {% if active_tab == 'photos' or active_tab == 'preop_photos' %}bg-blue-100 text-blue-700{% else %}bg-slate-200/70 text-slate-500 group-hover:bg-slate-200{% endif %}">
+                        <i class="fa-solid fa-camera text-[11px]"></i>
+                    </span>
+                    <span>Photos</span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center {% if active_tab == 'photos' or active_tab == 'preop_photos' %}bg-blue-100 text-blue-800 border border-blue-200{% else %}bg-slate-200 text-slate-600{% endif %}">
+                        {{ preop_photos.count|add:photo_uploads.count }}
+                    </span>
+                </a>
+
+                <!-- 5. CarePath -->
+                <a href="?tab=carepath" 
+                   data-patient-tab-active="{% if active_tab == 'carepath' or active_tab == 'appointments' %}true{% else %}false{% endif %}"
+                   class="group inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap min-h-[40px]
+                   {% if active_tab == 'carepath' or active_tab == 'appointments' %}
+                       bg-white text-blue-700 shadow-xs border border-slate-200/90 font-bold ring-1 ring-blue-500/20
+                   {% else %}
+                       text-slate-600 hover:text-slate-900 hover:bg-white/70 border border-transparent
+                   {% endif %}">
+                    <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs {% if active_tab == 'carepath' or active_tab == 'appointments' %}bg-blue-100 text-blue-700{% else %}bg-slate-200/70 text-slate-500 group-hover:bg-slate-200{% endif %}">
+                        <i class="fa-solid fa-route text-[11px]"></i>
+                    </span>
+                    <span>CarePath</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Mobile Scroll Indicator & Tab Directory Guide -->
+        <div class="sm:hidden flex items-center justify-between px-2 pt-0.5 text-[11px] text-slate-500 font-medium">
+            <span class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-hand-pointer text-blue-500 text-[10px]"></i>
+                <span class="text-slate-600">Swipe tabs horizontally to view Photos &amp; CarePath</span>
+            </span>
+            <span class="text-slate-400 font-mono text-[10px]">5 tabs</span>
+        </div>
+    </section>
 
     <!-- TAB CONTENTS -->
 
@@ -3065,6 +3203,14 @@
                 previewImage(radInput, 'radio_preview', 'radio_placeholder');
                 showToast('Pasted radiograph image into Step 2!', true);
             }
+        }
+    });
+
+    // Auto-scroll active clinical module tab into view on mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeTabEl = document.querySelector('[data-patient-tab-active="true"]');
+        if (activeTabEl) {
+            activeTabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     });
 </script>
