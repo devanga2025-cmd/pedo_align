@@ -77,23 +77,29 @@ class PatientPortalTests(TestCase):
         )
 
     def test_patient_registration_and_login(self):
-        # 1. Register new patient
+        # 1. Verify register route cleanly redirects to login (self-registration disabled)
         register_url = reverse('patient:register')
-        reg_data = {
-            'full_name': 'Rohan Kumar',
-            'email': 'rohan@example.com',
-            'date_of_birth': '2010-05-15',
-            'mobile_number': '9876543210',
-            'password': 'SecurePatientPass123!',
-            'confirm_password': 'SecurePatientPass123!',
-        }
-        res = self.client.post(register_url, reg_data)
+        res = self.client.get(register_url)
         self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse('patient:login'))
 
-        # Profile created and auto-connected to clinical record matching email/phone
-        patient_profile = PatientProfile.objects.filter(user__email='rohan@example.com').first()
-        self.assertIsNotNone(patient_profile)
-        self.assertTrue(patient_profile.patient_id.startswith('PA-P'))
+        # Create patient account and verify login flow
+        user = User.objects.create_user(
+            username='rohan@example.com',
+            email='rohan@example.com',
+            password='SecurePatientPass123!',
+            first_name='Rohan',
+            last_name='Kumar'
+        )
+        patient_profile = PatientProfile.objects.create(
+            user=user,
+            full_name='Rohan Kumar',
+            patient_id='PA-P0001',
+            date_of_birth='2010-05-15',
+            phone_number='9876543210',
+            connected_patient_record=self.clinical_patient,
+            connection_status='CONNECTED'
+        )
         self.assertEqual(patient_profile.connection_status, 'CONNECTED')
 
         # 2. Logout
@@ -287,41 +293,45 @@ class PatientPortalTests(TestCase):
 
     def test_patient_category_and_guardian_support(self):
         """Requirement 2: Child and Adult Patient categories with parent/guardian contact info."""
-        # 1. Register Child Patient
-        res = self.client.post(reverse('patient:register'), {
-            'patient_category': 'CHILD',
-            'full_name': 'Leo Anderson',
-            'date_of_birth': '2016-03-20',
-            'email': 'leo.parent@example.com',
-            'mobile_number': '+91 9900112233',
-            'parent_guardian_name': 'Sarah Anderson',
-            'parent_guardian_phone': '+91 9900112233',
-            'parent_guardian_email': 'sarah.anderson@example.com',
-            'parent_guardian_relationship': 'Mother',
-            'password': 'SecureChildPassword123!',
-            'confirm_password': 'SecureChildPassword123!',
-        })
+        # 1. Verify register route redirects to login
+        res = self.client.get(reverse('patient:register'))
         self.assertEqual(res.status_code, 302)
-        child_profile = PatientProfile.objects.filter(user__email='leo.parent@example.com').first()
-        self.assertIsNotNone(child_profile)
+        self.assertRedirects(res, reverse('patient:login'))
+
+        # 2. Child Patient profile
+        child_user = User.objects.create_user(
+            username='leo.parent@example.com',
+            email='leo.parent@example.com',
+            password='SecureChildPassword123!'
+        )
+        child_profile = PatientProfile.objects.create(
+            user=child_user,
+            patient_category='CHILD',
+            full_name='Leo Anderson',
+            date_of_birth='2016-03-20',
+            phone_number='+91 9900112233',
+            parent_guardian_name='Sarah Anderson',
+            parent_guardian_phone='+91 9900112233',
+            parent_guardian_email='sarah.anderson@example.com',
+            parent_guardian_relationship='Mother'
+        )
         self.assertEqual(child_profile.patient_category, 'CHILD')
         self.assertEqual(child_profile.parent_guardian_name, 'Sarah Anderson')
         self.assertEqual(child_profile.parent_guardian_relationship, 'Mother')
 
-        # 2. Register Adult Patient
-        self.client.logout()
-        res_adult = self.client.post(reverse('patient:register'), {
-            'patient_category': 'ADULT',
-            'full_name': 'Victoria Sterling',
-            'date_of_birth': '1995-11-10',
-            'email': 'victoria@example.com',
-            'mobile_number': '+91 9887766554',
-            'password': 'SecureAdultPassword123!',
-            'confirm_password': 'SecureAdultPassword123!',
-        })
-        self.assertEqual(res_adult.status_code, 302)
-        adult_profile = PatientProfile.objects.filter(user__email='victoria@example.com').first()
-        self.assertIsNotNone(adult_profile)
+        # 3. Adult Patient profile
+        adult_user = User.objects.create_user(
+            username='victoria@example.com',
+            email='victoria@example.com',
+            password='SecureAdultPassword123!'
+        )
+        adult_profile = PatientProfile.objects.create(
+            user=adult_user,
+            patient_category='ADULT',
+            full_name='Victoria Sterling',
+            date_of_birth='1995-11-10',
+            phone_number='+91 9887766554'
+        )
         self.assertEqual(adult_profile.patient_category, 'ADULT')
 
     def test_schedule_based_notifications_and_mark_as_read(self):

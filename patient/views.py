@@ -248,93 +248,19 @@ def patient_login_view(request):
 
 
 def patient_register_view(request):
+    """
+    Patient self-registration is disabled.
+    Access to the Patient Portal is exclusively via clinic-assigned Joining Codes
+    or doctor-created patient credentials.
+    """
     if request.user.is_authenticated:
         if hasattr(request.user, 'patient_profile'):
             return redirect('patient:dashboard')
         elif hasattr(request.user, 'doctor_profile'):
             return redirect('doctor:dashboard')
 
-    form = PatientRegistrationForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        full_name = form.cleaned_data['full_name'].strip()
-        patient_category = form.cleaned_data.get('patient_category', 'CHILD')
-        email = form.cleaned_data['email'].strip().lower()
-        dob = form.cleaned_data['date_of_birth']
-        phone = form.cleaned_data['mobile_number'].strip()
-        parent_name = form.cleaned_data.get('parent_guardian_name', '').strip()
-        parent_phone = form.cleaned_data.get('parent_guardian_phone', '').strip()
-        parent_email = (form.cleaned_data.get('parent_guardian_email', '') or '').strip()
-        parent_rel = form.cleaned_data.get('parent_guardian_relationship', 'Parent').strip()
-        pwd = form.cleaned_data['password']
-
-        user = User.objects.create_user(
-            username=email,
-            email=email,
-            password=pwd,
-            first_name=full_name.split()[0] if full_name else '',
-            last_name=' '.join(full_name.split()[1:]) if len(full_name.split()) > 1 else ''
-        )
-
-        patient_profile = PatientProfile.objects.create(
-            user=user,
-            full_name=full_name,
-            patient_category=patient_category,
-            date_of_birth=dob,
-            phone_number=phone,
-            parent_guardian_name=parent_name,
-            parent_guardian_phone=parent_phone,
-            parent_guardian_email=parent_email,
-            parent_guardian_relationship=parent_rel
-        )
-
-        # Check if doctor already created and approved a patient with this email or phone
-        matching_clinical = ClinicalPatient.objects.filter(
-            Q(email__iexact=email) | (Q(phone=phone) & ~Q(phone=''))
-        ).first()
-
-        if matching_clinical:
-            # Sync category and parent info
-            matching_clinical.patient_category = patient_category
-            if parent_name and not matching_clinical.parent_guardian_name:
-                matching_clinical.parent_guardian_name = parent_name
-            if parent_phone and not matching_clinical.parent_guardian_phone:
-                matching_clinical.parent_guardian_phone = parent_phone
-            if parent_email and not matching_clinical.parent_guardian_email:
-                matching_clinical.parent_guardian_email = parent_email
-            matching_clinical.save()
-
-            patient_profile.connected_patient_record = matching_clinical
-            patient_profile.connection_status = 'CONNECTED'
-            joining_code = getattr(matching_clinical, 'joining_code', None)
-            if joining_code:
-                joining_code.status = 'APPROVED'
-                joining_code.save()
-                patient_profile.pending_code = joining_code
-            patient_profile.save()
-
-        # Welcome notification
-        if patient_profile.is_connected:
-            PatientNotification.objects.create(
-                patient=patient_profile,
-                notification_type='TREATMENT_UPDATE',
-                title='Welcome to Your Treatment Portal!',
-                message=f'Your account is connected with Dr. {patient_profile.doctor.full_name}. Your aligner plan is active.'
-            )
-            messages.success(request, f"Welcome, {full_name}! You are connected with Dr. {patient_profile.doctor.full_name}.")
-        else:
-            PatientNotification.objects.create(
-                patient=patient_profile,
-                notification_type='TREATMENT_UPDATE',
-                title='Welcome to PEDO ALIGN!',
-                message=f'Your Patient ID is {patient_profile.patient_id}. Connect with your doctor using your unique joining code to activate aligner tracking.'
-            )
-            messages.success(request, f"Registration complete! Your Patient ID is {patient_profile.patient_id}.")
-
-        login(request, user)
-        request.session.set_expiry(60 * 60 * 24 * 90)  # Persistent login for 90 days
-        return redirect('patient:dashboard')
-
-    return render(request, 'patient/auth/register.html', {'form': form})
+    messages.info(request, "Patient self-registration is disabled. Please sign in using your clinic-provided Joining Code.")
+    return redirect('patient:login')
 
 
 def patient_logout_view(request):
