@@ -1202,6 +1202,7 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
             'phone_number': '9876543219',
             'dental_qualification': 'BDS, MDS',
             'specialization': '',  # Left empty
+            'ksdc_registration_number': 'KSDC-1122-C',
             'clinic_name': 'Default Smile Clinic',
             'clinic_address': '101 Healthcare Blvd',
             'password': 'StrongPassword123',
@@ -1213,6 +1214,23 @@ class PatientClinicalRecordAndJourneyTests(TestCase):
         doc = DoctorProfile.objects.filter(user__email='default.spec@example.com').first()
         self.assertIsNotNone(doc)
         self.assertEqual(doc.specialization, 'Pedodontist')
+
+    def test_doctor_registration_ksdc_is_mandatory(self):
+        """Test that KSDC / Dental Council Registration Number is required."""
+        resp = self.client.post(reverse('doctor:register'), {
+            'full_name': 'Dr. No KSDC',
+            'email': 'noksdc@example.com',
+            'phone_number': '9876543217',
+            'dental_qualification': 'BDS, MDS',
+            'specialization': 'Pedodontist',
+            'ksdc_registration_number': '',  # Omitted / blank
+            'clinic_name': 'No KSDC Clinic',
+            'clinic_address': '101 Healthcare Blvd',
+            'password': 'StrongPassword123',
+            'confirm_password': 'StrongPassword123',
+        })
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('ksdc_registration_number', resp.context['form'].errors)
 
 
 

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#F3F8FC]">
+<html lang="en" class="h-full bg-[#EAF8FA]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
                             aqua: '#08C8C8',
                             'light-aqua': '#E8F8F8',
                             'soft-blue': '#E8F0F8',
-                            bg: '#F3F8FC',
+                            bg: '#EAF8FA',
                             white: '#FFFFFF',
                             pink: '#F28AA8',
                             50: '#E8F0F8',
@@ -81,7 +81,7 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full flex flex-col font-sans text-slate-700 bg-[#F3F8FC] antialiased selection:bg-teal-100 selection:text-navy-900">
+<body class="h-full flex flex-col font-sans text-slate-700 bg-[#EAF8FA] antialiased selection:bg-teal-100 selection:text-navy-900">
 
     <div class="flex h-screen overflow-hidden">
         
@@ -188,7 +188,7 @@
         </aside>
 
         <!-- MAIN CONTENT AREA -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#F3F8FC]">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#EAF8FA]">
             
             <!-- TOP NAVBAR -->
             <header class="h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-30 shadow-xs flex-shrink-0">
@@ -409,7 +409,7 @@
             {% endif %}
 
             <!-- MAIN BODY VIEWPORT -->
-            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-24 lg:pb-6 custom-scrollbar">
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-28 lg:pb-6 custom-scrollbar">
                 {% block content %}{% endblock %}
             </main>
 
@@ -417,45 +417,43 @@
 
     </div>
 
-    <!-- MOBILE BOTTOM NAVIGATION BAR -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white/95 backdrop-blur-md border-t border-slate-200/90 flex items-center justify-around z-40 mobile-bottom-nav">
+    <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
+    <nav class="lg:hidden mobile-bottom-nav" aria-label="Mobile Navigation">
         <!-- 1. Dashboard -->
-        <a href="{% url 'doctor:dashboard' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-chart-pie text-sm sm:text-base {% if request.resolver_match.url_name == 'dashboard' %}text-[#083878]{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Dashboard</span>
+        <a href="{% url 'doctor:dashboard' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" title="Dashboard">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
         </a>
 
         <!-- 2. Patients -->
-        <a href="{% url 'doctor:patient_list' %}" class="mobile-nav-link {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_create' and request.resolver_match.url_name != 'patient_requests' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-users text-sm sm:text-base {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_create' and request.resolver_match.url_name != 'patient_requests' %}text-[#083878]{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Patients</span>
+        <a href="{% url 'doctor:patient_list' %}" class="mobile-nav-link {% if 'patient' in request.resolver_match.url_name and request.resolver_match.url_name != 'patient_create' and request.resolver_match.url_name != 'patient_requests' %}active{% endif %}" title="Patients">
+            <i class="fa-solid fa-users"></i>
+            <span>Patients</span>
         </a>
 
         <!-- 3. Add Patient -->
-        <a href="{% url 'doctor:patient_create' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'patient_create' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <div class="w-8 h-8 rounded-full bg-[#083878] text-white flex items-center justify-center shadow-xs">
-                <i class="fa-solid fa-user-plus text-xs"></i>
-            </div>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 text-[#083878] font-semibold truncate">Add</span>
+        <a href="{% url 'doctor:patient_create' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'patient_create' %}active{% endif %}" title="Add Patient">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Add</span>
         </a>
 
         <!-- 4. Requests -->
-        <a href="{% url 'doctor:patient_requests' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'patient_requests' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <div class="relative">
-                <i class="fa-solid fa-key text-sm sm:text-base {% if request.resolver_match.url_name == 'patient_requests' %}text-[#083878]{% endif %}"></i>
+        <a href="{% url 'doctor:patient_requests' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'patient_requests' %}active{% endif %}" title="Patient Requests">
+            <div class="relative inline-flex items-center justify-center">
+                <i class="fa-solid fa-key"></i>
                 {% if pending_requests_count > 0 %}
                 <span class="absolute -top-1 -right-2 min-w-[14px] h-[14px] px-0.5 bg-amber-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-1 ring-white">
                     {{ pending_requests_count }}
                 </span>
                 {% endif %}
             </div>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Requests</span>
+            <span>Requests</span>
         </a>
 
         <!-- 5. Appointments -->
-        <a href="{% url 'doctor:appointments' %}" class="mobile-nav-link {% if 'appointment' in request.resolver_match.url_name %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-calendar-check text-sm sm:text-base {% if 'appointment' in request.resolver_match.url_name %}text-[#083878]{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Appointments</span>
+        <a href="{% url 'doctor:appointments' %}" class="mobile-nav-link {% if 'appointment' in request.resolver_match.url_name %}active{% endif %}" title="Appointments">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Appointments</span>
         </a>
     </nav>
 

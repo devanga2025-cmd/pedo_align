@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#F3F8FC]">
+<html lang="en" class="h-full bg-[#EAF8FA]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
                             aqua: '#08C8C8',
                             'light-aqua': '#E8F8F8',
                             'soft-blue': '#E8F0F8',
-                            bg: '#F3F8FC',
+                            bg: '#EAF8FA',
                             white: '#FFFFFF',
                             pink: '#F28AA8',
                             50: '#E8F0F8',
@@ -78,7 +78,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full flex flex-col font-sans text-slate-700 bg-[#F3F8FC] antialiased selection:bg-teal-100 selection:text-navy-900">
+<body class="h-full flex flex-col font-sans text-slate-700 bg-[#EAF8FA] antialiased selection:bg-teal-100 selection:text-navy-900">
 
     <div class="flex h-screen overflow-hidden">
 
@@ -182,7 +182,7 @@
         </aside>
 
         <!-- MAIN VIEWPORT -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#EAF8FA]">
             
             <!-- TOP NAVBAR -->
             <header class="h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-30 flex-shrink-0 shadow-xs">
@@ -407,7 +407,7 @@
             {% endif %}
 
             <!-- MAIN BODY VIEWPORT -->
-            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-24 lg:pb-6 custom-scrollbar">
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5 pb-28 lg:pb-6 custom-scrollbar">
                 {% block content %}{% endblock %}
             </main>
 
@@ -415,38 +415,36 @@
 
     </div>
 
-    <!-- MOBILE BOTTOM NAVIGATION BAR -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-white/95 backdrop-blur-md border-t border-slate-200/90 flex items-center justify-around z-40 mobile-bottom-nav">
+    <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
+    <nav class="lg:hidden mobile-bottom-nav" aria-label="Mobile Navigation">
         <!-- 1. Clinical Journey -->
-        <a href="{% url 'patient:dashboard' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-house-medical text-sm sm:text-base {% if request.resolver_match.url_name == 'dashboard' %}text-[#083878]{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Journey</span>
+        <a href="{% url 'patient:dashboard' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" title="Clinical Journey">
+            <i class="fa-solid fa-house-medical"></i>
+            <span>Journey</span>
         </a>
 
         <!-- 2. Treatment Plan -->
-        <a href="{% url 'patient:my_treatment' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'my_treatment' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-tooth text-sm sm:text-base {% if request.resolver_match.url_name == 'my_treatment' %}text-[#083878]{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Treatment</span>
+        <a href="{% url 'patient:my_treatment' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'my_treatment' or request.resolver_match.url_name == 'my_treatment_alias' %}active{% endif %}" title="Treatment Plan">
+            <i class="fa-solid fa-tooth"></i>
+            <span>Treatment</span>
         </a>
 
         <!-- 3. Upload Photos -->
-        <a href="{% url 'patient:upload_photos' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'upload_photos' %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <div class="w-8 h-8 rounded-full bg-[#083878] text-white flex items-center justify-center shadow-xs">
-                <i class="fa-solid fa-camera text-xs"></i>
-            </div>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 text-[#083878] font-semibold truncate">Photos</span>
+        <a href="{% url 'patient:upload_photos' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'upload_photos' %}active{% endif %}" title="Upload Photos">
+            <i class="fa-solid fa-camera"></i>
+            <span>Photos</span>
         </a>
 
         <!-- 4. Visits / Appointments -->
-        <a href="{% url 'patient:appointments' %}" class="mobile-nav-link {% if 'appointment' in request.resolver_match.url_name %}active{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-calendar-check text-sm sm:text-base {% if 'appointment' in request.resolver_match.url_name %}text-[#083878]{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Visits</span>
+        <a href="{% url 'patient:appointments' %}" class="mobile-nav-link {% if 'appointment' in request.resolver_match.url_name %}active{% endif %}" title="Visits & Appointments">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Visits</span>
         </a>
 
         <!-- 5. Emergency / Help -->
-        <a href="{% url 'patient:emergency' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'emergency' %}active text-rose-600{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-            <i class="fa-solid fa-triangle-exclamation text-sm sm:text-base {% if request.resolver_match.url_name == 'emergency' %}text-rose-600{% endif %}"></i>
-            <span class="text-[9px] sm:text-[10px] mt-0.5 truncate">Help</span>
+        <a href="{% url 'patient:emergency' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'emergency' %}active{% endif %}" title="Emergency Help">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Help</span>
         </a>
     </nav>
 

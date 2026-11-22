@@ -44,8 +44,8 @@ class DoctorRegistrationForm(forms.Form):
     )
     ksdc_registration_number = forms.CharField(
         max_length=100,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. KSDC-12345-A'})
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. KSDC-12345-A', 'required': 'required'})
     )
     clinic_name = forms.CharField(
         max_length=250,
